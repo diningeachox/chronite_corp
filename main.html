@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Javascript Game Template</title>
+    <style>
+    	* { padding: 0; margin: 0; }
+
+      .wrapper {
+          position: relative;
+      }
+      .wrapper canvas {
+          position: absolute;
+          top: 25%;
+          left: 25%;
+          display: block;
+          margin: 0 auto;
+      }
+      #overlay {
+        pointer-events: none /*We want to click through this canvas */
+      }
+    </style>
+
+
+</head>
+<body style="background-color:black;">
+<div class="wrapper">
+    <canvas id=canvas width=1000 height=580
+        style=" z-index: 0;"></canvas>
+    <canvas id="overlay" width="1000" height="580"
+        style=" z-index: 1;"></canvas>
+</div>
+
+<script> window.ECS = {
+           Components: {},
+
+           systems: {},
+           entities: [],
+           game: {}
+    }; </script>
+
+<script type="text/javascript" src="entity.js"></script>
+
+<script type="text/javascript" src="components.js"></script>
+
+<script type="text/javascript" src="system.js"></script>
+
+
+<script type="text/javascript" src="utils.js"></script>
+<script type="text/javascript" src="scenes.js"></script>
+<script type="text/javascript" src="game.js"></script>
+
+<script> window.onload = init; </script>
+
+
+</body>
