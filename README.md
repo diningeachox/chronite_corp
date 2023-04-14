@@ -68,4 +68,10 @@ Contains code for the buttons seen in the game. They respond to onHover events a
 ### cursor.js 
 A custom cursor appearing over the canvas that we'll need to make our game look better.
 
+### Directories 
+- audio: holds all the audio files (I've asked Fidel to use .ogg or .opus format to save space)
+- sprites: holds all visual assets (usually .png)
+- fonts: holds the game's custom fonts (.otf preferred over .ttf due to size)
+- shaders: GLSL shaders (written as strings in .js files so I don't have to asynchronously load them), used for special effects
+
 The rest of the details should hopefully be in the code's comments. Let me know if you have questions!
