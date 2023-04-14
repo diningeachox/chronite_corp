@@ -1,59 +1,18 @@
-// Useful helper functions and data structures for the game
+/**
+Useful helper functions and data structures for the game
+**/
 
-
-//Button class
-var Button = function(config) {
-    //x and y are coordinates of the CENTER of the button
-    this.x = config.x || 0;
-    this.y = config.y || 0;
-    this.width = config.width || 150;
-    this.height = config.height || 50;
-    this.label = config.label || "Click me!";
-    this.onClick = config.onClick || function() {};
-    this.hover = 0;
+// Converts a #ffffff hex string into an [r,g,b] array
+var h2r = function(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? [
+        parseInt(result[1], 16),
+        parseInt(result[2], 16),
+        parseInt(result[3], 16)
+    ] : null;
 };
 
-Button.prototype.draw = function(ctx) {
-    //Normal button
-    if (!this.hover){
-        ctx.fillStyle = "blue";
-        ctx.fillRect(this.x - (this.width / 2), this.y - (this.height / 2), this.width, this.height);
-        ctx.font="20px Arial";
-        ctx.fillStyle = "white";
-        ctx.textAlign = "center";
-        ctx.fillText(this.label, this.x, this.y);
-    } else {
-        //Hovered over button
-        ctx.fillStyle = "rgb(100, 100, 255)";
-        ctx.fillRect(this.x - (this.width / 2), this.y - (this.height / 2), this.width, this.height);
-        ctx.font="20px Arial";
-        ctx.fillStyle = "black";
-        ctx.textAlign = "center";
-        ctx.fillText(this.label, this.x, this.y);
-    }
-
-};
-
-Button.prototype.isMouseInside = function(mouseX, mouseY) {
-    return (mouseX > (this.x - (this.width / 2)) &&
-           mouseX < (this.x + (this.width / 2)) &&
-           mouseY > (this.y - (this.height / 2)) &&
-           mouseY < (this.y + (this.height / 2)));
-};
-
-Button.prototype.handleMouseClick = function(mouseX, mouseY) {
-    if (this.isMouseInside(mouseX, mouseY)) {
-        this.onClick();
-    }
-};
-
-Button.prototype.handleMouseHover = function(mouseX, mouseY) {
-    this.hover = this.isMouseInside(mouseX, mouseY);
-};
-
-function resize() {
-    canvas.width = window.innerWidth / 2;
-    canvas.height = window.innerHeight;
-    overlay.width = window.innerWidth / 2;
-    overlay.height = window.innerHeight;
+// Inverse of the above
+var r2h = function(rgb) {
+    return "#" + ((1 << 24) + (rgb[0] << 16) + (rgb[1] << 8) + rgb[2]).toString(16).slice(1);
 };

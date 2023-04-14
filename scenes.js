@@ -1,4 +1,13 @@
-class SceneManager {
+import * as Assets from './assets.js';
+import * as Game from "./game.js";
+
+//Variables from assets.js
+var canvas = Assets.canvas;
+var overlay = Assets.overlay;
+var c = Assets.c;
+var ol = Assets.ol;
+
+export class SceneManager {
     constructor(){
         this.cur_scene = null;
     }
@@ -11,7 +20,7 @@ class SceneManager {
 }
 
 //Abstract scene class
-class Scene {
+export class Scene {
   constructor() {
     if (this.constructor == Scene) {
       throw new Error("Abstract classes can't be instantiated.");
@@ -52,19 +61,21 @@ class Scene {
 /**
  * Menu class, extends Scene class
  */
-class Menu extends Scene {
+export class Menu extends Scene {
     constructor(){
       super();
       this.name = "menu";
       //Clicking play will change scene from "menu" to "game"
       var play_button = new Button({x: canvas.width / 2, y:200, width:150, height:50, label:"Play",
             onClick: function(){
-                changeScene(game_scene);
+                changeScene(Game.game_scene);
+                playSound(sfx_sources["button_click"].src, sfx_ctx);
             }
            });
       var ins_button = new Button({x: canvas.width / 2, y:300, width:150, height:50, label:"Instructions",
             onClick: function(){
-                changeScene(ins_scene);
+                changeScene(Game.ins_scene);
+                playSound(sfx_sources["button_click"].src, sfx_ctx);
             }
           });
       this.buttons = [play_button, ins_button];
@@ -91,7 +102,7 @@ class Menu extends Scene {
 /**
  * Game class, extends Scene class
  */
-class GameScene extends Scene {
+export class GameScene extends Scene {
     constructor(game){
       super();
       this.name = "game";
@@ -100,62 +111,56 @@ class GameScene extends Scene {
       //Buttons
       var menu_button = new Button({x: canvas.width / 2, y:canvas.height - 100, width:150, height:50, label:"Menu",
             onClick: function(){
-                changeScene(menu);
+                changeScene(Game.menu);
+                playSound(sfx_sources["button_click"].src, sfx_ctx);
             }
            });
       this.buttons = [menu_button];
     }
     update(delta) {
-        this.game.score += delta;
+        this.game.update(delta);
     }
     render(delta){
-        c.clearRect(0, 0, canvas.width, canvas.height);
 
-        c.fillStyle = "beige";
-        c.fillRect(0, 0, canvas.width, canvas.height);
-        //title
+        c.clearRect(0, 0, canvas.width, canvas.height);
+        this.game.render(delta);
+        //Buttons
         for (var i = 0; i < this.buttons.length; i++){
             this.buttons[i].draw(c);
         }
-
-        c.fillStyle = "black";
-        c.font="20px Arial";
-        c.fillText("Score: " + this.game.score, 500, 400);
     }
     load(){
-      //Load new game, plus all assets
         super.load();
-        this.game = new Game();
-        console.log("New game");
     }
     unload(){
-        this.game = null;
+        //this.game = null;
     }
 }
 
 /**
  * Game class, extends Scene class
  */
-class Ins extends Scene {
+export class Ins extends Scene {
     constructor(){
       super();
       this.name = "ins";
       //Buttons
       var menu_button = new Button({x: canvas.width / 2, y:canvas.height - 100, width:150, height:50, label:"Back",
             onClick: function(){
-                changeScene(menu);
+                changeScene(Game.menu);
+                playSound(sfx_sources["button_click"].src, sfx_ctx);
             }
            });
 
      var play_button = new Button({x: canvas.width / 2, y:200, width:150, height:50, label:"Play",
            onClick: function(){
-               changeScene(game_scene);
+               changeScene(Game.game_scene);
+               playSound(sfx_sources["button_click"].src, sfx_ctx);
            }
           });
       this.buttons = [menu_button, play_button];
     }
     update(delta) {
-        game.score += delta;
     }
     render(delta){
         c.clearRect(0, 0, canvas.width, canvas.height);
@@ -180,7 +185,8 @@ class Ins extends Scene {
 }
 
 //Change scenes
-function changeScene(new_scene){
+export function changeScene(new_scene){
+
     if (sm.cur_scene != null) sm.cur_scene.unload();
     new_scene.load();
     sm.cur_scene = new_scene;
@@ -188,7 +194,7 @@ function changeScene(new_scene){
 
 
 // A pause scene, but more convenient to not put it into a class
-function drawPause(){
+export function drawPause(){
 
     ol.clearRect(0, 0, overlay.width, overlay.height);
     ol.fillStyle = "rgba(0, 0, 0, 0.5)"; //Transparent black

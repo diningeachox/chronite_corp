@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Javascript Game Template</title>
+    <style>
+    	* { padding: 0; margin: 0; }
+
+      .wrapper {
+          position: relative;
+      }
+      .wrapper canvas {
+          position: absolute;
+          top: 25%;
+          left: 25%;
+          display: block;
+          margin: 0 auto;
+      }
+      #overlay {
+        pointer-events: none /*We want to click through this canvas */
+      }
+      #gl {
+        pointer-events: none /*We want to click through this canvas */
+      }
+      .load_text {
+          position: fixed;
+          margin: auto;
+          color: #FFFFFF;
+          left: calc(50% - 120px);
+          top: calc(50% + 100px);
+          font-family: fantasy;
+          font-size: 40px;
+          font-weight: lighter;
+      }
+
+      .load_text:after {
+          overflow: hidden;
+          display: inline-block;
+          vertical-align: bottom;
+          -webkit-animation: ellipsis steps(4,end) 1000ms infinite;
+          animation: ellipsis steps(4,end) 1000ms infinite;
+          content: "\2026"; /* ascii code for the ellipsis character */
+          width: 0px;
+      }
+    </style>
+
+
+</head>
+<body style="background-color:black;">
+<div class="wrapper">
+    <canvas id=canvas width=1000 height=580
+        style=" z-index: 3;"></canvas>
+    <canvas id="overlay" width="1000" height="580"
+        style=" z-index: 1;"></canvas>
+    <canvas id="gl" width="1000" height="580"
+            style=" z-index: 2;"></canvas>
+</div>
+
+<div class="load_text" style="z-index: 0">Loading Game</div>
+
+<script>
+    window.ECS = {
+           Components: {},
+
+           systems: {},
+           entities: [],
+           game: {}
+    };
+
+    //Shaders
+    var shaders = {};
+
+    var sprites = {};
+
+    // Scene manager
+    var sm;
+
+    //Sound sources
+    var music_ctx = new (window.AudioContext || window.webkitAudioContext)();
+    var music_sources = {};
+
+    var ambient_sounds_sources = {};
+    var ambient_sounds_ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+    var sfx_sources = {};
+    var sfx_ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+    var music_player;
+    var ambient_player;
+    var sfx_player;
+
+</script>
+
+<script type="text/javascript" src="sound.js"></script>
+
+<script type="text/javascript" src="entity.js"></script>
+<script type="text/javascript" src="components.js"></script>
+<script type="text/javascript" src="assemblage.js"></script>
+<script type="text/javascript" src="system.js"></script>
+
+<script type="text/javascript" src="cursor.js"></script>
+<script type="text/javascript" src="collision.js"></script>
+<script type="text/javascript" src="button.js"></script>
+
+<script type="module" src="assets.js"></script>
+<script type="module" src="scenes.js"></script>
+<script type="module" src="game.js"></script>
+
+<script type="module">
+
+import {init} from './game.js';
+var modules = {};
+modules.init = init;
+
+//Preloading
+var promises = [];
+
+promises.push(addSound("button_click", sfx_sources, sfx_ctx, "./audio/button_click.ogg"));
+Promise.all(promises)
+  .then(function gameInit() {
+
+      // Initiate audio contexts
+      music_player = new AudioPlayer(music_ctx);
+      ambient_player = new AudioPlayer(ambient_sounds_ctx);
+      sfx_player = new AudioPlayer(sfx_ctx);
+
+      init(); //Initialize game states
+
+      //Remove loading screen
+      console.log("Starting game...")
+  })
+  .catch(function handleError(error) {
+    console.log("Error" + error);
+  });
+</script>
+
+
+</body>
