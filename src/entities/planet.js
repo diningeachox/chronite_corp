@@ -41,4 +41,4 @@ const scoutedPlanet = () => {
 
 }
 
-export default Planet
+export {hqPlanet, startingPlanet, scoutedPlanet};
