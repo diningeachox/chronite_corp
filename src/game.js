@@ -1,5 +1,6 @@
 import * as Scene from './scenes.js';
 import * as Assets from './assets.js';
+import {clip} from "./utils.js";
 
 //Variables from assets.js
 var canvas = Assets.canvas;
@@ -7,6 +8,9 @@ var overlay = Assets.overlay;
 var c = Assets.c;
 var ol = Assets.ol;
 var gl = Assets.gl;
+
+//Debug mode toggle
+var DEBUG = false;
 
 // Game pause toggle
 var pause = 0;
@@ -17,6 +21,11 @@ var MS_PER_UPDATE = 1000 / frame_rate;
 var lag = 0;
 var prev = Date.now();
 var elapsed;
+
+//Zoom level
+var zoom = 1.0; // 114% zoom in
+
+
 
 // Game scenes
 export var game;
@@ -29,8 +38,7 @@ function resize() {
     canvas.height = window.innerHeight;
     overlay.width = window.innerWidth / 2;
     overlay.height = window.innerHeight;
-    gl.width = window.innerWidth;
-    gl.height = window.innerHeight;
+
 };
 
 export function init(){
@@ -64,17 +72,23 @@ export function init(){
         sm.cur_scene.handleMouseHover(mouseX, mouseY);
     }, false);
 
+    //Mouse scroll wheel
+    canvas.addEventListener('wheel', function(e){
+        var rect = canvas.getBoundingClientRect();
+        var mouseX = e.clientX - rect.left;
+        var mouseY = e.clientY - rect.top;
+        //Current scene's Buttons
+        zoom += e.deltaY / 1000.0;
+        //Assets.ortho_camera.position.z += e.deltaY / 10.0;
+        zoom = clip(zoom, 0.1, 10);
+
+        Assets.ortho_camera.scale.set(zoom, zoom, 1);
+    }, false);
+
     //Key presses
     document.addEventListener('keydown', function(e) {
         if(e.keyCode == 80) { //P key
             if (sm.cur_scene.name === "game") pause = (pause + 1) % 2;
-        }
-        //Debug only
-        else if(e.keyCode == 38) { //up key (raise water level)
-            console.log("Up key pressed");
-        }
-        else if(e.keyCode == 40) { //down key (lower water level)
-            console.log("Down key pressed");
         }
     });
 
@@ -85,24 +99,22 @@ export function init(){
 class Game {
     constructor(){
         this.score = 0;
-        Assets.SpriteFactory('./sprites/ship1.png', 0);
-        Assets.SpriteFactory('./sprites/ship1.png', 1);
+        Assets.SpriteFactory('../sprites/ship1.png', 0);
+        Assets.SpriteFactory('../sprites/ship1.png', 1);
+        Assets.StarFactory(0, 0, 222);
+        Assets.StarFactory(15.0, -10.0, 223);
+        sprites[0].position.set(0.0, 0.0, 0.0);
+        sprites[1].position.set(10.0, 5.0, 0.0);
     }
     update(delta){
         this.score += delta;
-        sprites[0].position.set(this.score, this.score, 0);
         sprites[0].material.rotation = this.score / 10.0;
-        sprites[1].position.set(this.score, -this.score, 0);
     }
     render(delta){
-
-        c.fillStyle = "white";
-        c.font="20px Arial";
-        c.fillText("Score: " + this.score, 500, 400);
-
-        Assets.camera.updateMatrixWorld();
+        Assets.plane_uniforms.u_time.value += delta;
+        Assets.ortho_camera.updateMatrixWorld();
         //Assets.controls.update();
-        Assets.renderer.render( Assets.scene, Assets.ortho_camera );
+        Assets.renderer.render(Assets.scene, Assets.ortho_camera);
     }
 }
 

@@ -42,6 +42,7 @@
           content: "\2026"; /* ascii code for the ellipsis character */
           width: 0px;
       }
+      html, body {margin: 0; height: 100%; overflow: hidden}
     </style>
 
 
@@ -91,6 +92,11 @@
 
 </script>
 
+<script type="module" src="shaders/vert.js"></script>
+<script type="module" src="shaders/frag.js"></script>
+<script type="module" src="shaders/skyfield.js"></script>
+<script type="module" src="shaders/planet_surface.js"></script>
+
 <script type="module" src="src/sound.js"></script>
 
 <script type="module" src="src/entity.js"></script>
@@ -119,7 +125,7 @@ var promises = [];
 promises.push(addSound("button_click", sfx_sources, sfx_ctx, "./audio/button_click.ogg"));
 Promise.all(promises)
   .then(function gameInit() {
-
+      document.getElementsByClassName("load_text")[0].innerHTML = "";
       // Initiate audio contexts
       music_player = new AudioPlayer(music_ctx);
       ambient_player = new AudioPlayer(ambient_sounds_ctx);

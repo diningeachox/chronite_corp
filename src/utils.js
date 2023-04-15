@@ -16,3 +16,8 @@ export var h2r = function(hex) {
 export var r2h = function(rgb) {
     return "#" + ((1 << 24) + (rgb[0] << 16) + (rgb[1] << 8) + rgb[2]).toString(16).slice(1);
 };
+
+//Clip value of x in the interval [a, b] inclusive
+export function clip(x, a, b){
+    return Math.max(Math.min(x, b), a);
+}
