@@ -6,11 +6,12 @@ const planet = (config) => {
   ent.addComponent( new ECS.Components.HP(config.HP || 100));
   ent.addComponent( new ECS.Components.OutputGood(config.output));
   ent.addComponent( new ECS.Components.InputGoods(config.input || []));
+  ent.addComponent( new ECS.Components.Ships(config.ships || 10));
   ent.addComponent( new ECS.Components.Position(config.position || [100,100]));
   return ent;
 }
 
-const hqPlanet = planet({type: "hq", input:{type: goods.gold, max:1000}}); //TODO use objects for planet types
+const hqPlanet = planet({type: "hq", input:{type: goods.gold, max:1000}, ships:0 }); //TODO use objects for planet types
 
 // The idea here is that we'll want to start with one of each 
 // of a basic set of planets that provide everything. 
