@@ -1,5 +1,6 @@
 import * as Assets from './assets.js';
 import * as Game from "./game.js";
+import {Button} from "./button.js";
 
 //Variables from assets.js
 var canvas = Assets.canvas;

@@ -91,24 +91,25 @@
 
 </script>
 
-<script type="text/javascript" src="sound.js"></script>
+<script type="module" src="src/sound.js"></script>
 
-<script type="text/javascript" src="entity.js"></script>
-<script type="text/javascript" src="components.js"></script>
-<script type="text/javascript" src="assemblage.js"></script>
-<script type="text/javascript" src="system.js"></script>
+<script type="module" src="src/entity.js"></script>
+<script type="module" src="src/components.js"></script>
+<script type="module" src="src/assemblage.js"></script>
+<script type="module" src="src/system.js"></script>
 
-<script type="text/javascript" src="cursor.js"></script>
-<script type="text/javascript" src="collision.js"></script>
-<script type="text/javascript" src="button.js"></script>
+<script type="module" src="src/cursor.js"></script>
+<script type="module" src="src/collision.js"></script>
+<script type="module" src="src/button.js"></script>
 
-<script type="module" src="assets.js"></script>
-<script type="module" src="scenes.js"></script>
-<script type="module" src="game.js"></script>
+<script type="module" src="src/assets.js"></script>
+<script type="module" src="src/scenes.js"></script>
+<script type="module" src="src/game.js"></script>
 
 <script type="module">
 
-import {init} from './game.js';
+import {init} from './src/game.js';
+import {AudioPlayer, addSound} from './src/sound.js';
 var modules = {};
 modules.init = init;
 

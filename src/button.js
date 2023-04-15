@@ -2,7 +2,7 @@
 
 
 //Button class
-var Button = function(config) {
+export var Button = function(config) {
     //x and y are coordinates of the CENTER of the button
     this.x = config.x || 0;
     this.y = config.y || 0;
@@ -49,11 +49,4 @@ Button.prototype.handleMouseClick = function(mouseX, mouseY) {
 
 Button.prototype.handleMouseHover = function(mouseX, mouseY) {
     this.hover = this.isMouseInside(mouseX, mouseY);
-};
-
-function resize() {
-    canvas.width = window.innerWidth / 2;
-    canvas.height = window.innerHeight;
-    overlay.width = window.innerWidth / 2;
-    overlay.height = window.innerHeight;
 };

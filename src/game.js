@@ -6,6 +6,7 @@ var canvas = Assets.canvas;
 var overlay = Assets.overlay;
 var c = Assets.c;
 var ol = Assets.ol;
+var gl = Assets.gl;
 
 // Game pause toggle
 var pause = 0;
@@ -23,7 +24,14 @@ export var game_scene;
 export var ins_scene;
 export var menu;
 
-
+function resize() {
+    canvas.width = window.innerWidth / 2;
+    canvas.height = window.innerHeight;
+    overlay.width = window.innerWidth / 2;
+    overlay.height = window.innerHeight;
+    gl.width = window.innerWidth;
+    gl.height = window.innerHeight;
+};
 
 export function init(){
     //Resize canvas and overlay to window
