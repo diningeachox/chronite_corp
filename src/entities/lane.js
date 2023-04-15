@@ -5,3 +5,5 @@ const lane = (config) => {
   ent.addComponent( new ECS.Components.Ships(0));
   return ent;
 }
+
+export default lane;
