@@ -1,6 +1,7 @@
 import * as Scene from './scenes.js';
 import * as Assets from './assets.js';
 import {clip} from "./utils.js";
+import {Vector2D} from "./vector2D.js";
 
 //Variables from assets.js
 var canvas = Assets.canvas;
@@ -22,10 +23,12 @@ var lag = 0;
 var prev = Date.now();
 var elapsed;
 
+//FPS calculation
+var real_frames = 0;
+var fps = 0;
+
 //Zoom level
-var zoom = 1.0; // 114% zoom in
-
-
+var zoom = 1.0;
 
 // Game scenes
 export var game;
@@ -34,16 +37,21 @@ export var ins_scene;
 export var menu;
 
 function resize() {
-    canvas.width = window.innerWidth / 2;
+    canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    overlay.width = window.innerWidth / 2;
+    canvas.style.left = "0px";
+    overlay.width = window.innerWidth;
     overlay.height = window.innerHeight;
-
+    overlay.style.left = "0px";
 };
 
 export function init(){
     //Resize canvas and overlay to window
     resize();
+
+    //Background
+    Assets.plane_uniforms.u_resolution.value.x = Assets.gl.width;
+    Assets.plane_uniforms.u_resolution.value.y = Assets.gl.height;
 
     sm = new Scene.SceneManager();
     menu = new Scene.Menu();
@@ -70,6 +78,7 @@ export function init(){
         var mouseY = e.clientY - rect.top;
         //Current scene's Buttons
         sm.cur_scene.handleMouseHover(mouseX, mouseY);
+        //Assets.plane_uniforms.u_mouse.value.x = mouseX
     }, false);
 
     //Mouse scroll wheel
@@ -99,22 +108,35 @@ export function init(){
 class Game {
     constructor(){
         this.score = 0;
+
         Assets.SpriteFactory('../sprites/ship1.png', 0);
         Assets.SpriteFactory('../sprites/ship1.png', 1);
-        Assets.StarFactory(0, 0, 222);
+
+        Assets.LaneFactory(new Vector2D(-8.0, 0), new Vector2D(1.0, 30), 100);
+        Assets.StarFactory(-8.0, 0, 222);
         Assets.StarFactory(15.0, -10.0, 223);
+        Assets.StarFactory(1.0, 30.0, 224);
         sprites[0].position.set(0.0, 0.0, 0.0);
         sprites[1].position.set(10.0, 5.0, 0.0);
     }
     update(delta){
         this.score += delta;
         sprites[0].material.rotation = this.score / 10.0;
+        ECS.entities[222].rotation.set(0.0, this.score / 100.0, 0.0);
+        ECS.entities[223].rotation.set(this.score / 300.0, -this.score / 100.0, 0.0);
+        ECS.entities[224].rotation.set(this.score / 300.0, 0.0, -this.score / 500.0);
     }
     render(delta){
+        //Frame rate
+        c.fillStyle = "white";
+        c.font="20px Arial";
+        c.fillText("FPS: " + fps, 700, 40);
+
         Assets.plane_uniforms.u_time.value += delta;
         Assets.ortho_camera.updateMatrixWorld();
         //Assets.controls.update();
         Assets.renderer.render(Assets.scene, Assets.ortho_camera);
+
     }
 }
 
@@ -122,12 +144,19 @@ class Game {
 
 //Game loop
 function gameLoop(current){
-    current = Date.now();
-    elapsed = current - prev;
-    prev = current;
-    lag += elapsed;
 
     if (pause == 0){
+        //Update FPS calculation once every 250 milliseconds
+        if ((Date.now() - time) > 1000){
+            fps = real_frames;
+            real_frames = 0;
+            time += 1000; //Go forward one second
+        }
+        current = Date.now();
+        elapsed = current - prev;
+        prev = current;
+        lag += elapsed;
+
         while (lag >= MS_PER_UPDATE) {
             //Update
             var t1 = Date.now();
@@ -137,17 +166,19 @@ function gameLoop(current){
             lag -= MS_PER_UPDATE;
         }
         //console.log(lag);
-
+        real_frames += 1;
         ol.clearRect(0, 0, overlay.width, overlay.height);
     } else {
-        drawPause();
+        lag = 0;
+
     }
     //Render
     sm.render(lag / MS_PER_UPDATE);
 
-
-    //window.cancelAnimationFrame(req);
-
+    if (pause) {
+        Scene.drawPause();
+        //Pause music
+    }
     window.requestAnimationFrame(gameLoop);
 
 }

@@ -90,12 +90,16 @@
     var ambient_player;
     var sfx_player;
 
+    var time = Date.now(); //Game time (for FPS calculations)
+
 </script>
 
 <script type="module" src="shaders/vert.js"></script>
 <script type="module" src="shaders/frag.js"></script>
+<script type="module" src="shaders/texture.js"></script>
 <script type="module" src="shaders/skyfield.js"></script>
 <script type="module" src="shaders/planet_surface.js"></script>
+<script type="module" src="shaders/nebula.js"></script>
 
 <script type="module" src="src/sound.js"></script>
 
@@ -131,8 +135,8 @@ Promise.all(promises)
       ambient_player = new AudioPlayer(ambient_sounds_ctx);
       sfx_player = new AudioPlayer(sfx_ctx);
 
-      init(); //Initialize game states
-
+      //Initialize game states
+      init();
       //Remove loading screen
       console.log("Starting game...")
   })
