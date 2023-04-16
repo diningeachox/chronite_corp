@@ -133,9 +133,15 @@ export class GameScene extends Scene {
     }
     load(){
         super.load();
+        //Play main game music
+        music_player.setBuffer(music_sources["main"].src.buffer);
+        music_player.play(true);
     }
     unload(){
         //this.game = null;
+
+        //Stop music
+        music_player.stop();
     }
 }
 
