@@ -91,7 +91,7 @@ export function init(){
         //Assets.ortho_camera.position.z += e.deltaY / 10.0;
         zoom = clip(zoom, 0.1, 10);
 
-        Assets.ortho_camera.scale.set(zoom, zoom, 1);
+        //Assets.ortho_camera.scale.set(zoom, zoom, 1);
     }, false);
 
     //Key presses
@@ -125,6 +125,28 @@ class Game {
         ECS.entities[222].rotation.set(0.0, this.score / 100.0, 0.0);
         ECS.entities[223].rotation.set(this.score / 300.0, -this.score / 100.0, 0.0);
         ECS.entities[224].rotation.set(this.score / 300.0, 0.0, -this.score / 500.0);
+
+        //Check raycasting intersections
+        var INTERSECTED;
+        Assets.raycaster.setFromCamera( Assets.pointer, Assets.ortho_camera );
+
+				const intersects = Assets.raycaster.intersectObjects( Assets.scene.children, false );
+
+        if ( intersects.length > 0 ) {
+          /*
+					if ( INTERSECTED != intersects[ 0 ].object ) {
+
+						if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+
+						INTERSECTED = intersects[ 0 ].object;
+						INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+						INTERSECTED.material.emissive.setHex( 0xff0000 );
+
+					}
+          */
+            console.log(intersects);
+
+				}
     }
     render(delta){
         //Frame rate
@@ -134,9 +156,8 @@ class Game {
 
         Assets.plane_uniforms.u_time.value += delta;
         Assets.ortho_camera.updateMatrixWorld();
-        //Assets.controls.update();
+        Assets.controls.update();
         Assets.renderer.render(Assets.scene, Assets.ortho_camera);
-
     }
 }
 

@@ -46,6 +46,7 @@ export const renderer = new THREE.WebGLRenderer({powerPreference: "high-performa
         autoClear: true,
         canvas: gl
       });
+renderer.setPixelRatio( window.devicePixelRatio );
 renderer.setClearColor(0xDDDDDD, 0);
 renderer.clearDepth();
 //Texture loading
@@ -53,6 +54,11 @@ const loader = new THREE.TextureLoader();
 
 export const scene = new THREE.Scene();
 export const clock = new THREE.Clock();
+
+export const raycaster = new THREE.Raycaster(); //For selecting objects
+export const pointer = new THREE.Vector2();
+
+raycaster.layers.set( 1 ); //Check only collisions for objects on layer 1
 
 //PerspectiveCamera
 //export const camera = new THREE.PerspectiveCamera(70, WIDTH/HEIGHT);
@@ -65,7 +71,16 @@ export var viewPortHeight = gl.height / gl.width * viewPortWidth;
 export const ortho_camera = new THREE.OrthographicCamera(viewPortWidth / - 2,
             viewPortWidth / 2, viewPortHeight / 2, viewPortHeight / - 2, 0.1, 2000);
 ortho_camera.position.set(0, 0, 1);
+ortho_camera.layers.enableAll(); //camera sees all layers by default
 scene.add(ortho_camera);
+
+function onPointerMove( event ) {
+	// calculate pointer position in normalized device coordinates
+	// (-1 to +1) for both components
+	pointer.x = ( event.clientX / viewPortWidth ) * 2 - 1;
+	pointer.y = - ( event.clientY / viewPortHeight ) * 2 + 1;
+}
+
 
 //Background effects
 const plane_geometry = new THREE.PlaneBufferGeometry( 100, 100 );
@@ -99,15 +114,23 @@ export const background_material = new THREE.ShaderMaterial({
     lights: true
 });
 
-
+/*
 const light = new THREE.PointLight( 0xff0000, 1, 100 );
 light.position.set( 1, 0, 0);
 scene.add( light );
-
+*/
 
 //Orbit controls
-//export const controls = new OrbitControls(ortho_camera, renderer.domElement );
-//controls.enableZoom = true;
+export const controls = new OrbitControls(ortho_camera, canvas );
+controls.enableZoom = true;
+controls.minZoom = 0.2;
+controls.maxZoom = 1.5;
+controls.mouseButtons = {
+    LEFT: THREE.MOUSE.PAN,
+    MIDDLE: THREE.MOUSE.DOLLY,
+    RIGHT: THREE.MOUSE.ROTATE
+}
+controls.enableRotate = false;
 
 scene.background = null;
 
@@ -119,6 +142,8 @@ background_material.uniforms.textureSampler.value = bg;
 
 export var plane_mesh = new THREE.Mesh( plane_geometry, background_material );
 plane_mesh.position.set( 0, 0, -100);
+plane_mesh.layers.disableAll();
+plane_mesh.layers.set(0); // Layer 0 for background
 scene.add( plane_mesh );
 
 //Read any jsons we may use to store game data
@@ -156,6 +181,8 @@ export function StarFactory(x, y, id){
     var scale = 0.1 * size_mod;
     sphere.scale.set(scale, scale, scale);
     sphere.position.set(x, y, -80);
+    sphere.layers.disableAll();
+    sphere.layers.set(1); //Layer 1 for planets
     scene.add(sphere);
 
     ECS.entities[id] = sphere;
@@ -186,7 +213,11 @@ export function LaneFactory(source, destination, id){
     const line = new Line2( lane_geometry, matLine );
     line.computeLineDistances();
     line.scale.set( 1, 1, 1 );
+    line.layers.disableAll();
+    line.layers.set(2); //Layer 2
     scene.add( line );
+
+    ECS.entities[id] = line;
 }
 
 // Create a sprite object in THREE.js
