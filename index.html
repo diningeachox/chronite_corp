@@ -19,7 +19,7 @@
       #overlay {
         pointer-events: none /*We want to click through this canvas */
       }
-      
+
       .load_text {
           position: fixed;
           margin: auto;
@@ -62,9 +62,15 @@
            Components: {},
 
            systems: {},
-           entities: [],
+           entities: {},
            game: {}
     };
+    var matching_sphere = {};
+    var matching_entity = {};
+
+    //Game flags
+    var flags = {"mouse_down": false,
+                  "shift": false};
 
     //Shaders
     var shaders = {};

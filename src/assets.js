@@ -58,6 +58,7 @@ export const clock = new THREE.Clock();
 export const raycaster = new THREE.Raycaster(); //For selecting objects
 export const pointer = new THREE.Vector2();
 
+
 raycaster.layers.set( 1 ); //Check only collisions for objects on layer 1
 
 //PerspectiveCamera
@@ -75,11 +76,13 @@ ortho_camera.layers.enableAll(); //camera sees all layers by default
 scene.add(ortho_camera);
 
 function onPointerMove( event ) {
-	// calculate pointer position in normalized device coordinates
-	// (-1 to +1) for both components
-	pointer.x = ( event.clientX / viewPortWidth ) * 2 - 1;
-	pointer.y = - ( event.clientY / viewPortHeight ) * 2 + 1;
+	  // calculate pointer position in normalized device coordinates
+	  // (-1 to +1) for both components
+	  pointer.x = ( event.clientX / window.innerWidth) * 2 - 1;
+	  pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 }
+
+canvas.addEventListener( 'pointermove', onPointerMove ); //Add event listener
 
 
 //Background effects
@@ -160,8 +163,9 @@ function readTextFile(file, callback) {
 }
 
 const planet_geometry = new THREE.SphereGeometry( 64, 32, 32 );
+const select_geometry = new THREE.SphereGeometry( 70, 32, 32 );
 
-export function StarFactory(x, y, id){
+export function StarFactory(x, y){
     //Color
     const uniforms = {
       color: { value: new THREE.Color( 0x00a822 ) },
@@ -183,9 +187,23 @@ export function StarFactory(x, y, id){
     sphere.position.set(x, y, -80);
     sphere.layers.disableAll();
     sphere.layers.set(1); //Layer 1 for planets
-    scene.add(sphere);
 
-    ECS.entities[id] = sphere;
+    //Selection sphere
+    const material = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.0
+    });
+    const sel_sphere = new THREE.Mesh( select_geometry, material );
+    sel_sphere.scale.set(scale, scale, scale);
+    sel_sphere.position.set(x, y, -80);
+    sel_sphere.layers.disableAll();
+    sel_sphere.layers.set(0); //Layer 0 for the selection sphere
+    scene.add(sphere);
+    scene.add(sel_sphere);
+    matching_sphere[sphere.uuid] = sel_sphere; //Match the selection sphere with actual sphere
+    //scene.add(sphere);
+    return sphere.uuid;
 }
 
 
@@ -215,9 +233,10 @@ export function LaneFactory(source, destination, id){
     line.scale.set( 1, 1, 1 );
     line.layers.disableAll();
     line.layers.set(2); //Layer 2
-    scene.add( line );
+    return line;
+    //scene.add( line );
 
-    ECS.entities[id] = line;
+    //ECS.entities[id] = line;
 }
 
 // Create a sprite object in THREE.js

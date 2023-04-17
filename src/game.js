@@ -2,6 +2,7 @@ import * as Scene from './scenes.js';
 import * as Assets from './assets.js';
 import {clip} from "./utils.js";
 import {Vector2D} from "./vector2D.js";
+import {hqPlanet, startingPlanet} from "./entities/planet.js";
 
 //Variables from assets.js
 var canvas = Assets.canvas;
@@ -71,6 +72,14 @@ export function init(){
         sm.cur_scene.handleMouseClick(mouseX, mouseY);
     }, false);
 
+    canvas.addEventListener('mousedown', function(e){
+        var rect = canvas.getBoundingClientRect();
+        var mouseX = e.clientX - rect.left;
+        var mouseY = e.clientY - rect.top;
+        //Current scene's Buttons
+        flags["mouse_down"] = true;
+    }, false);
+
     //Mouse move
     canvas.addEventListener('mousemove', function(e){
         var rect = canvas.getBoundingClientRect();
@@ -79,6 +88,14 @@ export function init(){
         //Current scene's Buttons
         sm.cur_scene.handleMouseHover(mouseX, mouseY);
         //Assets.plane_uniforms.u_mouse.value.x = mouseX
+    }, false);
+
+    canvas.addEventListener('mouseup', function(e){
+        var rect = canvas.getBoundingClientRect();
+        var mouseX = e.clientX - rect.left;
+        var mouseY = e.clientY - rect.top;
+        //Current scene's Buttons
+        flags["mouse_down"] = false;
     }, false);
 
     //Mouse scroll wheel
@@ -109,44 +126,31 @@ class Game {
     constructor(){
         this.score = 0;
 
+        this.selected_entity = null;
+        //Create starting planets
+        var pl = startingPlanet(0, 0, 0);
+
+        var pl2 = startingPlanet(1, 25.0, 5.4);
+
         Assets.SpriteFactory('../sprites/ship1.png', 0);
         Assets.SpriteFactory('../sprites/ship1.png', 1);
 
-        Assets.LaneFactory(new Vector2D(-8.0, 0), new Vector2D(1.0, 30), 100);
-        Assets.StarFactory(-8.0, 0, 222);
-        Assets.StarFactory(15.0, -10.0, 223);
-        Assets.StarFactory(1.0, 30.0, 224);
+        //Assets.LaneFactory(new Vector2D(-8.0, 0), new Vector2D(1.0, 30), 100);
+        //Assets.StarFactory(-8.0, 0, 222);
+        //Assets.StarFactory(15.0, -10.0, 223);
+        //Assets.StarFactory(1.0, 30.0, 224);
         sprites[0].position.set(0.0, 0.0, 0.0);
         sprites[1].position.set(10.0, 5.0, 0.0);
     }
     update(delta){
         this.score += delta;
         sprites[0].material.rotation = this.score / 10.0;
-        ECS.entities[222].rotation.set(0.0, this.score / 100.0, 0.0);
-        ECS.entities[223].rotation.set(this.score / 300.0, -this.score / 100.0, 0.0);
-        ECS.entities[224].rotation.set(this.score / 300.0, 0.0, -this.score / 500.0);
+        //ECS.entities[222].rotation.set(0.0, this.score / 100.0, 0.0);
+        //ECS.entities[223].rotation.set(this.score / 300.0, -this.score / 100.0, 0.0);
+        //ECS.entities[224].rotation.set(this.score / 300.0, 0.0, -this.score / 500.0);
 
-        //Check raycasting intersections
-        var INTERSECTED;
-        Assets.raycaster.setFromCamera( Assets.pointer, Assets.ortho_camera );
+        ECS.systems.selection(this);
 
-				const intersects = Assets.raycaster.intersectObjects( Assets.scene.children, false );
-
-        if ( intersects.length > 0 ) {
-          /*
-					if ( INTERSECTED != intersects[ 0 ].object ) {
-
-						if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-
-						INTERSECTED = intersects[ 0 ].object;
-						INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
-						INTERSECTED.material.emissive.setHex( 0xff0000 );
-
-					}
-          */
-            console.log(intersects);
-
-				}
     }
     render(delta){
         //Frame rate
@@ -157,6 +161,7 @@ class Game {
         Assets.plane_uniforms.u_time.value += delta;
         Assets.ortho_camera.updateMatrixWorld();
         Assets.controls.update();
+
         Assets.renderer.render(Assets.scene, Assets.ortho_camera);
     }
 }
