@@ -1,6 +1,5 @@
 import * as Assets from "./assets.js";
-
-
+import lane from "./entities/lane.js";
 
 ECS.systems.selection = function systemSelection (game) {
     //Check raycasting intersections
@@ -24,15 +23,27 @@ ECS.systems.selection = function systemSelection (game) {
             if (matching_sphere.hasOwnProperty(intersects[0].object.uuid)){
                 matching_sphere[intersects[0].object.uuid].material.opacity = 0.3;
                 var entity = matching_entity[intersects[0].object.uuid];
-                if (flags["mouse_down"]){
+                if (flags["mouse_click"]){
                     if (!entity.components.selected.value){
-                        entity.components.selected.value = true;
-                        //Turn selection sphere red
-                        matching_sphere[intersects[0].object.uuid].material.color.setRGB(0, 1, 0);
-                        if (game.selected_entity != null){
-                            game.selected_entity.components.selected.value = false;
+                        //Normal select
+                        if (!flags["shift"]){
+                            entity.components.selected.value = true;
+                            //Turn selection sphere red
+                            matching_sphere[intersects[0].object.uuid].material.color.setRGB(0, 1, 0);
+                            if (game.selected_entity != null){
+                                game.selected_entity.components.selected.value = false;
+                            }
+                            game.selected_entity = entity;
+                        } else {
+                            //Create route to this planet
+                            if (game.selected_entity != null){
+                                var originplanet = game.selected_entity;
+                                var destinationplanet = entity;
+                                const l = lane({origin: originplanet, destination: destinationplanet});
+                                //Populate the lane dictionary
+                                lanes[new Set([originplanet.id, destinationplanet.id])] = l;
+                            }
                         }
-                        game.selected_entity = entity;
                     } else {
                         entity.components.selected.value = false;
                         game.selected_entity = null;

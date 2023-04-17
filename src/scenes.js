@@ -28,6 +28,7 @@ export class Scene {
       throw new Error("Abstract classes can't be instantiated.");
     }
     this.buttons = [];
+    this.panels = [];
   }
 
   update(delta) {
@@ -42,10 +43,16 @@ export class Scene {
       for (var i = 0; i < this.buttons.length; i++){
           this.buttons[i].handleMouseClick(mouseX, mouseY);
       }
+      for (var i = 0; i < this.panels.length; i++){
+          this.panels[i].handleMouseClick(mouseX, mouseY);
+      }
   }
   handleMouseHover(mouseX, mouseY){
       for (var i = 0; i < this.buttons.length; i++){
           this.buttons[i].handleMouseHover(mouseX, mouseY);
+      }
+      for (var i = 0; i < this.panels.length; i++){
+          this.panels[i].handleMouseHover(mouseX, mouseY);
       }
   }
 
@@ -118,6 +125,42 @@ export class GameScene extends Scene {
             }
            });
       this.buttons = [menu_button];
+
+      //Panels
+      this.info_panel = new Panel(canvas.width - 400 - 20, 100, 400, 400, "Planet Info");
+      //Buttons
+      var route_button = new Button({x: this.info_panel.x + this.info_panel.w/2, y: this.info_panel.y + this.info_panel.h - 60, width:150, height:50, label:"Recall all routes",
+            onClick: function(){
+                playSound(sfx_sources["button_click"].src, sfx_ctx);
+            }
+           });
+      this.info_panel.addButton(route_button);
+
+
+      this.effects_panel = new Panel(20, canvas.height - 280 - 20, canvas.width / 2, 280, "Field Effects");
+      //AoE buttons
+      var speed_button = new Button({x: this.effects_panel.x + 120, y: this.effects_panel.y + 100, width:150, height:50, label:"Speed Field",
+            onClick: function(){
+                playSound(sfx_sources["button_click"].src, sfx_ctx);
+            }
+           });
+      this.effects_panel.addButton(speed_button);
+
+      var slow_button = new Button({x: this.effects_panel.x + 300, y: this.effects_panel.y + 100, width:150, height:50, label:"Slow Field",
+            onClick: function(){
+                playSound(sfx_sources["button_click"].src, sfx_ctx);
+            }
+           });
+      this.effects_panel.addButton(slow_button);
+
+      var nebula_button = new Button({x: this.effects_panel.x + 480, y: this.effects_panel.y + 100, width:150, height:50, label:"Nebula Field",
+            onClick: function(){
+                playSound(sfx_sources["button_click"].src, sfx_ctx);
+            }
+           });
+      this.effects_panel.addButton(nebula_button);
+
+      this.panels = [this.info_panel, this.effects_panel];
     }
     update(delta) {
         this.game.update(delta);
@@ -126,10 +169,16 @@ export class GameScene extends Scene {
 
         c.clearRect(0, 0, canvas.width, canvas.height);
         this.game.render(delta);
+
+
         //Buttons
         for (var i = 0; i < this.buttons.length; i++){
             this.buttons[i].draw(c);
         }
+
+        //Only render info panel if a planet/lane is selected
+        if (this.game.selected_entity != null) this.info_panel.render(delta);
+        this.effects_panel.render(delta);
     }
     load(){
         super.load();
@@ -143,6 +192,49 @@ export class GameScene extends Scene {
         //Stop music
         music_player.stop();
     }
+}
+
+//Panel used in a scene
+class Panel extends Scene {
+  constructor(x, y, w, h, title="Planet Info"){
+      super();
+      this.title = title;
+      this.x = x;
+      this.y = y;
+      this.w = w;
+      this.h = h;
+
+      this.buttons = [];
+    //this.panels = [];
+  }
+  addButton(button){
+      this.buttons.push(button);
+  }
+  update(delta) {
+
+  }
+  render(delta){
+
+      c.fillStyle = "#FFFFFF8A";
+      c.fillRect(this.x, this.y, this.w, this.h);
+      c.lineWidth = 4;
+      c.strokeStyle = "white";
+      c.strokeRect(this.x, this.y, this.w, this.h);
+      //Title
+      c.font="30px dialogFont";
+      c.fillStyle = "black";
+      c.textAlign = "center";
+      c.fillText(this.title, this.x + this.w/2, this.y + 40);
+
+      //Buttons
+      for (var i = 0; i < this.buttons.length; i++){
+          this.buttons[i].draw(c);
+      }
+  }
+  load(){
+  }
+  unload(){
+  }
 }
 
 /**

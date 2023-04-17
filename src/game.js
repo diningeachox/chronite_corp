@@ -70,6 +70,7 @@ export function init(){
         var mouseY = e.clientY - rect.top;
         //Current scene's Buttons
         sm.cur_scene.handleMouseClick(mouseX, mouseY);
+        flags["mouse_click"] = true;
     }, false);
 
     canvas.addEventListener('mousedown', function(e){
@@ -115,6 +116,14 @@ export function init(){
     document.addEventListener('keydown', function(e) {
         if(e.keyCode == 80) { //P key
             if (sm.cur_scene.name === "game") pause = (pause + 1) % 2;
+        } else if(e.keyCode == 16) { //Shift key
+            flags["shift"] = true;
+        }
+    });
+
+    document.addEventListener('keyup', function(e) {
+        if(e.keyCode == 16) { //Shift key
+            flags["shift"] = false;
         }
     });
 
@@ -151,6 +160,8 @@ class Game {
 
         ECS.systems.selection(this);
 
+        //Reset flags
+        flags["mouse_click"] = false;
     }
     render(delta){
         //Frame rate

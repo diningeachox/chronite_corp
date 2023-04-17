@@ -207,7 +207,7 @@ export function StarFactory(x, y){
 }
 
 
-export function LaneFactory(source, destination, id){
+export function LaneFactory(source, destination){
     //const points = [new THREE.Vector3(source.x, source.y, 0), new THREE.Vector3(destination.x, destination.y, 0)];
     const points = [source.x, source.y, -80, destination.x, destination.y, -80];
     const lane_geometry = new LineGeometry();
@@ -232,11 +232,10 @@ export function LaneFactory(source, destination, id){
     line.computeLineDistances();
     line.scale.set( 1, 1, 1 );
     line.layers.disableAll();
-    line.layers.set(2); //Layer 2
-    return line;
-    //scene.add( line );
-
-    //ECS.entities[id] = line;
+    line.layers.set(1); //Layer 1
+    scene.add(line);
+    console.log("Lane created!");
+    return line.uuid;
 }
 
 // Create a sprite object in THREE.js
