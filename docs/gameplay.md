@@ -4,7 +4,7 @@ The primary forms of interaction in the game will be:
 1. Creating trade routes between planets on the map.
 2. Placing area effect zones on the map that are crossed by routes.
 
-## Planets
+# Planets
 
 All planets have an HP stat. If the HP hits 0, that planet becomes barren and has no effect for the rest of the game. Ships sent from a planet continue to their destination to drop off their cargoes, but then disappear.
 
@@ -13,14 +13,14 @@ Every planet except the HQ makes exactly one product, which may be a resource, a
 Any non-hostile planet that produces goods may be sent engines. 
 You may also send modules to non-hostile planets.
 
-# Hostile Planets
+## Hostile Planets
   Hostile planets produce Munitions. Instead of the player setting up routes, they are created automatically, preferring planets that are nearby and have lower HP. You may only send your own warships to hostile planets, not engines, resources, or modules. Hostile planets will be revealed either when triggered by exploration, or when Metacrystal quantities reach ceratin thresholds.
 
-# HQ Planet
+## HQ Planet
 Gold delivered to the HQ planet determines score and possibly victory. The HQ planet having 0 HP causes defeat. Area effect resources must be sent to the HQ planet to be used. It starts with some Hyperchronite, but no other resources. It has no input maxima. It has twice the HP of other planets.
 
 
-# Starting Planets
+## Starting Planets
 
 1. HQ. Takes Metacrystals (was Gold) and all area effect resources as inputs. (Hyperchronite, Infrachronite, Deuterium, and Pyrite.)
 
@@ -38,13 +38,13 @@ Gold delivered to the HQ planet determines score and possibly victory. The HQ pl
 
 8. Produces Metacrystals. Takes Computronium and Hyperchronite as inputs. Has low input maxes.
 
-# Initially Unexplored Planets
+## Initially Unexplored Planets
 
 Unexplored planets have a scouting progress stat which is initially at 0, and increases as Scouts are sent to it. When that stat hits a threshold, the planet is revealed, and may be used as any other planet.
 
 Exploration will randomly pick one of the non hostile planets within a tier. Hostile planets within a tier will be revealed at the same time that one of the last two planets in a tier is revealed.
 
-## First Tier. 
+### First Tier. 
 
 9. Produces Deuterium. No inputs.
 
@@ -56,7 +56,7 @@ Exploration will randomly pick one of the non hostile planets within a tier. Hos
 
 13. Hostile Military Planet I. Sends Munitions. If it is not revealed by the exploration trigger, it will be revealed when Metacrystals are at 30% of the victory threshold.
 
-## Second Tier
+### Second Tier
 
 14. Military Planet. Sends munitions. Takes Antimatter as an input.
 
@@ -70,7 +70,7 @@ Exploration will randomly pick one of the non hostile planets within a tier. Hos
 
 19. Hostile military planet II. Sends Munitions on either Cutter or Heavy ships. (Determined randomly when revealed.) If it is not revealed by the exploration trigger, it will be revealed when Metacrystals are at 50% of the victory threshold.
 
-## Third Tier
+### Third Tier
 
 20. Sends Restoration Modules. Takes Infrachronite and Computronium as input.
 
@@ -84,13 +84,23 @@ Exploration will randomly pick one of the non hostile planets within a tier. Hos
 
 # Trade Routes
 
-Planets that produce resources may have at most one trade route originating from them. There should be enough route possibilities that choosing route destinations is a meaningful gameplay decision. When a route is active, all inputs and at least one ship are present at the origin planet, and an interval of time has passed since the last ship was sent, the origin planet will send a ship. When the ships arrive at the destination planet, they will drop of their cargo into that planet's input stockpile, or affect the destination's stats (if the cargo is a module or munition) or create a ship at the destination (if the cargo is an engine.)
+Planets that produce resources may have at most one trade route originating from them and arriving at another planet. There is no limit to how many routes may have the same destination.
+A ship will be sent on an active route when:
+- At least one ship is present in the planet's ship queue.
+- All inputs are present in at least the amount of the capacity of the next ship in the queue.
+- The cooldown interval has passed since the last ship was sent.
 
-## Resources
+When the ships arrive at the destination planet, they will drop off their cargo into that planet's input stockpile, or affect the destination's stats (if the cargo is a module or munition) or create a ship at the destination (if the cargo is an engine.) Then the ship gates back to the origin planet, and goes to the back of the ship queue. (Order of ships in the queue matters now that we have three distinct kinds of ships.)
+
+Routes may be recalled. If a route is recalled, ships in that route remain in the queue when they return home.
+
+If a new route is created while another route is active, all ships on the previous route must return home before they can use the new route.
+
+# Resources
 
 Basic resources are produced directly by planets. Engines, modules, and metacrystals require other resources to produce.
 
-# Basic Resources
+## Basic Resources
 
 - Antimatter
 
@@ -108,10 +118,10 @@ Basic resources are produced directly by planets. Engines, modules, and metacrys
 - Deuterium
   HQ stockpile allows placement of Nebulae.
 
-# Metacrystals
+## Metacrystals
   Metacrystals that have been shipped to the HQ Planet determine victory.
 
-# Modules, Munitions, and Scouts
+## Modules, Munitions, and Scouts
   These do not go into input stockpiles, but affect a planet's stats immediately when they are received.
 
 - Restoration Modules
@@ -143,7 +153,7 @@ Basic resources are produced directly by planets. Engines, modules, and metacrys
 - Heavy engine
   Makes Heavy Ships, these are slower than standard ships, but have greater capacity.
 
-## Area Effects
+# Area Effects
 
 These can be generally be placed anywhere on the map. They are circular (or roughly, depending on map granularity) They cannot be placed where they would overlap with other area effects. Placing area effects should be the main focus of gameplay. After a period of time, they decay.
 
