@@ -14,7 +14,7 @@ Any non-hostile planet that produces goods may be sent engines.
 You may also send modules to non-hostile planets.
 
 - Hostile Planets
-  Hostile planets produce Munitions. Instead of the player setting up routes, they are created automatically, preferring planets that are nearby and have lower HP. You may only send your own warships to hostile planets, not engines, resources, or modules.
+  Hostile planets produce Munitions. Instead of the player setting up routes, they are created automatically, preferring planets that are nearby and have lower HP. You may only send your own warships to hostile planets, not engines, resources, or modules. Hostile planets will be revealed either when triggered by exploration, or when Metacrystal quantities reach ceratin thresholds.
 
 - HQ Planet
 Gold delivered to the HQ planet determines score and possibly victory. The HQ planet having 0 HP causes defeat. Area effect resources must be sent to the HQ planet to be used. It starts with some Hyperchronite, but no other resources. It has no input maxima. It has twice the HP of other planets.
@@ -36,11 +36,13 @@ Gold delivered to the HQ planet determines score and possibly victory. The HQ pl
 
 7. Produces Infrachronite. (was Slowium.)
 
-8. Produces Metacrystals Takes Computronium and Hyperchronite as inputs. Has low input maxes.
+8. Produces Metacrystals. Takes Computronium and Hyperchronite as inputs. Has low input maxes.
 
 # Initially Unexplored Planets
 
-First Tier. Exploration will randomly pick one of the non hostile planets within a tier. Hostile planets within a tier will revealed at the same time that 
+Exploration will randomly pick one of the non hostile planets within a tier. Hostile planets within a tier will be revealed at the same time that one of the last two planets in a tier is revealed.
+
+# First Tier. 
 
 9. Produces Deuterium. No inputs.
 
@@ -50,7 +52,7 @@ First Tier. Exploration will randomly pick one of the non hostile planets within
 
 12. Sends Heavy Engines. Takes Infrachronite and Basic Engines as inputs. Engines sent here are *inputs*, they cannot be sent to be used as ships; domestic production must be used to get more ships. Has Heavy ships.
 
-13. Hostile Military Planet I. Sends Munitions.
+13. Hostile Military Planet I. Sends Munitions. If it is not revealed by the exploration trigger, it will be revealed when Metacrystals are at 30% of the victory threshold.
 
 Second Tier
 
@@ -64,7 +66,7 @@ Second Tier
 
 18. Produces Metacrystals. Takes Pyrite and Deuterium as inputs.
 
-19. Hostile military planet II. Sends Munitions on either Cutter or Heavy ships. (Determined randomly when revealed.)
+19. Hostile military planet II. Sends Munitions on either Cutter or Heavy ships. (Determined randomly when revealed.) If it is not revealed by the exploration trigger, it will be revealed when Metacrystals are at 50% of the victory threshold.
 
 Third Tier
 
@@ -76,7 +78,7 @@ Third Tier
 
 23. Grand Bazaar. Takes every Basic resource. (They all feed into the same input stat.) Produces Metacrystals.
 
-N. Hostile military planet III. Sends Munitions on all three kinds of warships.
+24. Hostile military planet III. Sends Munitions on all three kinds of warships. If it is not revealed by the exploration trigger, it will be revealed when Metacrystals are at 70% of the victory threshold.
 
 # Trade Routes
 
@@ -84,7 +86,7 @@ Planets that produce resources may have at most one trade route originating from
 
 ## Resources
 
-Basic resources are produced directly by planets. Engines, modules, and metacrystals require other resources to produce
+Basic resources are produced directly by planets. Engines, modules, and metacrystals require other resources to produce.
 
 # Basic Resources
 
@@ -93,16 +95,16 @@ Basic resources are produced directly by planets. Engines, modules, and metacrys
 - Computronium
 
 - Infrachronite
-  Allows placement of Slow Zones
+  HQ stockpile allows placement of Slow Zones.
 
 - Hyperchronite
-  Allows placement of Fast Zones
+  HQ stockpile allows placement of Fast Zones.
 
 - Pyrite
-  Allows placement of Pirate Swarms
+  HQ stockpile allows placement of Pirate Swarms.
 
 - Deuterium
-  Allows placement of Nebulae
+  HQ stockpile allows placement of Nebulae.
 
 # Metacrystals
   Metacrystals that have been shipped to the HQ Planet determine victory.
@@ -144,11 +146,11 @@ These can be generally be placed anywhere on the map. They are circular (or roug
   Speeds up or slows down routes passing through them.
 
 - Nebulae
-  Reduces volume of routes over a speed threshold.
+  Destroys a proportion of ships over a speed threshold. Note: this includes Cutter ships operating at their default speed.
 
 - Pirate Swarm
-  Reduces volume of routes under a speed threshold.
+  Destroys a proportion of ship under a speed threshold. Note: this includes Heavy ships operating at their default speed
 
 # Events
 
-Any area effect may spontaneously be created at random. Hostile planets may appear. (Or unexplored worlds or barren worlds may turn into hostiles.)
+Any area effect may spontaneously be created at random. 
