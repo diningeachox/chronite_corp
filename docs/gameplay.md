@@ -80,11 +80,7 @@ N. Hostile military planet III. Sends Munitions on all three kinds of warships.
 
 # Trade Routes
 
-Planets that produce goods may have at most one trade route originating from them. There should be enough route possibilities that choosing route destinations is a meaningful gameplay decision. When a trade route is active goods will arrive at the destination at a rate proportional to the travel time taken by the route, and the hulls available.
-
-## Negative HP
-The destination of this route should be chosen based on criteria that are reasonably transparent. The HQ should be a low priority target by default, so 
-
+Planets that produce resources may have at most one trade route originating from them. There should be enough route possibilities that choosing route destinations is a meaningful gameplay decision. When a route is active, all inputs and at least one ship are present at the origin planet, and an interval of time has passed since the last ship was sent, the origin planet will send a ship. When the ships arrive at the destination planet, they will drop of their cargo into that planet's input stockpile, or affect the destination's stats (if the cargo is a module or munition) or create a ship at the destination (if the cargo is an engine.)
 
 ## Resources
 
@@ -139,8 +135,6 @@ Basic resources are produced directly by planets. Engines, modules, and metacrys
 
 - Heavy engine
   Makes Heavy Ships, these are slower than standard ships, but have greater capacity.
-
-# Warships
 
 # Area Effects
 
