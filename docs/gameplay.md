@@ -148,13 +148,13 @@ Basic resources are produced directly by planets. Engines, modules, and metacrys
 These can be generally be placed anywhere on the map. They are circular (or roughly, depending on map granularity) They cannot be placed where they would overlap with other area effects. Placing area effects should be the main focus of gameplay. After a period of time, they decay.
 
 - Fast Zone / Slow Zone
-  Speeds up or slows down routes passing through them.
+  Speeds up or slows down routes passing through them. On planets: decreases or increases the interval between sending ships.
 
 - Nebulae
-  Destroys a proportion of ships over a speed threshold. Note: this includes Cutter ships operating at their default speed.
+  Destroys a proportion of ships over a speed threshold. Note: this includes Cutter ships operating at their default speed. (On planets: ???)
 
 - Pirate Swarm
-  Destroys a proportion of ship under a speed threshold. Note: this includes Heavy ships operating at their default speed
+  Destroys a proportion of ship under a speed threshold. Note: this includes Heavy ships operating at their default speed. (On planets: steals from input stockpiles?) 
 
 # Events
 
