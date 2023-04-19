@@ -14,7 +14,7 @@ Any non-hostile planet that produces goods may be sent engines.
 You may also send modules to non-hostile planets.
 
 - Hostile Planets
-  Hostile planets produce warships. Instead of the player setting up routes, they are created automatically, preferring planets that are nearby and have lower HP. You may only send your own warships to hostile planets, not engines, resources, or modules.
+  Hostile planets produce Munitions. Instead of the player setting up routes, they are created automatically, preferring planets that are nearby and have lower HP. You may only send your own warships to hostile planets, not engines, resources, or modules.
 
 - HQ Planet
 Gold delivered to the HQ planet determines score and possibly victory. The HQ planet having 0 HP causes defeat. Area effect resources must be sent to the HQ planet to be used. It starts with some Hyperchronite, but no other resources. It has no input maxima. It has twice the HP of other planets.
@@ -50,11 +50,11 @@ First Tier. Exploration will randomly pick one of the non hostile planets within
 
 12. Sends Heavy Engines. Takes Infrachronite and Basic Engines as inputs. Engines sent here are *inputs*, they cannot be sent to be used as ships; domestic production must be used to get more ships. Has Heavy ships.
 
-13. Hostile Military Planet I. Sends Warships.
+13. Hostile Military Planet I. Sends Munitions.
 
 Second Tier
 
-14. Military Planet. Sends Warships. Takes Antimatter as an input.
+14. Military Planet. Sends munitions. Takes Antimatter as an input.
 
 15. Sends Construction Modules. Takes Computronium as input.
 
@@ -64,7 +64,7 @@ Second Tier
 
 18. Produces Metacrystals. Takes Pyrite and Deuterium as inputs.
 
-19. Hostile military planet II. Sends either Cutter or Heavy Warships. (Determined randomly when revealed.)
+19. Hostile military planet II. Sends Munitions on either Cutter or Heavy ships. (Determined randomly when revealed.)
 
 Third Tier
 
@@ -72,25 +72,23 @@ Third Tier
 
 21. Produces Selectable Resource. (Resource can be selected in the planet's info panel, and can be Antimatter or Computronium.)
 
-22. Military Planet II. Sends Warships. Takes Antimatter as an input.
+22. Military Planet II. Sends Munitions. Takes Antimatter as an input.
 
 23. Grand Bazaar. Takes every Basic resource. (They all feed into the same input stat.) Produces Metacrystals.
 
-N. Hostile military planet III. Sends all three kinds of warships.
+N. Hostile military planet III. Sends Munitions on all three kinds of warships.
 
 # Trade Routes
 
 Planets that produce goods may have at most one trade route originating from them. There should be enough route possibilities that choosing route destinations is a meaningful gameplay decision. When a trade route is active goods will arrive at the destination at a rate proportional to the travel time taken by the route, and the hulls available.
 
-## Hostile Routes
-
 ## Negative HP
 The destination of this route should be chosen based on criteria that are reasonably transparent. The HQ should be a low priority target by default, so 
 
 
-# Resources
+## Resources
 
-Basic resources are produced directly by planets. Engines, modules, 
+Basic resources are produced directly by planets. Engines, modules, and metacrystals require other resources to produce
 
 # Basic Resources
 
@@ -110,29 +108,43 @@ Basic resources are produced directly by planets. Engines, modules,
 - Deuterium
   Allows placement of Nebulae
 
-
-- Metacrystals
+# Metacrystals
   Metacrystals that have been shipped to the HQ Planet determine victory.
 
-# Engines
+# Modules and Munitions
+  These do not go into input stockpiles, but affect a planet's stats immediately when they are received.
 
-M
+- Restoration Modules
+  Increases HP
 
-- Ships (Ship Engines?)
-  Every planet that produces goods has ships. By default, they are basic ships. When a route is begun, ships are sent out
+- Construction Modules
+  Increases Input stockpile Max.
+
+- Munitions
+  Decreases HP. These are only sent by Hostile Planets to your planets, or by your planets to Hostile planets.
+
+# Engines and Ships
+
+  Every planet that produces goods has ships. By default, they are basic ships. When a route is begun, ships are sent from the origin at regular intervals. In order to increase the number of ships, you must send engines to that planet. When a planet receives an engine, it immediately becomes a ship at that planet.
   
-  So only allowing Ships to be sent from a Ship producing world makes sense. Unlike all of the other goods, however, you wouldn't get your ship back after delivery. If the good is Ship Engines, then we can have it work exactly like other goods, and assume that the receiving planet automatically converts engines to ships. But since every planet can receive engines, it must be possible for a planet that produces engines to use them itself, which is like having a route to itself, which isn't otherwise a thing. I think this should just be a special case.
+  Planets that produce ships are the exception. In order to get more ships there, you must use the domestic production interface rather than creating a route.
 
+  Engines have three types:
 
+- Basic engine
+  Makes Basic ships
 
-- (Nullium)
-  Allows placement of Calming Zone. Should be rare.
+- Cutter engine
+  Makes Cutter ships. These are faster than standard ships and have the same capacity.
 
+- Heavy engine
+  Makes Heavy Ships, these are slower than standard ships, but have greater capacity.
 
+# Warships
 
 # Area Effects
 
-These can be generally be placed anywhere on the map. They are circular (or roughly, depending on map granularity) They cannot be placed where they would overlap with other area effects. (?)Placing area effects should be the main focus of gameplay.
+These can be generally be placed anywhere on the map. They are circular (or roughly, depending on map granularity) They cannot be placed where they would overlap with other area effects. Placing area effects should be the main focus of gameplay. After a period of time, they decay.
 
 - Fast Zone / Slow Zone
   Speeds up or slows down routes passing through them.
@@ -142,9 +154,6 @@ These can be generally be placed anywhere on the map. They are circular (or roug
 
 - Pirate Swarm
   Reduces volume of routes under a speed threshold.
-
-- (Calming Zone)
-This effect is an exception to the no-overlapping effect rule, as its purpose is to erase other area effects.
 
 # Events
 
