@@ -1,6 +1,6 @@
 import * as Assets from './assets.js';
 import * as Game from "./game.js";
-import {Button} from "./button.js";
+import {Button, Slider} from "./button.js";
 import {playSound} from "./sound.js";
 
 //Variables from assets.js
@@ -127,17 +127,39 @@ export class GameScene extends Scene {
       this.buttons = [menu_button];
 
       //Panels
-      this.info_panel = new Panel(canvas.width - 400 - 20, 100, 400, 400, "Planet Info");
+      this.info_panel = new Panel(canvas.width - 400 - 20, 100, 400, 650, "Planet Info");
       //Buttons
-      var route_button = new Button({x: this.info_panel.x + this.info_panel.w/2, y: this.info_panel.y + this.info_panel.h - 60, width:150, height:50, label:"Recall all routes",
+      var route_button = new Button({x: this.info_panel.x + this.info_panel.w/2, y: this.info_panel.y + this.info_panel.h - 60, width:250, height:50, label:"Recall all routes",
             onClick: function(){
                 playSound(sfx_sources["button_click"].src, sfx_ctx);
             }
            });
       this.info_panel.addButton(route_button);
 
+      var fleet_button = new Button({x: this.info_panel.x + this.info_panel.w/2, y: this.info_panel.y + this.info_panel.h - 160, width:200, height:50, label:"Send Fleet",
+            onClick: function(){
+                playSound(sfx_sources["button_click"].src, sfx_ctx);
+            }
+           });
+      this.info_panel.addButton(fleet_button);
 
-      this.effects_panel = new Panel(20, canvas.height - 280 - 20, canvas.width / 2, 280, "Field Effects");
+      //Sliders
+      var basic_ship_slider = new Slider({x: this.info_panel.x + this.info_panel.w/2, y: this.info_panel.y + this.info_panel.h - 460, width:250, height:50, label:"Basic Ship",
+            onClick: function(){
+                playSound(sfx_sources["button_click"].src, sfx_ctx);
+            }
+           });
+      this.info_panel.addButton(basic_ship_slider);
+
+      var tanker_slider = new Slider({x: this.info_panel.x + this.info_panel.w/2, y: this.info_panel.y + this.info_panel.h - 360, width:250, height:50, label:"Tanker",
+            onClick: function(){
+                playSound(sfx_sources["button_click"].src, sfx_ctx);
+            }
+           });
+      this.info_panel.addButton(tanker_slider);
+
+
+      this.effects_panel = new Panel(20, 20, canvas.width / 3, 180, "Field Effects");
       //AoE buttons
       var speed_button = new Button({x: this.effects_panel.x + 120, y: this.effects_panel.y + 100, width:150, height:50, label:"Speed Field",
             onClick: function(){
@@ -194,8 +216,8 @@ export class GameScene extends Scene {
     }
 }
 
-//Panel used in a scene
-class Panel extends Scene {
+//Panels used in scenes
+export class Panel extends Scene {
   constructor(x, y, w, h, title="Planet Info"){
       super();
       this.title = title;
@@ -236,6 +258,8 @@ class Panel extends Scene {
   unload(){
   }
 }
+
+
 
 /**
  * Game class, extends Scene class

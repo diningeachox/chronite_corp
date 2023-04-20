@@ -6,6 +6,7 @@ import {Cursor} from "./cursor.js";
 import {Vector2D} from "./vector2D.js";
 import { OrbitControls } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/controls/OrbitControls.js';
 
+
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
 
@@ -100,7 +101,7 @@ export const plane_uniforms = {
 export const plane_material = new THREE.ShaderMaterial( {
     uniforms: plane_uniforms,
     vertexShader: shaders.vert,
-    fragmentShader: shaders.frag
+    fragmentShader: shaders.nebula
 } );
 
 export const background_material = new THREE.ShaderMaterial({
@@ -113,6 +114,8 @@ export const background_material = new THREE.ShaderMaterial({
     ]),
     vertexShader: shaders.tex_vert,
     fragmentShader: shaders.tex_frag,
+    //vertexShader: shaders.vert,
+    //fragmentShader: shaders.nebula,
     transparent: true,
     lights: true
 });
@@ -129,9 +132,9 @@ controls.enableZoom = true;
 controls.minZoom = 0.2;
 controls.maxZoom = 1.5;
 controls.mouseButtons = {
-    LEFT: THREE.MOUSE.PAN,
+    LEFT: THREE.MOUSE.ROTATE,
     MIDDLE: THREE.MOUSE.DOLLY,
-    RIGHT: THREE.MOUSE.ROTATE
+    RIGHT: THREE.MOUSE.PAN
 }
 controls.enableRotate = false;
 
@@ -143,7 +146,7 @@ const bg = new THREE.TextureLoader().load( "../sprites/nebula.jpg");
 bg.magFilter = THREE.NearestFilter;
 background_material.uniforms.textureSampler.value = bg;
 
-export var plane_mesh = new THREE.Mesh( plane_geometry, background_material );
+export var plane_mesh = new THREE.Mesh( plane_geometry, plane_material );
 plane_mesh.position.set( 0, 0, -100);
 plane_mesh.layers.disableAll();
 plane_mesh.layers.set(0); // Layer 0 for background
@@ -239,10 +242,18 @@ export function LaneFactory(source, destination){
 }
 
 // Create a sprite object in THREE.js
-export function SpriteFactory(src, id){
+export function SpriteFactory(x, y, src){
     const map = loader.load(src);
     const material = new THREE.SpriteMaterial( { map: map } );
     const sprite = new THREE.Sprite( material );
+    sprite.position.set(x, y, 0);
+    sprite.layers.disableAll();
+    sprite.layers.set(2); //Layer 2 so it's non-interactable
     scene.add(sprite);
-    sprites[id] = sprite;
+    //sprites[id] = sprite;
+    return sprite.uuid;
+}
+
+export const ShipFactory = (x, y) => {
+    return SpriteFactory(x, y, "../sprites/ship1.png");
 }

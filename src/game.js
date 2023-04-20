@@ -3,7 +3,7 @@ import * as Assets from './assets.js';
 import {clip} from "./utils.js";
 import {Vector2D} from "./vector2D.js";
 import {hqPlanet, startingPlanet} from "./entities/planet.js";
-
+import {basic_ship, tanker, fleet} from "./entities/ship.js";
 //Variables from assets.js
 var canvas = Assets.canvas;
 var overlay = Assets.overlay;
@@ -141,24 +141,22 @@ class Game {
 
         var pl2 = startingPlanet(1, 25.0, 5.4);
 
-        Assets.SpriteFactory('../sprites/ship1.png', 0);
-        Assets.SpriteFactory('../sprites/ship1.png', 1);
+        self.pl3 = startingPlanet(3, 12.0, 18.4);
 
-        //Assets.LaneFactory(new Vector2D(-8.0, 0), new Vector2D(1.0, 30), 100);
-        //Assets.StarFactory(-8.0, 0, 222);
-        //Assets.StarFactory(15.0, -10.0, 223);
-        //Assets.StarFactory(1.0, 30.0, 224);
-        sprites[0].position.set(0.0, 0.0, 0.0);
-        sprites[1].position.set(10.0, 5.0, 0.0);
+        //var ship1 = basic_ship(1.0, 1.0);
+        //var ship2 = basic_ship(-2.0, -4.0);
+
     }
     update(delta){
         this.score += delta;
-        sprites[0].material.rotation = this.score / 10.0;
+        //sprites[0].material.rotation = this.score / 10.0;
         //ECS.entities[222].rotation.set(0.0, this.score / 100.0, 0.0);
         //ECS.entities[223].rotation.set(this.score / 300.0, -this.score / 100.0, 0.0);
         //ECS.entities[224].rotation.set(this.score / 300.0, 0.0, -this.score / 500.0);
 
         ECS.systems.selection(this);
+        ECS.systems.updateEntities(this, delta);
+
 
         //Reset flags
         flags["mouse_click"] = false;
@@ -169,6 +167,9 @@ class Game {
         c.font="20px Arial";
         c.fillText("FPS: " + fps, 700, 40);
 
+
+        c.fillText("Metal: " + pl3.components.inputgoods.value.metal.current, 900, 40);
+        c.fillText("Chronium: " + pl3.components.inputgoods.value.chronium.current, 900, 80);
         Assets.plane_uniforms.u_time.value += delta;
         Assets.ortho_camera.updateMatrixWorld();
         Assets.controls.update();

@@ -6,6 +6,27 @@ ECS.Components.Type = function ComponentType (value){
 };
 ECS.Components.Type.prototype.name = 'type';
 
+ECS.Components.Carry = function ComponentCarry (value){
+    this.value = value;
+
+    return this;
+};
+ECS.Components.Carry.prototype.name = 'carry';
+
+ECS.Components.Capacity = function ComponentCapacity (value){
+    this.value = value;
+
+    return this;
+};
+ECS.Components.Capacity.prototype.name = 'capacity';
+
+ECS.Components.Speed = function ComponentSpeed (value){
+    this.value = value;
+
+    return this;
+};
+ECS.Components.Speed.prototype.name = 'speed';
+
 ECS.Components.HP = function ComponentHP (value){
     this.value = value;
 
@@ -61,3 +82,10 @@ ECS.Components.DestinationPlanet = function ComponentDestinationPlanet (value){
     return this;
 };
 ECS.Components.DestinationPlanet.prototype.name = 'destinationplanet';
+
+ECS.Components.Lane = function ComponentLane (value){
+    this.value = value;
+
+    return this;
+};
+ECS.Components.Lane.prototype.name = 'lane';

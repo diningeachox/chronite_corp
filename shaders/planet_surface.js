@@ -82,13 +82,15 @@ void main() {
   light = normalize(light);
   // calculate the dot product of
   // the light to the vertex normal
-  float dProd = max(0.0, dot(vNormal, light)) * 0.2;
+  float dProd = max(dot(vNormal, light), 0.0) * 0.15;
 
   // feed into our frag colour
   vec3 surface_color = vec3(0.0, 0.24, 0.67);
   if (vColor.x > 0.0) {
       surface_color = color * clamp(vColor, 0.7, 1.0);
   }
+
+	//The light is a yellow color
   gl_FragColor = vec4(surface_color * dProd, 1.0);
 }
 `;
