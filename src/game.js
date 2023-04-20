@@ -173,8 +173,12 @@ class Game {
 
         this.selected_entity = null;
         this.hovered_entity = null;
+
         //Create starting planets
-        var pl = startingPlanet(0, 0, 0);
+        var hq = hqPlanet;
+        hq.components.position.value = new Vector2D(0, 0);
+
+        var pl = startingPlanet(0, 30.0, 20.0);
 
         var pl2 = startingPlanet(1, 52.0, 25.4);
 

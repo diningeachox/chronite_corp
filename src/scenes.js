@@ -92,11 +92,38 @@ export class Menu extends Scene {
     update(delta) {}
     render(delta){
         c.clearRect(0, 0, canvas.width, canvas.height);
-        c.drawImage(images["cover2"], 0, 0, canvas.width, canvas.height);
-        //c.fillStyle = "beige";
-        //c.fillRect(0, 0, canvas.width, canvas.height);
+
+        c.drawImage(images["cover2"], (canvas.width - canvas.height) / 2, 0, canvas.height, canvas.height);
+        var r = (canvas.width - canvas.height) / (2 * canvas.width);
+        var gradient = c.createLinearGradient(0, 0, canvas.width, 0);
+        // Add three color stops
+        gradient.addColorStop(0, "rgba(0, 0, 0, 1.0)");
+        gradient.addColorStop(r, "rgba(0, 0, 0, 1.0)");
+        gradient.addColorStop(0.5, "rgba(0, 0, 0, 0.0)");
+        gradient.addColorStop(1 - r, "rgba(0, 0, 0, 1.0)");
+        gradient.addColorStop(1, "rgba(0, 0, 0, 1.0)");
+        c.fillStyle = gradient;
+        c.fillRect(0, 0, canvas.width, canvas.height);
+
+        c.drawImage(images["cover1"], (canvas.width - canvas.height) / 2 - canvas.height, 0, canvas.height, canvas.height);
+        c.drawImage(images["cover3"], canvas.width - (canvas.width - canvas.height) / 2, 0, canvas.height, canvas.height);
+
+        gradient = c.createLinearGradient(0, 0, (canvas.width - canvas.height) / 2, 0);
+        // Add three color stops
+        gradient.addColorStop(0, "rgba(0, 0, 0, 0.0)");
+        gradient.addColorStop(1, "rgba(0, 0, 0, 1.0)");
+        c.fillStyle = gradient;
+        c.fillRect(0, 0, (canvas.width - canvas.height) / 2, canvas.height);
+
+        gradient = c.createLinearGradient(canvas.width - (canvas.width - canvas.height) / 2, 0, canvas.width, 0);
+        // Add three color stops
+        gradient.addColorStop(0, "rgba(0, 0, 0, 1.0)");
+        gradient.addColorStop(1, "rgba(0, 0, 0, 0.0)");
+        c.fillStyle = gradient;
+        c.fillRect(canvas.width - (canvas.width - canvas.height) / 2, 0, (canvas.width - canvas.height) / 2, canvas.height);
+
         //title
-        c.font="80px Arial";
+        c.font="80px dialogFont";
         c.fillStyle = "white";
         c.textAlign = "center";
         c.fillText("Mercury Inc.", canvas.width/2, 190);
@@ -303,7 +330,7 @@ export class Ins extends Scene {
             }
            });
 
-     var play_button = new Button({x: canvas.width / 2, y:200, width:150, height:50, label:"Play",
+     var play_button = new Button({x: canvas.width / 2, y:canvas.height - 200, width:150, height:50, label:"Play",
            onClick: function(){
                changeScene(Game.game_scene);
                playSound(sfx_sources["button_click"].src, sfx_ctx);
@@ -316,12 +343,39 @@ export class Ins extends Scene {
     render(delta){
         c.clearRect(0, 0, canvas.width, canvas.height);
 
-        c.fillStyle = "beige";
+        c.drawImage(images["cover2"], (canvas.width - canvas.height) / 2, 0, canvas.height, canvas.height);
+        var r = (canvas.width - canvas.height) / (2 * canvas.width);
+        var gradient = c.createLinearGradient(0, 0, canvas.width, 0);
+        // Add three color stops
+        gradient.addColorStop(0, "rgba(0, 0, 0, 1.0)");
+        gradient.addColorStop(r, "rgba(0, 0, 0, 1.0)");
+        gradient.addColorStop(0.5, "rgba(0, 0, 0, 0.0)");
+        gradient.addColorStop(1 - r, "rgba(0, 0, 0, 1.0)");
+        gradient.addColorStop(1, "rgba(0, 0, 0, 1.0)");
+        c.fillStyle = gradient;
         c.fillRect(0, 0, canvas.width, canvas.height);
+
+        c.drawImage(images["cover1"], (canvas.width - canvas.height) / 2 - canvas.height, 0, canvas.height, canvas.height);
+        c.drawImage(images["cover3"], canvas.width - (canvas.width - canvas.height) / 2, 0, canvas.height, canvas.height);
+
+        gradient = c.createLinearGradient(0, 0, (canvas.width - canvas.height) / 2, 0);
+        // Add three color stops
+        gradient.addColorStop(0, "rgba(0, 0, 0, 0.0)");
+        gradient.addColorStop(1, "rgba(0, 0, 0, 1.0)");
+        c.fillStyle = gradient;
+        c.fillRect(0, 0, (canvas.width - canvas.height) / 2, canvas.height);
+
+        gradient = c.createLinearGradient(canvas.width - (canvas.width - canvas.height) / 2, 0, canvas.width, 0);
+        // Add three color stops
+        gradient.addColorStop(0, "rgba(0, 0, 0, 1.0)");
+        gradient.addColorStop(1, "rgba(0, 0, 0, 0.0)");
+        c.fillStyle = gradient;
+        c.fillRect(canvas.width - (canvas.width - canvas.height) / 2, 0, (canvas.width - canvas.height) / 2, canvas.height);
+
         c.font="80px Arial";
-        c.fillStyle = "black";
+        c.fillStyle = "white";
         c.textAlign = "center";
-        c.fillText("Instructions", canvas.width/2, 90);
+        c.fillText("Instructions", canvas.width/2, 190);
         for (var i = 0; i < this.buttons.length; i++){
             this.buttons[i].draw(c);
         }
