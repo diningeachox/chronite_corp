@@ -17,6 +17,8 @@ export var gl = document.getElementById('gl');
 export var c = canvas.getContext("2d");
 export var ol = overlay.getContext("2d");
 
+//export var projector = new THREE.Projector();
+
 gl.width = window.innerWidth;
 gl.height = window.innerHeight;
 gl.style.left = "0px";
@@ -165,10 +167,12 @@ function readTextFile(file, callback) {
     rawFile.send(null);
 }
 
-const planet_geometry = new THREE.SphereGeometry( 64, 32, 32 );
+
 const select_geometry = new THREE.SphereGeometry( 70, 32, 32 );
 
+const bar_geometry = new THREE.PlaneBufferGeometry( 120, 15 );
 export function StarFactory(x, y){
+    const planet_geometry = new THREE.SphereGeometry( 64, 32, 32 );
     //Color
     const uniforms = {
       color: { value: new THREE.Color( 0x00a822 ) },
@@ -191,6 +195,20 @@ export function StarFactory(x, y){
     sphere.layers.disableAll();
     sphere.layers.set(1); //Layer 1 for planets
 
+    //HP bar
+
+    const hp_material = new THREE.MeshBasicMaterial({
+        color: 0x00ab00,
+        transparent: true,
+        opacity: 1.0
+    });
+    const hp_bar = new THREE.Mesh(bar_geometry, hp_material);
+    var height = 64 * scale;
+    hp_bar.scale.set(0.1, 0.1, 0.1);
+    hp_bar.position.set(x, y + height * 1.2, -80 + height + 1);
+    hp_bar.layers.disableAll();
+    hp_bar.layers.set(0); //Layer 1 for planets
+
     //Selection sphere
     const material = new THREE.MeshBasicMaterial({
         color: 0xffffff,
@@ -202,9 +220,12 @@ export function StarFactory(x, y){
     sel_sphere.position.set(x, y, -80);
     sel_sphere.layers.disableAll();
     sel_sphere.layers.set(0); //Layer 0 for the selection sphere
+
     scene.add(sphere);
     scene.add(sel_sphere);
-    matching_sphere[sphere.uuid] = sel_sphere; //Match the selection sphere with actual sphere
+    scene.add(hp_bar);
+
+    matching_sphere[sphere.uuid] = {sel: sel_sphere, stat: hp_bar}; //Match the selection sphere with actual sphere
     //scene.add(sphere);
     return sphere.uuid;
 }
@@ -254,6 +275,17 @@ export function SpriteFactory(x, y, src){
     return sprite.uuid;
 }
 
-export const ShipFactory = (x, y) => {
-    return SpriteFactory(x, y, "../sprites/ship1.png");
+export const ShipFactory = (x, y, type) => {
+    switch (type) {
+      case 0:
+        return SpriteFactory(x, y, "../sprites/basic.png");
+        break;
+      case 1:
+        return SpriteFactory(x, y, "../sprites/tanker.png");
+        break;
+      case 2:
+        return SpriteFactory(x, y, "../sprites/cutter.png");
+        break;
+    }
+    return null;
 }

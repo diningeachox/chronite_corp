@@ -1,3 +1,4 @@
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.135.0/build/three.module.js';
 import * as Scene from './scenes.js';
 import * as Assets from './assets.js';
 import {clip} from "./utils.js";
@@ -63,6 +64,41 @@ export function init(){
     ins_scene = new Scene.Ins();
 
     //Add Event listeners
+    overlay.addEventListener('click', function(e){
+        var rect = canvas.getBoundingClientRect();
+        var mouseX = e.clientX - rect.left;
+        var mouseY = e.clientY - rect.top;
+        //Current scene's Buttons
+        sm.cur_scene.handleMouseClick(mouseX, mouseY);
+        flags["mouse_click"] = true;
+    }, false);
+
+    overlay.addEventListener('mousedown', function(e){
+        var rect = canvas.getBoundingClientRect();
+        var mouseX = e.clientX - rect.left;
+        var mouseY = e.clientY - rect.top;
+        //Current scene's Buttons
+        flags["mouse_down"] = true;
+    }, false);
+
+    //Mouse move
+    overlay.addEventListener('mousemove', function(e){
+        var rect = canvas.getBoundingClientRect();
+        var mouseX = e.clientX - rect.left;
+        var mouseY = e.clientY - rect.top;
+        //Current scene's Buttons
+        sm.cur_scene.handleMouseHover(mouseX, mouseY);
+        //Assets.plane_uniforms.u_mouse.value.x = mouseX
+    }, false);
+
+    overlay.addEventListener('mouseup', function(e){
+        var rect = canvas.getBoundingClientRect();
+        var mouseX = e.clientX - rect.left;
+        var mouseY = e.clientY - rect.top;
+        //Current scene's Buttons
+        flags["mouse_down"] = false;
+    }, false);
+
     //Mouse down
     canvas.addEventListener('click', function(e){
         var rect = canvas.getBoundingClientRect();
@@ -136,15 +172,18 @@ class Game {
         this.score = 0;
 
         this.selected_entity = null;
+        this.hovered_entity = null;
         //Create starting planets
         var pl = startingPlanet(0, 0, 0);
 
-        var pl2 = startingPlanet(1, 25.0, 5.4);
+        var pl2 = startingPlanet(1, 52.0, 25.4);
 
-        self.pl3 = startingPlanet(3, 12.0, 18.4);
+        var pl3 = startingPlanet(3, 36.0, 38.4);
+        this.planets = [pl, pl2, pl3];
+        this.frame = 0;
 
-        //var ship1 = basic_ship(1.0, 1.0);
-        //var ship2 = basic_ship(-2.0, -4.0);
+        //Planet stats
+        this.stat_panel = new Scene.StatPanel(20, 20, canvas.width / 6, canvas.width / 10);
 
     }
     update(delta){
@@ -160,6 +199,7 @@ class Game {
 
         //Reset flags
         flags["mouse_click"] = false;
+        this.frame += 1;
     }
     render(delta){
         //Frame rate
@@ -168,13 +208,21 @@ class Game {
         c.fillText("FPS: " + fps, 700, 40);
 
 
-        c.fillText("Metal: " + pl3.components.inputgoods.value.metal.current, 900, 40);
-        c.fillText("Chronium: " + pl3.components.inputgoods.value.chronium.current, 900, 80);
+        //c.fillText("Metal: " + pl3.components.inputgoods.value.metal.current, 900, 40);
+        //c.fillText("Chronium: " + pl3.components.inputgoods.value.chronium.current, 900, 80);
         Assets.plane_uniforms.u_time.value += delta;
         Assets.ortho_camera.updateMatrixWorld();
         Assets.controls.update();
-
         Assets.renderer.render(Assets.scene, Assets.ortho_camera);
+
+        ECS.systems.renderEntities(this, delta);
+
+        if (this.stat_panel.visible){
+            this.stat_panel.render(delta, this.hovered_entity);
+        }
+
+        game.stat_panel.visible = false;
+
     }
 }
 

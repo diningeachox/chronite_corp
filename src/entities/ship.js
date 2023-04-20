@@ -1,6 +1,7 @@
 import {ShipFactory} from "../assets.js";
 import {Vector2D} from "../vector2D.js";
 import goods from './goods.js';
+import {scene} from "../assets.js";
 
 const ship = (config) => {
     const ent = new ECS.Entity();
@@ -12,15 +13,17 @@ const ship = (config) => {
     ent.addComponent( new ECS.Components.Type("ship"));
     ent.addComponent( new ECS.Components.OutputGood(config.output || goods.metal));
     //ent.addComponent( new ECS.Components.Lane(config.lane));
-    var uuid = ShipFactory(ent.components.position.value.x, ent.components.position.value.y);
+    var uuid = ShipFactory(ent.components.position.value.x, ent.components.position.value.y, config.type);
     matching_entity[uuid] = ent;
+
+    ent.addComponent( new ECS.Components.Asset(uuid));
     return ent;
 }
 
 //Ship types
-const basic_ship = (x, y, good) => {return ship({position: new Vector2D(x, y), hp: 100, speed: 1.0, capacity: 1, output: good})}
-const tanker = (x, y, good) => {return ship({position: new Vector2D(x, y), hp: 500, speed: 0.5, capacity: 5, output: good})} //Massive and slow but can store a lot
-const cutter = (x, y, good) => {return ship({position: new Vector2D(x, y), hp: 100, speed: 1.5, capacity: 1, output: good})}
+const basic_ship = (x, y, good) => {return ship({position: new Vector2D(x, y), hp: 100, speed: 1.0, capacity: 1, output: good, type: 0})}
+const tanker = (x, y, good) => {return ship({position: new Vector2D(x, y), hp: 500, speed: 0.5, capacity: 5, output: good, type: 1})} //Massive and slow but can store a lot
+const cutter = (x, y, good) => {return ship({position: new Vector2D(x, y), hp: 100, speed: 1.5, capacity: 1, output: good, type: 2})}
 
 const group = (config) => {
     const ent = new ECS.Entity();
@@ -37,6 +40,9 @@ const group = (config) => {
         min_speed = Math.min(config.ships[i].components.speed.value, min_speed);
         //Graphical placement (doesn't affect gameplay)
         config.ships[i].components.position.value = config.position;
+        var sprite = scene.getObjectByProperty("uuid", config.ships[i].components.asset.value);
+        sprite.position.x = config.position.x;
+        sprite.position.y = config.position.y;
         //Start ships with full load
         config.ships[i].components.carry.value = config.ships[i].components.capacity.value;
     }

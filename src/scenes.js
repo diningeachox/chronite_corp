@@ -75,13 +75,13 @@ export class Menu extends Scene {
       super();
       this.name = "menu";
       //Clicking play will change scene from "menu" to "game"
-      var play_button = new Button({x: canvas.width / 2, y:200, width:150, height:50, label:"Play",
+      var play_button = new Button({x: canvas.width / 2, y:400, width:150, height:50, label:"Play",
             onClick: function(){
                 changeScene(Game.game_scene);
                 playSound(sfx_sources["button_click"].src, sfx_ctx);
             }
            });
-      var ins_button = new Button({x: canvas.width / 2, y:300, width:150, height:50, label:"Instructions",
+      var ins_button = new Button({x: canvas.width / 2, y:500, width:150, height:50, label:"Instructions",
             onClick: function(){
                 changeScene(Game.ins_scene);
                 playSound(sfx_sources["button_click"].src, sfx_ctx);
@@ -92,13 +92,14 @@ export class Menu extends Scene {
     update(delta) {}
     render(delta){
         c.clearRect(0, 0, canvas.width, canvas.height);
-        c.fillStyle = "beige";
-        c.fillRect(0, 0, canvas.width, canvas.height);
+        c.drawImage(images["cover2"], 0, 0, canvas.width, canvas.height);
+        //c.fillStyle = "beige";
+        //c.fillRect(0, 0, canvas.width, canvas.height);
         //title
         c.font="80px Arial";
-        c.fillStyle = "black";
+        c.fillStyle = "white";
         c.textAlign = "center";
-        c.fillText("Javascript Game", canvas.width/2, 90);
+        c.fillText("Mercury Inc.", canvas.width/2, 190);
 
         for (var i = 0; i < this.buttons.length; i++){
             this.buttons[i].draw(c);
@@ -182,6 +183,8 @@ export class GameScene extends Scene {
            });
       this.effects_panel.addButton(nebula_button);
 
+
+
       this.panels = [this.info_panel, this.effects_panel];
     }
     update(delta) {
@@ -190,17 +193,20 @@ export class GameScene extends Scene {
     render(delta){
 
         c.clearRect(0, 0, canvas.width, canvas.height);
+        ol.clearRect(0, 0, canvas.width, canvas.height);
         this.game.render(delta);
 
 
         //Buttons
         for (var i = 0; i < this.buttons.length; i++){
-            this.buttons[i].draw(c);
+            this.buttons[i].draw(ol);
         }
 
         //Only render info panel if a planet/lane is selected
         if (this.game.selected_entity != null) this.info_panel.render(delta);
         this.effects_panel.render(delta);
+
+
     }
     load(){
         super.load();
@@ -218,45 +224,66 @@ export class GameScene extends Scene {
 
 //Panels used in scenes
 export class Panel extends Scene {
-  constructor(x, y, w, h, title="Planet Info"){
-      super();
-      this.title = title;
-      this.x = x;
-      this.y = y;
-      this.w = w;
-      this.h = h;
+    constructor(x, y, w, h, title="Planet Info"){
+        super();
+        this.title = title;
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
 
-      this.buttons = [];
-    //this.panels = [];
-  }
-  addButton(button){
-      this.buttons.push(button);
-  }
-  update(delta) {
+        this.buttons = [];
+      //this.panels = [];
+    }
+    addButton(button){
+        this.buttons.push(button);
+    }
+    update(delta) {
 
-  }
-  render(delta){
+    }
+    render(delta){
 
-      c.fillStyle = "#FFFFFF8A";
-      c.fillRect(this.x, this.y, this.w, this.h);
-      c.lineWidth = 4;
-      c.strokeStyle = "white";
-      c.strokeRect(this.x, this.y, this.w, this.h);
-      //Title
-      c.font="30px dialogFont";
-      c.fillStyle = "black";
-      c.textAlign = "center";
-      c.fillText(this.title, this.x + this.w/2, this.y + 40);
+        ol.fillStyle = "#FFFFFF8A";
+        ol.fillRect(this.x, this.y, this.w, this.h);
+        ol.lineWidth = 4;
+        ol.strokeStyle = "white";
+        ol.strokeRect(this.x, this.y, this.w, this.h);
+        //Title
+        ol.font="30px dialogFont";
+        ol.fillStyle = "black";
+        ol.textAlign = "center";
+        ol.fillText(this.title, this.x + this.w/2, this.y + 40);
 
-      //Buttons
-      for (var i = 0; i < this.buttons.length; i++){
-          this.buttons[i].draw(c);
-      }
-  }
-  load(){
-  }
-  unload(){
-  }
+        //Buttons
+        for (var i = 0; i < this.buttons.length; i++){
+            this.buttons[i].draw(ol);
+        }
+    }
+    load(){
+    }
+    unload(){
+    }
+}
+
+export class StatPanel extends Panel {
+    constructor(x, y, w, h){
+        super(x, y, w, h, "Planet Statistics");
+        this.visible = false;
+    }
+    update(delta) {
+
+    }
+    render(delta, planet){
+        super.render(delta);
+        ol.font="15px dialogFont";
+        ol.fillStyle = "black";
+        ol.textAlign = "left";
+        ol.fillText("HP: " + planet.components.hp.value + "%", this.x + 10, this.y + 80);
+    }
+    load(){
+    }
+    unload(){
+    }
 }
 
 

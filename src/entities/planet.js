@@ -17,7 +17,7 @@ const planet = (config) => {
     var uuid = StarFactory(ent.components.position.value.x, ent.components.position.value.y);
     matching_entity[uuid] = ent;
     //var meshes = StarFactory(ent.components.position.value.x, ent.components.position.value.y, 0);
-    //ent.addComponent( new ECS.Components.Meshes(meshes));
+    ent.addComponent( new ECS.Components.Asset(uuid));
     return ent;
 }
 

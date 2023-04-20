@@ -89,3 +89,11 @@ ECS.Components.Lane = function ComponentLane (value){
     return this;
 };
 ECS.Components.Lane.prototype.name = 'lane';
+
+//Sprite/mesh associated with entity
+ECS.Components.Asset = function ComponentAsset (value){
+    this.value = value;
+
+    return this;
+};
+ECS.Components.Asset.prototype.name = 'asset';

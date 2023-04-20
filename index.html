@@ -50,7 +50,7 @@
     <canvas id=canvas width=1000 height=580
         style=" z-index: 3;"></canvas>
     <canvas id="overlay" width="1000" height="580"
-        style=" z-index: 1;"></canvas>
+        style=" z-index: 4;"></canvas>
     <canvas id="gl" width="1000" height="580"
             style=" z-index: 2;"></canvas>
 </div>
@@ -77,6 +77,12 @@
     var shaders = {};
 
     var sprites = {};
+
+    const images = {};
+    var arr = {
+        "cover": "sprites/menu.jpg",
+        "cover2": "sprites/menu2.jpg"
+    };
 
     // Scene manager
     var sm;
@@ -125,11 +131,27 @@
 
 import {init} from './src/game.js';
 import {AudioPlayer, addSound} from './src/sound.js';
-var modules = {};
-modules.init = init;
+
+function loadImage(key, num){
+    images[key] = new Image();
+    images[key].onload = function() {
+        if (++num >= Object.keys(arr).length - 1) {
+            console.log("Loaded all images!");
+        }
+    };
+    images[key].src = arr[key];
+    document.getElementsByClassName("load_text")[0].innerHTML = "Loading images";
+}
 
 //Preloading
 var promises = [];
+
+//Load and convert images
+var loadedImages = 0;
+for (var key of Object.keys(arr)) {
+    loadedImages++;
+    promises.push(loadImage(key, loadedImages));
+}
 
 promises.push(addSound("button_click", sfx_sources, sfx_ctx, "./audio/button_click.ogg"));
 promises.push(addSound("main", music_sources, music_ctx, "./audio/main.opus"));
