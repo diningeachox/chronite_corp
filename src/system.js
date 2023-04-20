@@ -61,20 +61,23 @@ ECS.systems.selection = function systemSelection (game) {
                             if (game.selected_entity != null){
                                 var originplanet = game.selected_entity;
                                 var destinationplanet = entity;
-
-                                //Check for duplicates!!!!
-                                const l = lane({origin: originplanet, destination: destinationplanet});
-                                //Populate the lane dictionary
-                                lanes[new Set([originplanet.id, destinationplanet.id])] = l;
-
                                 var outputgood = originplanet.components.outputgood.value;
+                                //Only create lane if the destination planet's inputs match origin planet's outputs
                                 //debugger;
-                                //Create and send fleet
-                                var x = originplanet.components.position.value.x;
-                                var y = originplanet.components.position.value.y;
-                                var ships = [basic_ship(x, y, outputgood), basic_ship(x, y, outputgood), tanker(x, y, outputgood)];
+                                if (entity.components.inputgoods.value.hasOwnProperty(outputgood.name.toLowerCase())){
+                                    //Check for duplicates!!!!
+                                    const l = lane({origin: originplanet, destination: destinationplanet});
+                                    //Populate the lane dictionary
+                                    lanes[new Set([originplanet.id, destinationplanet.id])] = l;
 
-                                var fl = fleet(x, y, l, ships);
+                                    //debugger;
+                                    //Create and send fleet
+                                    var x = originplanet.components.position.value.x;
+                                    var y = originplanet.components.position.value.y;
+                                    var ships = [basic_ship(x, y, outputgood), basic_ship(x, y, outputgood), tanker(x, y, outputgood)];
+
+                                    var fl = fleet(x, y, l, ships);
+                                }
                             }
                         }
                     } else {

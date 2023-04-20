@@ -6,7 +6,7 @@ const planet = (config) => {
     const ent = new ECS.Entity();
     ent.addComponent( new ECS.Components.Type(config.type || "standard"));
     ent.addComponent( new ECS.Components.HP(config.HP || 100));
-    ent.addComponent( new ECS.Components.OutputGood(config.output));
+    ent.addComponent( new ECS.Components.OutputGood(config.output || goods.null));
     ent.addComponent( new ECS.Components.InputGoods(config.input || {}));
     ent.addComponent( new ECS.Components.Ships(config.ships || 10));
     ent.addComponent( new ECS.Components.Position(config.position || new Vector2D(0, 0)));
@@ -21,7 +21,7 @@ const planet = (config) => {
     return ent;
 }
 
-const hqPlanet = planet({type: "hq", input:{metacrystals: {max:1000, current:0}}, ships:0 }); //TODO use objects for planet types
+const hqPlanet = planet({type: "hq", input:{metacrystals: {max:1000, current:0}}, ships:0}); //TODO use objects for planet types
 
 // The idea here is that we'll want to start with one of each
 // of a basic set of planets that provide everything.
