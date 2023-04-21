@@ -9,6 +9,7 @@ ECS.Entity = function Entity(){
 
     // The component data will live in this object
     this.components = {};
+    ECS.entities[this.id] = this;
 
     return this;
 };

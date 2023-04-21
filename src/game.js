@@ -1,7 +1,11 @@
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.135.0/build/three.module.js';
 import * as Scene from './scenes.js';
 import * as Assets from './assets.js';
 import {clip} from "./utils.js";
 import {Vector2D} from "./vector2D.js";
+import {startingPlanet, outerPlanet} from "./entities/planet.js";
+import {basic_ship, tanker, fleet} from "./entities/ship.js";
+import lane from "./entities/lane.js";
 
 //Variables from assets.js
 var canvas = Assets.canvas;
@@ -62,6 +66,41 @@ export function init(){
     ins_scene = new Scene.Ins();
 
     //Add Event listeners
+    overlay.addEventListener('click', function(e){
+        var rect = canvas.getBoundingClientRect();
+        var mouseX = e.clientX - rect.left;
+        var mouseY = e.clientY - rect.top;
+        //Current scene's Buttons
+        sm.cur_scene.handleMouseClick(mouseX, mouseY);
+        flags["mouse_click"] = true;
+    }, false);
+
+    overlay.addEventListener('mousedown', function(e){
+        var rect = canvas.getBoundingClientRect();
+        var mouseX = e.clientX - rect.left;
+        var mouseY = e.clientY - rect.top;
+        //Current scene's Buttons
+        flags["mouse_down"] = true;
+    }, false);
+
+    //Mouse move
+    overlay.addEventListener('mousemove', function(e){
+        var rect = canvas.getBoundingClientRect();
+        var mouseX = e.clientX - rect.left;
+        var mouseY = e.clientY - rect.top;
+        //Current scene's Buttons
+        sm.cur_scene.handleMouseHover(mouseX, mouseY);
+        //Assets.plane_uniforms.u_mouse.value.x = mouseX
+    }, false);
+
+    overlay.addEventListener('mouseup', function(e){
+        var rect = canvas.getBoundingClientRect();
+        var mouseX = e.clientX - rect.left;
+        var mouseY = e.clientY - rect.top;
+        //Current scene's Buttons
+        flags["mouse_down"] = false;
+    }, false);
+
     //Mouse down
     canvas.addEventListener('click', function(e){
         var rect = canvas.getBoundingClientRect();
@@ -69,6 +108,15 @@ export function init(){
         var mouseY = e.clientY - rect.top;
         //Current scene's Buttons
         sm.cur_scene.handleMouseClick(mouseX, mouseY);
+        flags["mouse_click"] = true;
+    }, false);
+
+    canvas.addEventListener('mousedown', function(e){
+        var rect = canvas.getBoundingClientRect();
+        var mouseX = e.clientX - rect.left;
+        var mouseY = e.clientY - rect.top;
+        //Current scene's Buttons
+        flags["mouse_down"] = true;
     }, false);
 
     //Mouse move
@@ -81,6 +129,14 @@ export function init(){
         //Assets.plane_uniforms.u_mouse.value.x = mouseX
     }, false);
 
+    canvas.addEventListener('mouseup', function(e){
+        var rect = canvas.getBoundingClientRect();
+        var mouseX = e.clientX - rect.left;
+        var mouseY = e.clientY - rect.top;
+        //Current scene's Buttons
+        flags["mouse_down"] = false;
+    }, false);
+
     //Mouse scroll wheel
     canvas.addEventListener('wheel', function(e){
         var rect = canvas.getBoundingClientRect();
@@ -91,13 +147,21 @@ export function init(){
         //Assets.ortho_camera.position.z += e.deltaY / 10.0;
         zoom = clip(zoom, 0.1, 10);
 
-        Assets.ortho_camera.scale.set(zoom, zoom, 1);
+        //Assets.ortho_camera.scale.set(zoom, zoom, 1);
     }, false);
 
     //Key presses
     document.addEventListener('keydown', function(e) {
         if(e.keyCode == 80) { //P key
             if (sm.cur_scene.name === "game") pause = (pause + 1) % 2;
+        } else if(e.keyCode == 16) { //Shift key
+            flags["shift"] = true;
+        }
+    });
+
+    document.addEventListener('keyup', function(e) {
+        if(e.keyCode == 16) { //Shift key
+            flags["shift"] = false;
         }
     });
 
@@ -109,22 +173,50 @@ class Game {
     constructor(){
         this.score = 0;
 
-        Assets.SpriteFactory('../sprites/ship1.png', 0);
-        Assets.SpriteFactory('../sprites/ship1.png', 1);
+        this.selected_entity = null;
+        this.hovered_entity = null;
 
-        Assets.LaneFactory(new Vector2D(-8.0, 0), new Vector2D(1.0, 30), 100);
-        Assets.StarFactory(-8.0, 0, 222);
-        Assets.StarFactory(15.0, -10.0, 223);
-        Assets.StarFactory(1.0, 30.0, 224);
-        sprites[0].position.set(0.0, 0.0, 0.0);
-        sprites[1].position.set(10.0, 5.0, 0.0);
+
+        this.planets = [];
+        //Create starting planets
+        var startX = 0;
+        var startY = 0;
+        var startangle = 0;
+        for (var i = 1; i < 9; i++){
+            this.planets.push(startingPlanet(i, startX, startY));
+            startangle += (Math.PI / 3) * (0.5 + Math.random());
+            var ring = Math.floor(startangle / (Math.PI * 2)) + 1;
+            startX = 35 * ring * Math.cos(startangle);
+            startY = 35 * ring * Math.sin(startangle);
+        }
+
+        //Start route from 2 to 3
+        const l = lane({origin: this.planets[1], destination: this.planets[2]});
+        lanes[this.planets[1].id+","+this.planets[2].id] = l;
+        this.planets[1].components.lane.value = l;
+
+        //UI
+
+        //Planet stats panel
+        this.stat_panel = new Scene.StatPanel(20, 20, canvas.width / 6, canvas.width / 8);
+
+        this.frame = 0;
+
     }
     update(delta){
         this.score += delta;
-        sprites[0].material.rotation = this.score / 10.0;
-        ECS.entities[222].rotation.set(0.0, this.score / 100.0, 0.0);
-        ECS.entities[223].rotation.set(this.score / 300.0, -this.score / 100.0, 0.0);
-        ECS.entities[224].rotation.set(this.score / 300.0, 0.0, -this.score / 500.0);
+        //sprites[0].material.rotation = this.score / 10.0;
+        //ECS.entities[222].rotation.set(0.0, this.score / 100.0, 0.0);
+        //ECS.entities[223].rotation.set(this.score / 300.0, -this.score / 100.0, 0.0);
+        //ECS.entities[224].rotation.set(this.score / 300.0, 0.0, -this.score / 500.0);
+
+        ECS.systems.selection(this);
+        ECS.systems.updateEntities(this, delta);
+
+
+        //Reset flags
+        flags["mouse_click"] = false;
+        this.frame += 1;
     }
     render(delta){
         //Frame rate
@@ -132,10 +224,21 @@ class Game {
         c.font="20px Arial";
         c.fillText("FPS: " + fps, 700, 40);
 
+
+        //c.fillText("Metal: " + pl3.components.inputgoods.value.metal.current, 900, 40);
+        //c.fillText("Chronium: " + pl3.components.inputgoods.value.chronium.current, 900, 80);
         Assets.plane_uniforms.u_time.value += delta;
         Assets.ortho_camera.updateMatrixWorld();
-        //Assets.controls.update();
+        Assets.controls.update();
         Assets.renderer.render(Assets.scene, Assets.ortho_camera);
+
+        ECS.systems.renderEntities(this, delta);
+
+        if (this.stat_panel.visible){
+            this.stat_panel.render(delta, this.hovered_entity);
+        }
+
+        game.stat_panel.visible = false;
 
     }
 }

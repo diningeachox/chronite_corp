@@ -19,9 +19,7 @@
       #overlay {
         pointer-events: none /*We want to click through this canvas */
       }
-      #gl {
-        pointer-events: none /*We want to click through this canvas */
-      }
+
       .load_text {
           position: fixed;
           margin: auto;
@@ -52,7 +50,7 @@
     <canvas id=canvas width=1000 height=580
         style=" z-index: 3;"></canvas>
     <canvas id="overlay" width="1000" height="580"
-        style=" z-index: 1;"></canvas>
+        style=" z-index: 4;"></canvas>
     <canvas id="gl" width="1000" height="580"
             style=" z-index: 2;"></canvas>
 </div>
@@ -64,14 +62,28 @@
            Components: {},
 
            systems: {},
-           entities: [],
+           entities: {},
            game: {}
     };
+    var matching_sphere = {};
+    var matching_entity = {};
+    var lanes = {};
+
+    //Game flags
+    var flags = {"mouse_down": false, "mouse_click": false,
+                  "shift": false};
 
     //Shaders
     var shaders = {};
 
     var sprites = {};
+
+    const images = {};
+    var arr = {
+        "cover1": "sprites/menu.jpg",
+        "cover2": "sprites/menu2.jpg",
+        "cover3": "sprites/menu3.jpg"
+    };
 
     // Scene manager
     var sm;
@@ -93,6 +105,7 @@
     var time = Date.now(); //Game time (for FPS calculations)
 
 </script>
+<script type="module" src="src/config.js"></script>
 
 <script type="module" src="shaders/vert.js"></script>
 <script type="module" src="shaders/frag.js"></script>
@@ -120,16 +133,66 @@
 
 import {init} from './src/game.js';
 import {AudioPlayer, addSound} from './src/sound.js';
-var modules = {};
-modules.init = init;
+import volume from './src/config.js'
+
+function loadImage(key, num){
+    images[key] = new Image();
+    images[key].onload = function() {
+        if (++num >= Object.keys(arr).length - 1) {
+            console.log("Loaded all images!");
+        }
+    };
+    images[key].src = arr[key];
+    document.getElementsByClassName("load_text")[0].innerHTML = "Loading images";
+}
+//Load sounds from json configs
+function loadAllSounds(){
+    //Fetch configurations from volume.json
+    /*
+    fetch('./src/volume.json')
+    .then((response) => response.json())
+    .then((json) => {
+        console.log(json); //Volume specifications for each file
+        for (var key of Object.keys(json)){
+            var sources = sfx_sources;
+            var ctx = sfx_ctx;
+            if (json[key].type == "music"){
+                sources = music_sources;
+                ctx = music_ctx;
+            }
+            promises.push(addSound(key, sources, ctx, json[key].src, json[key].vol, json[key].loop));
+        }
+
+    }).catch( console.error );
+    */
+    console.log(volume); //Volume specifications for each file
+    for (var key of Object.keys(volume)){
+        var sources = sfx_sources;
+        var ctx = sfx_ctx;
+        if (volume[key].type == "music"){
+            sources = music_sources;
+            ctx = music_ctx;
+        }
+        promises.push(addSound(key, sources, ctx, volume[key].src, volume[key].vol, volume[key].loop));
+    }
+}
+
 
 //Preloading
 var promises = [];
+promises.push(loadAllSounds());
 
-promises.push(addSound("button_click", sfx_sources, sfx_ctx, "./audio/button_click.ogg"));
+//Load and convert images
+var loadedImages = 0;
+for (var key of Object.keys(arr)) {
+    loadedImages++;
+    promises.push(loadImage(key, loadedImages));
+}
+//init();
 
-//Music
-promises.push(addSound("main", music_sources, music_ctx, "./audio/main.opus"));
+//promises.push(addSound("button_click", sfx_sources, sfx_ctx, "./audio/button_click.ogg"));
+//promises.push(addSound("main", music_sources, music_ctx, "./audio/main.opus", 0.5, true));
+
 Promise.all(promises)
   .then(function gameInit() {
       document.getElementsByClassName("load_text")[0].innerHTML = "";

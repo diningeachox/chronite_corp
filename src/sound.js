@@ -6,12 +6,14 @@ export function AudioPlayer(context) {
   this.stopped = true;
   this.new_buffer = true;
   this.volume = 1.0;
+  this.obj = null;
 }
 
-AudioPlayer.prototype.setBuffer = function(buffer) {
+AudioPlayer.prototype.setBuffer = function(obj) {
   this.source = this.context.createBufferSource();
   //this.source.looping = true;
-  this.source.buffer = buffer;
+  this.source.buffer = obj.src.buffer;
+  this.obj = obj;
   this.source.looping = true;
   this.new_buffer = true;
 };
@@ -20,7 +22,8 @@ AudioPlayer.prototype.play = function(loop=false) {
   //this.source.connect(this.analyser);
   //this.analyser.connect(this.context.destination);
   this.source.loop = loop;
-  this.source.connect(this.context.destination);
+  this.source.connect(this.obj.gainNode);
+  this.obj.gainNode.connect(this.context.destination);
   //this.source.noteOn(0);
   this.source.start();
   this.stopped = false;
@@ -79,17 +82,29 @@ export function createAudioContextiObj (sound) {
 }
 
 //Add a sound once and store it inside sound_dict
-export function addSound(id, sound_dict, sound_ctx, source){
+export function addSound(id, sound_dict, sound_ctx, source, volume=1.0, loop=false){
+
+
     //Audio contexts
     var audioSource = sound_ctx.createBufferSource();
     return fetch(source)
     .then( resp => resp.arrayBuffer() )
     .then( buf => sound_ctx.decodeAudioData( buf ) )
     .then( audioBuffer => {
+      // Chain: audiosource -> gainNode -> analyzer -> speakers
+      var gainNode = sound_ctx.createGain();
+      audioSource.connect(gainNode);
+
+      gainNode.connect(sound_ctx.destination);
+      gainNode.gain.setValueAtTime(volume, sound_ctx.currentTime);
+      
       audioSource.buffer = audioBuffer;
+      audioSource.loop = loop;
+
       console.log("Audio " + id + " loaded!");
       //audioSource.loop = true;
-      sound_dict[id] = {"ctx": sound_ctx, "src": audioSource};
+      sound_dict[id] = {"ctx": sound_ctx, "src": audioSource, "gainNode": gainNode};
+      //sound.vol.gain.setValueAtTime(Math.max(0, volume), sound_ctx.currentTime)
       document.getElementsByClassName("load_text")[0].innerHTML = "Loading audio";
     })
     .catch( console.error );

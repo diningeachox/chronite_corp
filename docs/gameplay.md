@@ -6,79 +6,166 @@ The primary forms of interaction in the game will be:
 
 # Planets
 
-All planets have an HP stat. If the HP hits 0, that planet becomes barren.
+All planets have an HP stat. If the HP hits 0, that planet becomes barren and has no effect for the rest of the game. Ships sent from a planet continue to their destination to drop off their cargoes, but then disappear.
 
-By default, every planet produces exactly one good. Some planets may require one or two goods as input in order to produce a good. Planets that take goods as input have a stat for the quantity of that good they possess. That stat has a maximum. If the maximum would be exceeded, spillage of the good produces environmental destruction, represented as loss of HP. Any planet that produces goods may take ship hulls as an input. Note: stockpiles only exist for *input* goods. On the output side, the good doesn't exist until it is put on a ship for delivery.
+Every planet except the HQ makes exactly one product, which may be a resource, an engine type, a module type, or warships. Some planets may require one or two resources as inputs in order to produce a good. Planets that take resources as input have a stat for the quantity of that resource in their stockpiles. That stat has a maximum. If the maximum would be exceeded, spillage of the good produces environmental destruction, represented as loss of HP. Note: stockpiles only exist for *input* goods. On the output side, the good doesn't exist until it is put on a ship for delivery.
 
-- Hostile Planets
-  Hostile planets produce negative goods. Instead of the player setting up routes, they are created automatically.
+Any non-hostile planet that produces goods may be sent engines. 
+You may also send modules to non-hostile planets.
 
-- HQ Planet
-Gold delivered to the HQ planet determines score and possibly victory. The HQ planet having 0 HP causes defeat. Area effect good must be sent to the HQ planet to be used. It should start the game with enough area effect goods that the player can try out effects. Stockpile limits should be pretty generous; we don't want people overflowing here and losing the game before they understand the mechanics.
+## Hostile Planets
+  Hostile planets produce Munitions. Instead of the player setting up routes, they are created automatically, preferring planets that are nearby and have lower HP. You may only send your own warships to hostile planets, not engines, resources, or modules. Hostile planets will be revealed either when triggered by exploration, or when Metacrystal quantities reach ceratin thresholds.
 
-- (Lab Planets)
-I'm removing this category, which was basically extra places to do area effects from. It doesn't seem necessary.
+## HQ Planet
+Gold delivered to the HQ planet determines score and possibly victory. The HQ planet having 0 HP causes defeat. Area effect resources must be sent to the HQ planet to be used. It starts with some Hyperchronite, but no other resources. It has no input maxima. It has twice the HP of other planets.
+
+
+## Starting Planets
+
+1. HQ. Takes Metacrystals (was Gold) and all area effect resources as inputs. (Hyperchronite, Infrachronite, Deuterium, and Pyrite.)
+
+2. Produces Antimatter. No inputs. Starts with a route to 3.
+
+3. Sends Basic Engines. Takes Antimatter as an input. Engines cannot be sent here; domestic production must be used to get more ships.
+
+4. Produces Hyperchronite (was Speedium.) No inputs.
+
+5. Produces Computronium. No inputs.
+
+6. Sends Scouts. Takes Computronium as an input.
+
+7. Produces Infrachronite. (was Slowium.)
+
+8. Produces Metacrystals. Takes Computronium and Hyperchronite as inputs. Has low input maxes.
+
+## Initially Unexplored Planets
+
+Unexplored planets have a scouting progress stat which is initially at 0, and increases as Scouts are sent to it. When that stat hits a threshold, the planet is revealed, and may be used as any other planet.
+
+Exploration will randomly pick one of the non hostile planets within a tier. Hostile planets within a tier will be revealed at the same time that one of the last two planets in a tier is revealed.
+
+### First Tier. 
+
+9. Produces Deuterium. No inputs.
+
+10. Produces Pyrite. No inputs.
+
+11. Sends Cutter Engines. Takes Hyperchronite and Basic Engines as inputs. Engines sent here are *inputs*, they cannot be sent to be used as ships; domestic production must be used to get more ships. Has Cutter ships.
+
+12. Sends Heavy Engines. Takes Infrachronite and Basic Engines as inputs. Engines sent here are *inputs*, they cannot be sent to be used as ships; domestic production must be used to get more ships. Has Heavy ships.
+
+13. Hostile Military Planet I. Sends Munitions. If it is not revealed by the exploration trigger, it will be revealed when Metacrystals are at 30% of the victory threshold.
+
+### Second Tier
+
+14. Military Planet. Sends munitions. Takes Antimatter as an input.
+
+15. Sends Construction Modules. Takes Computronium as input.
+
+16. Produces Selectable Resource. (Resource can be selected in the planet's info panel, and can be Hyperchronite or Infrachronite.)
+
+17. Produces Selectable Resource. (Resource can be selected in the planet's info panel, and can be Deuterium or Pyrite.)
+
+18. Produces Metacrystals. Takes Pyrite and Deuterium as inputs.
+
+19. Hostile military planet II. Sends Munitions on either Cutter or Heavy ships. (Determined randomly when revealed.) If it is not revealed by the exploration trigger, it will be revealed when Metacrystals are at 50% of the victory threshold.
+
+### Third Tier
+
+20. Sends Restoration Modules. Takes Infrachronite and Computronium as input.
+
+21. Produces Selectable Resource. (Resource can be selected in the planet's info panel, and can be Antimatter or Computronium.)
+
+22. Military Planet II. Sends Munitions. Takes Antimatter as an input.
+
+23. Grand Bazaar. Takes every Basic resource. (They all feed into the same input stat.) Produces Metacrystals.
+
+24. Hostile military planet III. Sends Munitions on all three kinds of ships. If it is not revealed by the exploration trigger, it will be revealed when Metacrystals are at 70% of the victory threshold.
 
 # Trade Routes
 
-Planets that produce goods may have at most one trade route originating from them. There should be enough route possibilities that choosing route destinations is a meaningful gameplay decision. When a trade route is active goods will arrive at the destination at a rate proportional to the travel time taken by the route, and the hulls available.
+Planets that produce resources may have at most one trade route originating from them and arriving at another planet. There is no limit to how many routes may have the same destination.
+A ship will be sent on an active route when:
+- At least one ship is present in the planet's ship queue.
+- All inputs are present in at least the amount of the capacity of the next ship in the queue.
+- The cooldown interval has passed since the last ship was sent.
 
-## Hostile Routes
+When the ships arrive at the destination planet, they will drop off their cargo into that planet's input stockpile, or affect the destination's stats (if the cargo is a module or munition) or create a ship at the destination (if the cargo is an engine.) Then the ship gates back to the origin planet, and goes to the back of the ship queue. (Order of ships in the queue matters now that we have three distinct kinds of ships.)
 
-## Negative HP
-The destination of this route should be chosen based on criteria that are reasonably transparent. The HQ should be a low priority target by default, so 
+Routes may be recalled. If a route is recalled, ships in that route remain in the queue when they return home.
 
-## (Negative other goods or stats)
-Could have planets that steal gold or other goods instead?
+If a new route is created while another route is active, all ships on the previous route must return home before they can use the new route.
 
-# Goods
+# Resources
 
-Goods may be primary (produced directly by worlds) or secondary (produced by worlds that accept primary goods as input)
+Basic resources are produced directly by planets. Engines, modules, and metacrystals require other resources to produce.
 
-# Primary Goods
+## Basic Resources
 
-- Gold
-  See HQ planet.
+- Antimatter
 
-- Hull metals
-  Produce Ships
+- Computronium
 
-- Chronium
-  Allows placement of Fast Zones and Slow Zones
+- Infrachronite
+  HQ stockpile allows placement of Slow Zones.
 
-Secondary Goods
-
-- Ships (Ship Engines?)
-  These are kind of a weird case. Every planet that produces goods has ships. But letting every planet do a ships route seems to make too much micromanagement. So only allowing Ships to be sent from a Ship producing world makes sense. Unlike all of the other goods, however, you wouldn't get your ship back after delivery. If the good is Ship Engines, then we can have it work exactly like other goods, and assume that the receiving planet automatically converts engines to ships. But since every planet can receive engines, it must be possible for a planet that produces engines to use them itself, which is like having a route to itself, which isn't otherwise a thing. I think this should just be a special case.
-
-- (Speedium/Slowium)
-  More effective goods that make higher level effects, but are specialized. Or, we could make these primary.
+- Hyperchronite
+  HQ stockpile allows placement of Fast Zones.
 
 - Pyrite
-  Allows placement of Pirate Swarms
+  HQ stockpile allows placement of Pirate Swarms.
 
 - Deuterium
-  Allows placement of Nebulae
+  HQ stockpile allows placement of Nebulae.
 
-- (Nullium)
-  Allows placement of Calming Zone. Should be rare.
+## Metacrystals
+  Metacrystals that have been shipped to the HQ Planet determine victory.
+
+## Modules, Munitions, and Scouts
+  These do not go into input stockpiles, but affect a planet's stats immediately when they are received.
+
+- Restoration Modules
+  Increases HP
+
+- Construction Modules
+  Increases Input stockpile Max.
+
+- Munitions
+  Decreases HP. These are only sent by Hostile Planets to your planets, or by your planets to Hostile planets.
+
+- Scouts
+  These can only be sent to Unexplored Planets. They increase the planet's Scouting Progress stat.   
+
+# Engines and Ships
+
+  Every planet that produces goods has ships. By default, they are basic ships. When a route is begun, ships are sent from the origin at regular intervals. In order to increase the number of ships, you must send engines to that planet. When a planet receives an engine, it immediately becomes a ship at that planet.
+  
+  Planets that produce ships are the exception. In order to get more ships there, you must use the domestic production interface rather than creating a route.
+
+  Engines have three types:
+
+- Basic engine
+  Makes Basic ships
+
+- Cutter engine
+  Makes Cutter ships. These are faster than standard ships and have the same capacity.
+
+- Heavy engine
+  Makes Heavy Ships, these are slower than standard ships, but have greater capacity.
 
 # Area Effects
 
-These can be generally be placed anywhere on the map. They are circular (or roughly, depending on map granularity) They cannot be placed where they would overlap with other area effects. (?)Placing area effects should be the main focus of gameplay.
+These can be generally be placed anywhere on the map. They are circular (or roughly, depending on map granularity) They cannot be placed where they would overlap with other area effects. Placing area effects should be the main focus of gameplay. After a period of time, they decay.
 
 - Fast Zone / Slow Zone
-  Speeds up or slows down routes passing through them.
+  Speeds up or slows down routes passing through them. On planets: decreases or increases the interval between sending ships.
 
 - Nebulae
-  Reduces volume of routes over a speed threshold.
+  Destroys a proportion of ships over a speed threshold. Note: this includes Cutter ships operating at their default speed. (On planets: ???)
 
 - Pirate Swarm
-  Reduces volume of routes under a speed threshold.
-
-- (Calming Zone)
-This effect is an exception to the no-overlapping effect rule, as its purpose is to erase other area effects.
+  Destroys a proportion of ship under a speed threshold. Note: this includes Heavy ships operating at their default speed. (On planets: steals from input stockpiles?) 
 
 # Events
 
-Any area effect may spontaneously be created at random. Hostile planets may appear. (Or unexplored worlds or barren worlds may turn into hostiles.)
+Any area effect may spontaneously be created at random. 

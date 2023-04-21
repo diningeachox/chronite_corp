@@ -75,29 +75,29 @@ vec3 getStars(in vec3 from, in vec3 dir, int levels, float power)
 
 void main()
 {
-	vec2 uv = gl_FragCoord.xy / u_resolution.xy;
-	vec2 uvo=(uv-.5)*2.;
-	vec2 oriuv=uv;
-	uv=uv*2.-1.;
-	uv.y*=u_resolution.y/u_resolution.x;
-	uv.y-=.03;
+		vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+		vec2 uvo=(uv-.5)*2.;
+		vec2 oriuv=uv;
+		uv=uv*2.-1.;
+		uv.y*=u_resolution.y/u_resolution.x;
+		uv.y-=.03;
 
-	vec3 dir=normalize(vec3(uv,.8));
+		vec3 dir=normalize(vec3(uv,.8));
 
-    mat2 camrot2 = rot2D(u_time / 1000.0);
-	dir.xy*=camrot2;
+    mat2 camrot2 = rot2D(u_time / 10000.0);
+		dir.xy*=camrot2;
     dir.yz*=rot2D(2.1);
     dir = normalize(dir);
-	vec3 from=vec3(0.0);
+		vec3 from=vec3(0.0);
     vec3 color=clamp(getStars(from, dir, 1, 0.5) * 1.5, 0.0, 1.0) * vec3(0.0, 0.0, 1.0);
-	vec3 color2=clamp(getStars(from, -dir, 2, 0.5) * 0.9, 0.0, 1.0) * vec3(1.0, 0.0, 0.0);
+		vec3 color2=clamp(getStars(from, -dir, 2, 0.5) * 0.9, 0.0, 1.0) * vec3(1.0, 0.0, 0.0);
     vec3 color3=clamp(getStars(from, -dir, 3, 0.5) * 0.7, 0.0, 1.0) * vec3(1.0, 1.0, 0.0);
 
-    //vec3 colorStars=clamp(getStars(from, dir, 15, 0.9), 0.0, 1.0);
-    color = color + color2 + color3;
-	color=clamp(color,vec3(0.0),vec3(1.0));
+    vec3 colorStars=clamp(getStars(from, dir, 15, 0.9), 0.0, 1.0);
+    color = color + color2 + color3 + colorStars;
+		color=clamp(color,vec3(0.0),vec3(1.0));
     color = pow(color, vec3(1.2));
-	gl_FragColor = vec4(color,1.);
+		gl_FragColor = vec4(color * 0.5, 0.7);
 }
 
 `;

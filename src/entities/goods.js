@@ -7,7 +7,8 @@ const goods = {
   hp: {name: "HP"},
   gold: {name: "Gold"},
   pyrite: {name: "Pyrite"},
-  deuterium: {name: "Deuterium"}
+  deuterium: {name: "Deuterium"},
+  null: {name: "Null"} //Placeholder for planets with no output
 }
 
 export default goods;

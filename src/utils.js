@@ -1,4 +1,37 @@
 /**
+Useful data strutures
+**/
+
+export function Queue(){
+    this.data = new Array(0);
+    this.len = 0;
+}
+Queue.prototype.isEmpty = function(){
+    return (this.len == 0);
+}
+Queue.prototype.pop = function(){
+    if (this.data.length > 0){
+        this.len -= 1;
+        return this.data.splice(0, 1)[0];
+    }
+    throw "Trying to pop an empty queue!"
+}
+Queue.prototype.enqueue = function(item){
+    this.data.push(item);
+    this.len += 1;
+}
+Queue.prototype.top = function(){
+    if (this.len > 0){
+        return this.data[0];
+    }
+    throw "Queue is empty!"
+}
+
+Queue.prototype.size = function(){
+    return this.len;
+}
+
+/**
 Useful helper functions and data structures for the game
 **/
 
