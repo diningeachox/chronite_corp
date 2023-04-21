@@ -20,6 +20,13 @@ ECS.Components.Capacity = function ComponentCapacity (value){
 };
 ECS.Components.Capacity.prototype.name = 'capacity';
 
+ECS.Components.Cooldown = function ComponentCooldown (value){
+    this.value = value;
+
+    return this;
+};
+ECS.Components.Cooldown.prototype.name = 'cooldown';
+
 ECS.Components.Speed = function ComponentSpeed (value){
     this.value = value;
 
@@ -33,6 +40,27 @@ ECS.Components.HP = function ComponentHP (value){
     return this;
 };
 ECS.Components.HP.prototype.name = 'hp';
+
+ECS.Components.Hostile = function ComponentHostile (value){
+    this.value = value;
+
+    return this;
+};
+ECS.Components.Hostile.prototype.name = 'hostile';
+
+ECS.Components.Scouted = function ComponentScouted (value){
+    this.value = value;
+
+    return this;
+};
+ECS.Components.Scouted.prototype.name = 'scouted';
+
+ECS.Components.Active = function ComponentActive (value){
+    this.value = value;
+
+    return this;
+};
+ECS.Components.Active.prototype.name = 'active';
 
 ECS.Components.OutputGood = function ComponentOutputGood (value){
     this.value = value;
@@ -89,6 +117,13 @@ ECS.Components.Lane = function ComponentLane (value){
     return this;
 };
 ECS.Components.Lane.prototype.name = 'lane';
+
+ECS.Components.Planet = function ComponentPlanet (value){
+    this.value = value;
+
+    return this;
+};
+ECS.Components.Planet.prototype.name = 'planet';
 
 //Sprite/mesh associated with entity
 ECS.Components.Asset = function ComponentAsset (value){

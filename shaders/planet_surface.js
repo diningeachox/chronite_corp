@@ -2,6 +2,7 @@ shaders.planet_vert = `
 varying vec3 vNormal;
 varying vec3 vColor;
 uniform float wetness;
+uniform float seed;
 varying vec4 vLight;
 
 float hash( const in float n ) {
@@ -61,7 +62,7 @@ float SmoothNoise( vec3 p )
 void main() {
 
   vNormal = mat3(transpose(inverse(modelViewMatrix))) * normal;
-  float height = SmoothNoise(normal) * 5.0 - 3.0 * wetness;
+  float height = SmoothNoise(normal + SmoothNoise(vec3(seed, seed, 0))) * 5.0 - 3.0 * wetness;
   vec3 newPosition = position + normal * height;
   float c = clamp(height, -3.0, 1.0);
   vColor = vec3(c, c, c);

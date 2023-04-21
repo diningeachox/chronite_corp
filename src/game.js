@@ -3,8 +3,10 @@ import * as Scene from './scenes.js';
 import * as Assets from './assets.js';
 import {clip} from "./utils.js";
 import {Vector2D} from "./vector2D.js";
-import {hqPlanet, startingPlanet} from "./entities/planet.js";
+import {startingPlanet, outerPlanet} from "./entities/planet.js";
 import {basic_ship, tanker, fleet} from "./entities/ship.js";
+import lane from "./entities/lane.js";
+
 //Variables from assets.js
 var canvas = Assets.canvas;
 var overlay = Assets.overlay;
@@ -174,20 +176,31 @@ class Game {
         this.selected_entity = null;
         this.hovered_entity = null;
 
+
+        this.planets = [];
         //Create starting planets
-        var hq = hqPlanet;
-        hq.components.position.value = new Vector2D(0, 0);
+        var startX = 0;
+        var startY = 0;
+        var startangle = 0;
+        for (var i = 1; i < 9; i++){
+            this.planets.push(startingPlanet(i, startX, startY));
+            startangle += (Math.PI / 3) * (0.5 + Math.random());
+            var ring = Math.floor(startangle / (Math.PI * 2)) + 1;
+            startX = 35 * ring * Math.cos(startangle);
+            startY = 35 * ring * Math.sin(startangle);
+        }
 
-        var pl = startingPlanet(0, 30.0, 20.0);
+        //Start route from 2 to 3
+        const l = lane({origin: this.planets[1], destination: this.planets[2]});
+        lanes[this.planets[1].id+","+this.planets[2].id] = l;
+        this.planets[1].components.lane.value = l;
 
-        var pl2 = startingPlanet(1, 52.0, 25.4);
+        //UI
 
-        var pl3 = startingPlanet(3, 36.0, 38.4);
-        this.planets = [pl, pl2, pl3];
+        //Planet stats panel
+        this.stat_panel = new Scene.StatPanel(20, 20, canvas.width / 6, canvas.width / 8);
+
         this.frame = 0;
-
-        //Planet stats
-        this.stat_panel = new Scene.StatPanel(20, 20, canvas.width / 6, canvas.width / 10);
 
     }
     update(delta){

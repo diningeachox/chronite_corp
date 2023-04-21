@@ -168,7 +168,7 @@ function readTextFile(file, callback) {
 }
 
 
-const select_geometry = new THREE.SphereGeometry( 70, 32, 32 );
+const select_geometry = new THREE.SphereGeometry( 80, 32, 32 );
 
 const bar_geometry = new THREE.PlaneBufferGeometry( 120, 15 );
 export function StarFactory(x, y){
@@ -176,9 +176,10 @@ export function StarFactory(x, y){
     //Color
     const uniforms = {
       color: { value: new THREE.Color( 0x00a822 ) },
-      wetness: {value: Math.random() * 0.8 + 0.2}
+      wetness: {value: Math.random() * 0.8 + 0.2},
+      seed: {value: Math.random() + 1.0},
     };
-    uniforms.color.value.setHex( Math.random() * 0xffffff );
+    uniforms.color.value.setHex( Math.random() * 0xffff87 );
     const size = 1 - Math.random() * 0.2;
 
     //const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
@@ -243,11 +244,12 @@ export function LaneFactory(source, destination){
     //Linematerial with linewidth replaced by an attribute
     const matLine = new LineMaterial( {
       color: 0xffffff,
-      linewidth: 5, // in pixels
+      linewidth: 8, // in pixels
       vertexColors: true,
       //resolution:  // to be set by renderer, eventually
       dashed: false,
       alphaToCoverage: true,
+      opacity: 0.5
 
     } );
     matLine.resolution.set( gl.width, gl.height); //Set screen resolution (very important!)
@@ -268,6 +270,7 @@ export function SpriteFactory(x, y, src){
     const material = new THREE.SpriteMaterial( { map: map } );
     const sprite = new THREE.Sprite( material );
     sprite.position.set(x, y, 0);
+    sprite.scale.set(2, 2, 2);
     sprite.layers.disableAll();
     sprite.layers.set(2); //Layer 2 so it's non-interactable
     scene.add(sprite);

@@ -64,19 +64,17 @@ ECS.systems.selection = function systemSelection (game) {
                                 var outputgood = originplanet.components.outputgood.value;
                                 //Only create lane if the destination planet's inputs match origin planet's outputs
                                 //debugger;
-                                if (entity.components.inputgoods.value.hasOwnProperty(outputgood.name.toLowerCase())){
+                                if (entity.components.inputgoods.value.hasOwnProperty(outputgood)){
                                     //Check for duplicates!!!!
-                                    const l = lane({origin: originplanet, destination: destinationplanet});
-                                    //Populate the lane dictionary
-                                    lanes[new Set([originplanet.id, destinationplanet.id])] = l;
+                                    if (originplanet.components.lane.value == null){
+                                        const l = lane({origin: originplanet, destination: destinationplanet});
+                                        //Populate the lane dictionary
+                                        lanes[originplanet.id+","+destinationplanet.id] = l;
+                                        originplanet.components.lane.value = l;
 
-                                    //debugger;
-                                    //Create and send fleet
-                                    var x = originplanet.components.position.value.x;
-                                    var y = originplanet.components.position.value.y;
-                                    var ships = [basic_ship(x, y, outputgood), basic_ship(x, y, outputgood), tanker(x, y, outputgood)];
-
-                                    var fl = fleet(x, y, l, ships);
+                                    } else {
+                                        //Warning message
+                                    }
                                 }
                             }
                         }
@@ -96,6 +94,7 @@ ECS.systems.selection = function systemSelection (game) {
 }
 
 var planet_type = ["hq", "standard", "hostile"];
+const max_cooldown = 60;
 ECS.systems.updateEntities = function systemUpdateEntities(game, delta){
 
     for (var key of Object.keys(ECS.entities)){
@@ -104,6 +103,19 @@ ECS.systems.updateEntities = function systemUpdateEntities(game, delta){
         if (planet_type.includes(ent.components.type.value)){
             //Update Planets
             var inputs = ent.components.inputgoods.value;
+            if (ent.components.cooldown.value > 0) ent.components.cooldown.value -= delta;
+            //Send ships if planet has a lane and has ships
+            var lane = ent.components.lane.value;
+            if (lane != null && !ent.components.ships.value.isEmpty()){
+                //debugger;
+                if (ent.components.cooldown.value <= 0){
+                    ent.components.cooldown.value = max_cooldown;
+                    //Send ship at top of queue
+                    var ship = ent.components.ships.value.pop();
+                    ship.components.active.value = true;
+                    ship.components.carry.value = ship.components.capacity.value;
+                }
+            }
 
             //Overabundance penalty
             for (var key of Object.keys(inputs)){
@@ -115,55 +127,49 @@ ECS.systems.updateEntities = function systemUpdateEntities(game, delta){
 
             //Update lanes
 
-        } else if (ent.components.type.value == "fleet"){
-            //Update Fleets
-            var ships = ent.components.ships.value;
-            var total_goods = 0;
-            var lane = ent.components.lane.value;
-            var orig = lane.components.originplanet.value; //Origin planet
-            var dest = lane.components.destinationplanet.value; //Destination planet
-            var dir = null;
-            var target = "dest";
-            if (ships[0].components.carry.value > 0){
-                //Drop off goods if capacity is > 0 and at destination planet
-                dir = dest.components.position.value.subtract(ent.components.position.value);
-            } else {
-                dir = orig.components.position.value.subtract(ent.components.position.value);
-                target = "orig";
-            }
-            var distance = dir.modulus();
-
-            //debugger;
-            if (distance < ent.components.speed.value * delta){
-
-                for (var i = 0; i < ships.length; i++){
-                    if (target == "dest"){
-                        //Ships drop off goods
-                        total_goods += ships[i].components.carry.value;
-                        ships[i].components.carry.value = 0;
-                    } else {
-                        //Ships load up goods
-                        ships[i].components.carry.value = ships[i].components.capacity.value;
+        } else if (ent.components.type.value == "ship"){
+            //Update active ships
+            if (ent.components.active.value){
+                var planet = ent.components.planet.value;
+                if (planet != null) {
+                    var lane = planet.components.lane.value;
+                    if (lane != null){
+                        //debugger;
+                        var dest = lane.components.destinationplanet.value; //Destination planet
+                        var dir = dest.components.position.value.subtract(ent.components.position.value);
+                        var target = "dest";
+                        if (ent.components.carry.value == 0){
+                            //Return to orig planet if ship is empty
+                            dir = planet.components.position.value.subtract(ent.components.position.value);
+                            target = "orig";
+                        }
+                        var distance = dir.modulus();
+                        var angle = dir.angle();
+                        //debugger;
+                        if (distance < ent.components.speed.value * delta){
+                            if (target == "dest"){
+                                //Ships drop off goods
+                                var dest_inputs = dest.components.inputgoods.value;
+                                dest_inputs[ent.components.outputgood.value].current += ent.components.carry.value;
+                                ent.components.carry.value = 0;
+                            } else {
+                                //Ships load up goods
+                                ent.components.active.value = false;
+                                planet.components.ships.value.enqueue(ent);
+                            }
+                        } else {
+                            //Move ship toward target
+                            var movement = dir.normalize().scalarMult(ent.components.speed.value * delta);
+                            ent.components.position.value = ent.components.position.value.add(movement);
+                            //Move sprite with actual ship position
+                            var sprite = Assets.scene.getObjectByProperty("uuid", ent.components.asset.value);
+                            sprite.position.x = ent.components.position.value.x;
+                            sprite.position.y = ent.components.position.value.y;
+                            sprite.material.rotation = angle + Math.PI / 2;
+                        }
                     }
                 }
-                //Add total goods to destination planet
-                if (total_goods > 0){
-                    var dest_inputs = dest.components.inputgoods.value;
-                    var good_name = ships[0].components.outputgood.value.name.toLowerCase();
-                    dest_inputs[good_name].current += total_goods;
-                }
-            } else {
-                //Move towards it
-                var movement = dir.normalize().scalarMult(ent.components.speed.value * delta);
-                ent.components.position.value = ent.components.position.value.add(movement);
-                for (var i = 0; i < ships.length; i++){
-                    var sprite = Assets.scene.getObjectByProperty("uuid", ships[i].components.asset.value);
-                    ships[i].components.position.value = ships[i].components.position.value.add(movement);
-                    sprite.position.x = ships[i].components.position.value.x;
-                    sprite.position.y = ships[i].components.position.value.y;
-                }
             }
-
         }
     }
 

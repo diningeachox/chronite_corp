@@ -305,7 +305,24 @@ export class StatPanel extends Panel {
         ol.font="15px dialogFont";
         ol.fillStyle = "black";
         ol.textAlign = "left";
-        ol.fillText("HP: " + planet.components.hp.value + "%", this.x + 10, this.y + 80);
+        ol.fillText("HP: " + planet.components.hp.value + "%", this.x + 10, this.y + 60);
+        ol.fillText("Input Goods: ", this.x + 10, this.y + 80);
+        var inputgoods = planet.components.inputgoods.value;
+        var outputgood = planet.components.outputgood.value;
+        var i = 1;
+        for (var key of Object.keys(inputgoods)){
+            ol.fillText(key+": "+inputgoods[key].current+"/"+inputgoods[key].max, this.x + 40, this.y + 80 + i * 20);
+            i++;
+        }
+        if (Object.keys(inputgoods).length == 0) {
+            ol.fillText("N/A", this.x + 40, this.y + 80 + i * 20);
+            i++;
+        }
+
+        ol.fillText("Output Good: "+outputgood, this.x + 10, this.y + 80 + i * 20);
+        i++;
+        ol.fillText("Time until next ship: "+planet.components.cooldown.value, this.x + 10, this.y + 80 + i * 20);
+
     }
     load(){
     }

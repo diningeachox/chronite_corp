@@ -11,7 +11,9 @@ const ship = (config) => {
     ent.addComponent( new ECS.Components.Capacity(config.capacity));
     ent.addComponent( new ECS.Components.Carry(0));
     ent.addComponent( new ECS.Components.Type("ship"));
-    ent.addComponent( new ECS.Components.OutputGood(config.output || goods.metal));
+    ent.addComponent( new ECS.Components.OutputGood(config.output || ""));
+    ent.addComponent( new ECS.Components.Planet(null));
+    ent.addComponent( new ECS.Components.Active(false));
     //ent.addComponent( new ECS.Components.Lane(config.lane));
     var uuid = ShipFactory(ent.components.position.value.x, ent.components.position.value.y, config.type);
     matching_entity[uuid] = ent;
@@ -21,10 +23,12 @@ const ship = (config) => {
 }
 
 //Ship types
-const basic_ship = (x, y, good) => {return ship({position: new Vector2D(x, y), hp: 100, speed: 1.0, capacity: 1, output: good, type: 0})}
-const tanker = (x, y, good) => {return ship({position: new Vector2D(x, y), hp: 500, speed: 0.5, capacity: 5, output: good, type: 1})} //Massive and slow but can store a lot
-const cutter = (x, y, good) => {return ship({position: new Vector2D(x, y), hp: 100, speed: 1.5, capacity: 1, output: good, type: 2})}
+const basic_ship = (x, y, good) => {return ship({position: new Vector2D(x, y), hp: 100, speed: 0.3, capacity: 1, output: good, type: 0})}
+const tanker = (x, y, good) => {return ship({position: new Vector2D(x, y), hp: 500, speed: 0.15, capacity: 5, output: good, type: 1})} //Massive and slow but can store a lot
+const cutter = (x, y, good) => {return ship({position: new Vector2D(x, y), hp: 100, speed: 0.45, capacity: 1, output: good, type: 2})}
 
+
+//DOn't need anymore, delete
 const group = (config) => {
     const ent = new ECS.Entity();
     ent.addComponent( new ECS.Components.Position(config.position || new Vector2D(0, 0)));

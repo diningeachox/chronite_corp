@@ -153,7 +153,7 @@ for (var key of Object.keys(arr)) {
     loadedImages++;
     promises.push(loadImage(key, loadedImages));
 }
-
+//init();
 promises.push(addSound("button_click", sfx_sources, sfx_ctx, "./audio/button_click.ogg"));
 promises.push(addSound("main", music_sources, music_ctx, "./audio/main.opus"));
 Promise.all(promises)
