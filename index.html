@@ -127,6 +127,9 @@ modules.init = init;
 var promises = [];
 
 promises.push(addSound("button_click", sfx_sources, sfx_ctx, "./audio/button_click.ogg"));
+
+//Music
+promises.push(addSound("main", music_sources, music_ctx, "./audio/main.opus"));
 Promise.all(promises)
   .then(function gameInit() {
       document.getElementsByClassName("load_text")[0].innerHTML = "";
