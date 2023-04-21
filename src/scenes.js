@@ -126,7 +126,7 @@ export class Menu extends Scene {
         c.font="80px dialogFont";
         c.fillStyle = "white";
         c.textAlign = "center";
-        c.fillText("Mercury Inc.", canvas.width/2, 190);
+        c.fillText("Chronite Corporation", canvas.width/2, 190);
 
         for (var i = 0; i < this.buttons.length; i++){
             this.buttons[i].draw(c);
@@ -238,7 +238,7 @@ export class GameScene extends Scene {
     load(){
         super.load();
         //Play main game music
-        music_player.setBuffer(music_sources["main"].src.buffer);
+        music_player.setBuffer(music_sources["main"]);
         music_player.play(true);
     }
     unload(){
