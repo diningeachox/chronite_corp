@@ -134,7 +134,6 @@ ECS.systems.updateEntities = function systemUpdateEntities(game, delta){
                 if (planet != null) {
                     var lane = planet.components.lane.value;
                     if (lane != null){
-                        //debugger;
                         var dest = lane.components.destinationplanet.value; //Destination planet
                         var dir = dest.components.position.value.subtract(ent.components.position.value);
                         var target = "dest";
@@ -172,10 +171,7 @@ ECS.systems.updateEntities = function systemUpdateEntities(game, delta){
             }
         }
     }
-
 }
-
-
 
 ECS.systems.renderEntities = function systemRender (game, delta) {
     for (var key of Object.keys(ECS.entities)){

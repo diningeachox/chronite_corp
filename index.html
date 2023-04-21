@@ -70,8 +70,10 @@
     var lanes = {};
 
     //Game flags
-    var flags = {"mouse_down": false, "mouse_click": false,
-                  "shift": false};
+    var flags = {"mouse_down": false,
+                "mouse_click": false,
+                "shift": false,
+                "field": null};
 
     //Shaders
     var shaders = {};
@@ -133,7 +135,7 @@
 
 import {init} from './src/game.js';
 import {AudioPlayer, addSound} from './src/sound.js';
-import volume from './src/config.js'
+import volume from './src/config.js';
 
 function loadImage(key, num){
     images[key] = new Image();

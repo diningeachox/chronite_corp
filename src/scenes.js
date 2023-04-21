@@ -192,6 +192,7 @@ export class GameScene extends Scene {
       var speed_button = new Button({x: this.effects_panel.x + 120, y: this.effects_panel.y + 100, width:150, height:50, label:"Speed Field",
             onClick: function(){
                 playSound(sfx_sources["button_click"].src, sfx_ctx);
+                flags["field"] = "speed";
             }
            });
       this.effects_panel.addButton(speed_button);
@@ -199,6 +200,7 @@ export class GameScene extends Scene {
       var slow_button = new Button({x: this.effects_panel.x + 300, y: this.effects_panel.y + 100, width:150, height:50, label:"Slow Field",
             onClick: function(){
                 playSound(sfx_sources["button_click"].src, sfx_ctx);
+                flags["field"] = "slow";
             }
            });
       this.effects_panel.addButton(slow_button);
@@ -206,11 +208,10 @@ export class GameScene extends Scene {
       var nebula_button = new Button({x: this.effects_panel.x + 480, y: this.effects_panel.y + 100, width:150, height:50, label:"Nebula Field",
             onClick: function(){
                 playSound(sfx_sources["button_click"].src, sfx_ctx);
+                flags["field"] = "nebula";
             }
            });
       this.effects_panel.addButton(nebula_button);
-
-
 
       this.panels = [this.info_panel, this.effects_panel];
     }
