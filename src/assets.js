@@ -103,7 +103,7 @@ export const plane_uniforms = {
 export const plane_material = new THREE.ShaderMaterial( {
     uniforms: plane_uniforms,
     vertexShader: shaders.vert,
-    fragmentShader: shaders.nebula
+    fragmentShader: shaders.frag
 } );
 
 export const background_material = new THREE.ShaderMaterial({
