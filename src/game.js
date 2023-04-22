@@ -5,6 +5,7 @@ import {clip} from "./utils.js";
 import {Vector2D} from "./vector2D.js";
 import {startingPlanet, outerPlanet} from "./entities/planet.js";
 import {basic_ship, tanker, fleet} from "./entities/ship.js";
+import {area_field} from "./entities/aoe.js";
 import lane from "./entities/lane.js";
 
 //Variables from assets.js
@@ -199,6 +200,7 @@ class Game {
 
         //Planet stats panel
         this.stat_panel = new Scene.StatPanel(20, 20, canvas.width / 6, canvas.width / 8);
+        this.fields = [];
 
         this.frame = 0;
 
@@ -209,6 +211,25 @@ class Game {
         //ECS.entities[222].rotation.set(0.0, this.score / 100.0, 0.0);
         //ECS.entities[223].rotation.set(this.score / 300.0, -this.score / 100.0, 0.0);
         //ECS.entities[224].rotation.set(this.score / 300.0, 0.0, -this.score / 500.0);
+        if (flags["mouse_down"] && flags["field"] != null){
+            //Make a field
+            var vec = new THREE.Vector3(); // create once and reuse
+            var pos = new THREE.Vector3(); // create once and reuse
+
+            vec.set(
+                Assets.pointer.x,
+                Assets.pointer.y,
+                0.5 );
+
+            //vec.unproject( Assets.ortho_camera );
+
+            vec.sub( Assets.ortho_camera.position ).normalize();
+
+            var distance = (-50 - Assets.ortho_camera.position.z) / vec.z;
+
+            pos.copy( Assets.ortho_camera.position ).add( vec.multiplyScalar( distance ) );
+            var field = area_field(pos.x, pos.y, flags["field"]);
+        }
 
         ECS.systems.selection(this);
         ECS.systems.updateEntities(this, delta);

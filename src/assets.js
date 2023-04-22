@@ -292,3 +292,22 @@ export const ShipFactory = (x, y, type) => {
     }
     return null;
 }
+
+// Create an area effect field
+export function FieldFactory(x, y, size, type){
+    const geometry = new THREE.CircleGeometry( size, 32 );
+    const material = new THREE.MeshBasicMaterial({
+        color: 0xff0000,
+        transparent: true,
+        opacity: 0.15
+    });
+    const circle = new THREE.Mesh( geometry, material );
+
+    circle.position.set(x, y, -50);
+    circle.scale.set(1, 1, 1);
+    circle.layers.disableAll();
+    circle.layers.set(2); //Layer 2 so it's non-interactable
+    scene.add( circle );
+
+    return circle.uuid;
+}

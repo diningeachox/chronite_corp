@@ -97,6 +97,13 @@ ECS.Components.Selected = function ComponentSelected (value){
 };
 ECS.Components.Selected.prototype.name = 'selected';
 
+ECS.Components.Size = function ComponentSize (value){
+    this.value = value;
+
+    return this;
+};
+ECS.Components.Size.prototype.name = 'size';
+
 ECS.Components.OriginPlanet = function ComponentOriginPlanet (value){
     this.value = value;
 
