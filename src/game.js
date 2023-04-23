@@ -219,16 +219,16 @@ class Game {
             vec.set(
                 Assets.pointer.x,
                 Assets.pointer.y,
-                0.5 );
+                0 );
 
             //vec.unproject( Assets.ortho_camera );
 
             vec.sub( Assets.ortho_camera.position ).normalize();
 
-            var distance = (-50 - Assets.ortho_camera.position.z) / vec.z;
+            var distance = (-80 - Assets.ortho_camera.position.z) / vec.z;
 
             pos.copy( Assets.ortho_camera.position ).add( vec.multiplyScalar( distance ) );
-            var field = area_field(pos.x, pos.y, flags["field"]);
+            var field = area_field(vec.x, vec.y, flags["field"]);
         }
 
         ECS.systems.selection(this);

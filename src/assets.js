@@ -303,8 +303,7 @@ export function FieldFactory(x, y, size, type){
     });
     const circle = new THREE.Mesh( geometry, material );
 
-    circle.position.set(x, y, -50);
-    circle.scale.set(1, 1, 1);
+    circle.position.set(x, y, -80);
     circle.layers.disableAll();
     circle.layers.set(2); //Layer 2 so it's non-interactable
     scene.add( circle );
