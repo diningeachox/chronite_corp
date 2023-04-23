@@ -6,6 +6,13 @@ ECS.Components.Type = function ComponentType (value){
 };
 ECS.Components.Type.prototype.name = 'type';
 
+ECS.Components.Choices = function ComponentChoices (value){
+    this.value = value;
+
+    return this;
+};
+ECS.Components.Choices.prototype.name = 'choices';
+
 ECS.Components.Carry = function ComponentCarry (value){
     this.value = value;
 

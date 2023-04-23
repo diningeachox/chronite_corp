@@ -48,10 +48,12 @@
 <body style="background-color:black;">
 <div class="wrapper">
     <canvas id=canvas width=1000 height=580
-        style=" z-index: 3;"></canvas>
-    <canvas id="overlay" width="1000" height="580"
         style=" z-index: 4;"></canvas>
+    <canvas id="overlay" width="1000" height="580"
+        style=" z-index: 5;"></canvas>
     <canvas id="gl" width="1000" height="580"
+            style=" z-index: 3;"></canvas>
+    <canvas id="bg" width="1000" height="580"
             style=" z-index: 2;"></canvas>
 </div>
 
@@ -68,6 +70,9 @@
     var matching_sphere = {};
     var matching_entity = {};
     var lanes = {};
+    var fields = {};
+
+    var materials = {};
 
     //Game flags
     var flags = {"mouse_down": false,
@@ -82,6 +87,7 @@
 
     const images = {};
     var arr = {
+        "bg": "sprites/nebula.jpg",
         "cover1": "sprites/menu.jpg",
         "cover2": "sprites/menu2.jpg",
         "cover3": "sprites/menu3.jpg"
@@ -103,6 +109,8 @@
     var music_player;
     var ambient_player;
     var sfx_player;
+
+    var em;
 
     var time = Date.now(); //Game time (for FPS calculations)
 
@@ -135,7 +143,10 @@
 
 import {init} from './src/game.js';
 import {AudioPlayer, addSound} from './src/sound.js';
-import volume from './src/config.js';
+import {volume} from './src/config.js';
+import {EventManager} from "./src/eventmanager.js";
+
+em = new EventManager();
 
 function loadImage(key, num){
     images[key] = new Image();
@@ -191,9 +202,6 @@ for (var key of Object.keys(arr)) {
     promises.push(loadImage(key, loadedImages));
 }
 //init();
-
-//promises.push(addSound("button_click", sfx_sources, sfx_ctx, "./audio/button_click.ogg"));
-//promises.push(addSound("main", music_sources, music_ctx, "./audio/main.opus", 0.5, true));
 
 Promise.all(promises)
   .then(function gameInit() {

@@ -13,9 +13,12 @@ const planet = (config) => {
     ent.addComponent( new ECS.Components.Position(config.position || new Vector2D(0, 0)));
     ent.addComponent( new ECS.Components.Hostile(config.hostile || false));
     ent.addComponent( new ECS.Components.Selected(false));
-    ent.addComponent( new ECS.Components.Scouted(config.scouted || true));
+    ent.addComponent( new ECS.Components.Scouted(config.scouted));
     ent.addComponent( new ECS.Components.Cooldown(0));
     ent.addComponent( new ECS.Components.Lane(config.lane || null)); //outgoing lane
+    ent.addComponent( new ECS.Components.Choices(config.choices || null));
+
+    var starting_ships = config.starting_ships = ["basic", "basic", "basic"];
 
     ent.addComponent( new ECS.Components.Ships(new Queue()));
     //Meshes (one for actual planet, one spherical mesh for selection)
@@ -26,31 +29,35 @@ const planet = (config) => {
 
     //Producer planets start with 3 basic ships
     if (ent.components.outputgood.value != "Null"){
-        for (var i = 0; i < 3; i++){
-            var ship = basic_ship(ent.components.position.value.x,
-                        ent.components.position.value.y,
-                        ent.components.outputgood.value);
-            ship.components.planet.value = ent;
-            ent.components.ships.value.enqueue(ship);
+        for (var i = 0; i < starting_ships.length; i++){
+            if (starting_ships[i] == "basic"){
+                var ship = basic_ship(ent.components.position.value.x,
+                            ent.components.position.value.y,
+                            ent.components.outputgood.value);
+                ship.components.planet.value = ent;
+                ent.components.ships.value.enqueue(ship);
+            } else if (starting_ships[i] == "cutter"){
+                var ship = cutter(ent.components.position.value.x,
+                            ent.components.position.value.y,
+                            ent.components.outputgood.value);
+                ship.components.planet.value = ent;
+                ent.components.ships.value.enqueue(ship);
+            } else if (starting_ships[i] == "tanker"){
+                var ship = tanker(ent.components.position.value.x,
+                            ent.components.position.value.y,
+                            ent.components.outputgood.value);
+                ship.components.planet.value = ent;
+                ent.components.ships.value.enqueue(ship);
+            }
         }
     }
     return ent;
 }
 
-/*
-const hqPlanet = planet({type: "hq", input:{
-                                      metacrystals: {max:1000, current:0},
-                                      Hyperchronite: {max:1000, current:0},
-                                      Infrachronite: {max:1000, current:0},
-                                      Deuterium: {max:1000, current:0},
-                                      Pyrite: {max:1000, current:0}
-                                      },
-                                      ships:0}); //TODO use objects for planet types
-*/
 // The idea here is that we'll want to start with one of each
 // of a basic set of planets that provide everything.
 const startingPlanet = (i, x, y) => {
-  const config = {input: {}, type: "standard"};
+  const config = {input: {}, type: "standard", scouted: 1};
   switch (i) {
     case 1:
       config.input.Metacrystals = {max:30, current:0};
@@ -90,8 +97,8 @@ const startingPlanet = (i, x, y) => {
 }
 
 //Outer planets yet to be explored
-const outerPlanet = () => {
-  const config = {input: {}, type: "standard", scouted: false};
+const outerPlanet = (i, x, y) => {
+  const config = {input: {}, type: "standard", scouted: 0};
   switch (i) {
     case 9:
       config.output = "Deuterium";
@@ -116,18 +123,53 @@ const outerPlanet = () => {
       config.output = "Munition";
       config.input.Antimatter = {max:30, current:0};
       break;
-    case 23: //Bazzar
-      config.output = "Metacrystals";
-      config.input.Antimatter = {max:30, current:0};
+    case 15:
+      config.output = "Construction";
       config.input.Computronium = {max:30, current:0};
-      config.input.Hyperchronite = {max:30, current:0};
-      config.input.Infrachronite = {max:50, current:0};
+      break;
+    case 16:
+      config.output = "Hyperchronite";
+      config.choices = ["Hyperchronite", "Infrachronite"];
+      //config.input.Computronium = {max:30, current:0};
+      break;
+    case 17:
+      config.output = "Deuterium";
+      config.choices = ["Deuterium", "Pyrite"];
+      break;
+    case 18:
+      config.output = "Metacrystals";
       config.input.Deuterium = {max:30, current:0};
       config.input.Pyrite = {max:30, current:0};
       break;
+    case 19: //Hostile planet II
+      config.starting_ships = ["cutter", "cutter", "cutter"];
+      if (Math.random() > 0.5) config.starting_ships = ["tanker", "tanker", "tanker"];
+      config.output = "Munition";
+      break;
+    case 20:
+      config.output = "Restoration";
+      config.input.Infrachronite = {max:30, current:0};
+      config.input.Computronium = {max:30, current:0};
+      break;
+    case 21:
+      config.output = "Antimatter";
+      config.choices = ["Antimatter", "Computronium"];
+      break;
+    case 22:
+      config.output = "Munition";
+      config.input.Antimatter = {max:30, current:0};
+      break;
+    case 23: //Bazzar
+      config.output = "Metacrystals";
+      config.input.Currency = {max:100, current:0};
+      break;
+    case 24: //Hostile planet III
+      config.starting_ships = ["basic", "basic", "cutter", "cutter", "tanker", "tanker"];
+      config.output = "Munition";
+      break;
   }
-  config.position = new Vector2D(x, y);
 
+  config.position = new Vector2D(x, y);
   return planet(config);
 }
 

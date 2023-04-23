@@ -1,6 +1,6 @@
 import * as Assets from './assets.js';
 import * as Game from "./game.js";
-import {Button, Slider} from "./button.js";
+import {Button, ResourceButton, Slider} from "./button.js";
 import {playSound} from "./sound.js";
 
 //Variables from assets.js
@@ -8,6 +8,9 @@ var canvas = Assets.canvas;
 var overlay = Assets.overlay;
 var c = Assets.c;
 var ol = Assets.ol;
+
+var bg = Assets.bg;
+var bg_ctx = Assets.bg_ctx;
 
 export class SceneManager {
     constructor(){
@@ -65,6 +68,114 @@ export class Scene {
   unload() {
     throw new Error("Method 'unload()' must be implemented.");
   }
+}
+
+
+//Panels used in scenes
+export class Panel extends Scene {
+    constructor(x, y, w, h, title="Planet Info"){
+        super();
+        this.title = title;
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+
+        this.buttons = [];
+      //this.panels = [];
+    }
+    addButton(button){
+        this.buttons.push(button);
+    }
+    update(delta) {
+
+    }
+    render(delta){
+
+        ol.fillStyle = "#FFFFFF8A";
+        ol.fillRect(this.x, this.y, this.w, this.h);
+        ol.lineWidth = 4;
+        ol.strokeStyle = "white";
+        ol.strokeRect(this.x, this.y, this.w, this.h);
+        //Title
+        ol.font="30px dialogFont";
+        ol.fillStyle = "black";
+        ol.textAlign = "center";
+        ol.fillText(this.title, this.x + this.w/2, this.y + 40);
+
+        //Buttons
+        for (var i = 0; i < this.buttons.length; i++){
+            this.buttons[i].draw(ol);
+        }
+    }
+    load(){
+    }
+    unload(){
+    }
+}
+
+export class ResourcePanel extends Panel {
+    constructor(x, y, w, h){
+        super(x, y, w, h, "");
+        //this.visible = false;
+    }
+    update(delta) {
+
+    }
+    render(delta, planet){
+        //super.render(delta);
+        ol.font="15px dialogFont";
+        ol.fillStyle = "black";
+        ol.textAlign = "left";
+        ol.fillText("Resources", this.x + 10, this.y + 60);
+
+        for (var i = 0; i < this.buttons.length; i++){
+            this.buttons[i].draw(ol);
+        }
+    }
+    load(){
+    }
+    unload(){
+    }
+}
+
+
+export class StatPanel extends Panel {
+    constructor(x, y, w, h){
+        super(x, y, w, h, "Planet Statistics");
+        this.visible = false;
+    }
+    update(delta) {
+
+    }
+    render(delta, planet){
+        super.render(delta);
+        ol.font="15px dialogFont";
+        ol.fillStyle = "black";
+        ol.textAlign = "left";
+        ol.fillText("HP: " + planet.components.hp.value + "%", this.x + 10, this.y + 60);
+        ol.fillText("Input Goods: ", this.x + 10, this.y + 80);
+        var inputgoods = planet.components.inputgoods.value;
+        var outputgood = planet.components.outputgood.value;
+        var i = 1;
+        for (var key of Object.keys(inputgoods)){
+            ol.fillText(key+": "+inputgoods[key].current+"/"+inputgoods[key].max, this.x + 40, this.y + 80 + i * 20);
+            i++;
+        }
+        if (Object.keys(inputgoods).length == 0) {
+            ol.fillText("N/A", this.x + 40, this.y + 80 + i * 20);
+            i++;
+        }
+
+        ol.fillText("Output Good: "+outputgood, this.x + 10, this.y + 80 + i * 20);
+        i++;
+        ol.fillText("Time until next ship: "+planet.components.cooldown.value, this.x + 10, this.y + 80 + i * 20);
+
+    }
+    load(){
+    }
+    unload(){
+    }
 }
 
 /**
@@ -136,6 +247,8 @@ export class Menu extends Scene {
     }
 }
 
+export const info_panel = new Panel(window.innerWidth - 400 - 20, 100, 400, 250, "Planet Info");
+export const resource_panel = new ResourcePanel(20, 20, window.innerWidth / 3 * 2, 180, "Resources");
 /**
  * Game class, extends Scene class
  */
@@ -155,85 +268,125 @@ export class GameScene extends Scene {
       this.buttons = [menu_button];
 
       //Panels
-      this.info_panel = new Panel(canvas.width - 400 - 20, 100, 400, 650, "Planet Info");
       //Buttons
-      var route_button = new Button({x: this.info_panel.x + this.info_panel.w/2, y: this.info_panel.y + this.info_panel.h - 60, width:250, height:50, label:"Recall all routes",
+      var route_button = new Button({x: info_panel.x + info_panel.w/2, y: info_panel.y + info_panel.h - 60, width:250, height:40, label:"Recall Route",
             onClick: function(){
                 playSound(sfx_sources["button_click"].src, sfx_ctx);
+                em.notify("recall", true);
             }
            });
-      this.info_panel.addButton(route_button);
+      info_panel.addButton(route_button);
 
-      var fleet_button = new Button({x: this.info_panel.x + this.info_panel.w/2, y: this.info_panel.y + this.info_panel.h - 160, width:200, height:50, label:"Send Fleet",
+      var resource_button = new ResourceButton({x: info_panel.x + info_panel.w/2, y: info_panel.y + info_panel.h - 120, width:100, height:40, label:"",
             onClick: function(){
                 playSound(sfx_sources["button_click"].src, sfx_ctx);
             }
            });
-      this.info_panel.addButton(fleet_button);
+      info_panel.addButton(resource_button);
+
+      var fleet_button = new Button({x: info_panel.x + info_panel.w/2, y: info_panel.y + info_panel.h - 160, width:200, height:30, label:"Send Fleet",
+            onClick: function(){
+                playSound(sfx_sources["button_click"].src, sfx_ctx);
+            }
+           });
+      info_panel.addButton(fleet_button);
+
+
 
       //Sliders
-      var basic_ship_slider = new Slider({x: this.info_panel.x + this.info_panel.w/2, y: this.info_panel.y + this.info_panel.h - 460, width:250, height:50, label:"Basic Ship",
+      /*
+      var basic_ship_slider = new Slider({x: info_panel.x + info_panel.w/2, y: info_panel.y + info_panel.h - 460, width:250, height:50, label:"Basic Ship",
             onClick: function(){
                 playSound(sfx_sources["button_click"].src, sfx_ctx);
             }
            });
-      this.info_panel.addButton(basic_ship_slider);
+      info_panel.addButton(basic_ship_slider);
 
-      var tanker_slider = new Slider({x: this.info_panel.x + this.info_panel.w/2, y: this.info_panel.y + this.info_panel.h - 360, width:250, height:50, label:"Tanker",
+      var tanker_slider = new Slider({x: info_panel.x + info_panel.w/2, y: info_panel.y + info_panel.h - 360, width:250, height:50, label:"Tanker",
             onClick: function(){
                 playSound(sfx_sources["button_click"].src, sfx_ctx);
             }
            });
-      this.info_panel.addButton(tanker_slider);
+      info_panel.addButton(tanker_slider);
+      */
 
 
-      this.effects_panel = new Panel(20, 20, canvas.width / 3, 180, "Field Effects");
       //AoE buttons
-      var speed_button = new Button({x: this.effects_panel.x + 120, y: this.effects_panel.y + 100, width:150, height:50, label:"Speed Field",
+      var speed_button = new Button({x: resource_panel.x + 120, y: resource_panel.y + 80, width:100, height:30, label:"Speed Field",
             onClick: function(){
                 playSound(sfx_sources["button_click"].src, sfx_ctx);
                 flags["field"] = "speed";
             }
            });
-      this.effects_panel.addButton(speed_button);
+      speed_button.enabled = false;
+      resource_panel.addButton(speed_button);
 
-      var slow_button = new Button({x: this.effects_panel.x + 300, y: this.effects_panel.y + 100, width:150, height:50, label:"Slow Field",
+      var slow_button = new Button({x: resource_panel.x + 220, y: resource_panel.y + 80, width:100, height:30, label:"Slow Field",
             onClick: function(){
                 playSound(sfx_sources["button_click"].src, sfx_ctx);
                 flags["field"] = "slow";
             }
            });
-      this.effects_panel.addButton(slow_button);
+      slow_button.enabled = false;
+      resource_panel.addButton(slow_button);
 
-      var nebula_button = new Button({x: this.effects_panel.x + 480, y: this.effects_panel.y + 100, width:150, height:50, label:"Nebula Field",
+      var nebula_button = new Button({x: resource_panel.x + 320, y: resource_panel.y + 80, width:100, height:30, label:"Nebula Field",
             onClick: function(){
                 playSound(sfx_sources["button_click"].src, sfx_ctx);
                 flags["field"] = "nebula";
             }
            });
-      this.effects_panel.addButton(nebula_button);
+      nebula_button.enabled = false;
+      resource_panel.addButton(nebula_button);
 
-      this.panels = [this.info_panel, this.effects_panel];
+      var pyrite_button = new Button({x: resource_panel.x + 420, y: resource_panel.y + 80, width:100, height:30, label:"Pyrite Field",
+            onClick: function(){
+                playSound(sfx_sources["button_click"].src, sfx_ctx);
+                flags["field"] = "pyrite";
+            }
+           });
+      pyrite_button.enabled = false;
+      resource_panel.addButton(pyrite_button);
+
+      this.panels = [info_panel, resource_panel];
     }
     update(delta) {
         this.game.update(delta);
     }
     render(delta){
 
+
         c.clearRect(0, 0, canvas.width, canvas.height);
         ol.clearRect(0, 0, canvas.width, canvas.height);
-        this.game.render(delta);
+        if (!this.game.loading) {
+            this.game.render(delta);
 
 
-        //Buttons
-        for (var i = 0; i < this.buttons.length; i++){
-            this.buttons[i].draw(ol);
+            //Buttons
+            for (var i = 0; i < this.buttons.length; i++){
+                this.buttons[i].draw(ol);
+            }
+
+            //Only render info panel if a planet/lane is selected
+            if (this.game.selected_entity != null) info_panel.render(delta);
+            resource_panel.render(delta);
+        } else {
+            ol.font="80px Arial";
+            ol.fillStyle = "white";
+            ol.textAlign = "center";
+            ol.fillText("Generating galaxy...", canvas.width/2, canvas.height/2);
         }
 
-        //Only render info panel if a planet/lane is selected
-        if (this.game.selected_entity != null) this.info_panel.render(delta);
-        this.effects_panel.render(delta);
-
+        //Draw victory screen
+        if (this.game.end){
+            ol.fillStyle = "rgba(0, 0, 0, 0.4)";
+            ol.fillRect(0, 0, overlay.width, overlay.height);
+            ol.font="80px Arial";
+            ol.fillStyle = "white";
+            ol.textAlign = "center";
+            ol.fillText("Congratulations!", canvas.width/2, canvas.height/2);
+            ol.fillText("You have secured victory!", canvas.width/2, canvas.height/2 + 100);
+        }
 
     }
     load(){
@@ -241,93 +394,14 @@ export class GameScene extends Scene {
         //Play main game music
         music_player.setBuffer(music_sources["main"]);
         music_player.play(true);
+
+        bg_ctx.drawImage(images["bg"], 0, 0, bg.width, bg.height);
     }
     unload(){
         //this.game = null;
 
         //Stop music
         music_player.stop();
-    }
-}
-
-//Panels used in scenes
-export class Panel extends Scene {
-    constructor(x, y, w, h, title="Planet Info"){
-        super();
-        this.title = title;
-        this.x = x;
-        this.y = y;
-        this.w = w;
-        this.h = h;
-
-        this.buttons = [];
-      //this.panels = [];
-    }
-    addButton(button){
-        this.buttons.push(button);
-    }
-    update(delta) {
-
-    }
-    render(delta){
-
-        ol.fillStyle = "#FFFFFF8A";
-        ol.fillRect(this.x, this.y, this.w, this.h);
-        ol.lineWidth = 4;
-        ol.strokeStyle = "white";
-        ol.strokeRect(this.x, this.y, this.w, this.h);
-        //Title
-        ol.font="30px dialogFont";
-        ol.fillStyle = "black";
-        ol.textAlign = "center";
-        ol.fillText(this.title, this.x + this.w/2, this.y + 40);
-
-        //Buttons
-        for (var i = 0; i < this.buttons.length; i++){
-            this.buttons[i].draw(ol);
-        }
-    }
-    load(){
-    }
-    unload(){
-    }
-}
-
-export class StatPanel extends Panel {
-    constructor(x, y, w, h){
-        super(x, y, w, h, "Planet Statistics");
-        this.visible = false;
-    }
-    update(delta) {
-
-    }
-    render(delta, planet){
-        super.render(delta);
-        ol.font="15px dialogFont";
-        ol.fillStyle = "black";
-        ol.textAlign = "left";
-        ol.fillText("HP: " + planet.components.hp.value + "%", this.x + 10, this.y + 60);
-        ol.fillText("Input Goods: ", this.x + 10, this.y + 80);
-        var inputgoods = planet.components.inputgoods.value;
-        var outputgood = planet.components.outputgood.value;
-        var i = 1;
-        for (var key of Object.keys(inputgoods)){
-            ol.fillText(key+": "+inputgoods[key].current+"/"+inputgoods[key].max, this.x + 40, this.y + 80 + i * 20);
-            i++;
-        }
-        if (Object.keys(inputgoods).length == 0) {
-            ol.fillText("N/A", this.x + 40, this.y + 80 + i * 20);
-            i++;
-        }
-
-        ol.fillText("Output Good: "+outputgood, this.x + 10, this.y + 80 + i * 20);
-        i++;
-        ol.fillText("Time until next ship: "+planet.components.cooldown.value, this.x + 10, this.y + 80 + i * 20);
-
-    }
-    load(){
-    }
-    unload(){
     }
 }
 
