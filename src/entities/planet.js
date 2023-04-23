@@ -98,7 +98,7 @@ const startingPlanet = (i, x, y) => {
 
 //Outer planets yet to be explored
 const outerPlanet = (i, x, y) => {
-  const config = {input: {}, type: "standard", scouted: 0};
+  const config = {input: {Scout: {max:10, current:0}}, type: "standard", scouted: 0};
   switch (i) {
     case 9:
       config.output = "Deuterium";

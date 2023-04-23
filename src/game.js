@@ -9,6 +9,7 @@ import {area_field} from "./entities/aoe.js";
 import lane from "./entities/lane.js";
 import {pointvcircle, circlevcircle} from "./collision.js";
 import {stats} from "./config.js";
+import {playSound} from "./sound.js";
 
 //Variables from assets.js
 var canvas = Assets.canvas;
@@ -272,6 +273,8 @@ class Game {
                     var resource_type = stats.costs[flags["field"]].resource;
                     this.hq.components.inputgoods.value[resource_type].current -= stats.costs[flags["field"]].quantity;
                     Assets.circle.material.opacity = 0.0;
+
+                    playSound(sfx_sources[flags["field"]].src, sfx_ctx);
                     flags["field"] = null;
                 }
             } else {

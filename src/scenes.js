@@ -199,8 +199,11 @@ export class Menu extends Scene {
             }
           });
       this.buttons = [play_button, ins_button];
+      this.frame = 0;
     }
-    update(delta) {}
+    update(delta) {
+        this.frame++;
+    }
     render(delta){
         c.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -210,7 +213,7 @@ export class Menu extends Scene {
         // Add three color stops
         gradient.addColorStop(0, "rgba(0, 0, 0, 1.0)");
         gradient.addColorStop(r, "rgba(0, 0, 0, 1.0)");
-        gradient.addColorStop(0.5, "rgba(0, 0, 0, 0.0)");
+        gradient.addColorStop(0.5, "rgba(255, 255, 255, "+ (Math.sin(this.frame / 80.0) * 0.1 + 0.1) +")");
         gradient.addColorStop(1 - r, "rgba(0, 0, 0, 1.0)");
         gradient.addColorStop(1, "rgba(0, 0, 0, 1.0)");
         c.fillStyle = gradient;
@@ -243,7 +246,11 @@ export class Menu extends Scene {
             this.buttons[i].draw(c);
         }
     }
+    load(){
+
+    }
     unload(){
+        //music_player.stop();
     }
 }
 
@@ -271,7 +278,7 @@ export class GameScene extends Scene {
       //Buttons
       var route_button = new Button({x: info_panel.x + info_panel.w/2, y: info_panel.y + info_panel.h - 60, width:250, height:40, label:"Recall Route",
             onClick: function(){
-                playSound(sfx_sources["button_click"].src, sfx_ctx);
+                playSound(sfx_sources["click"].src, sfx_ctx);
                 em.notify("recall", true);
             }
            });
@@ -279,14 +286,14 @@ export class GameScene extends Scene {
 
       var resource_button = new ResourceButton({x: info_panel.x + info_panel.w/2, y: info_panel.y + info_panel.h - 120, width:100, height:40, label:"",
             onClick: function(){
-                playSound(sfx_sources["button_click"].src, sfx_ctx);
+                playSound(sfx_sources["click"].src, sfx_ctx);
             }
            });
       info_panel.addButton(resource_button);
 
       var fleet_button = new Button({x: info_panel.x + info_panel.w/2, y: info_panel.y + info_panel.h - 160, width:200, height:30, label:"Send Fleet",
             onClick: function(){
-                playSound(sfx_sources["button_click"].src, sfx_ctx);
+                playSound(sfx_sources["click"].src, sfx_ctx);
             }
            });
       info_panel.addButton(fleet_button);
@@ -314,7 +321,7 @@ export class GameScene extends Scene {
       //AoE buttons
       var speed_button = new Button({x: resource_panel.x + 120, y: resource_panel.y + 80, width:100, height:30, label:"Speed Field",
             onClick: function(){
-                playSound(sfx_sources["button_click"].src, sfx_ctx);
+                playSound(sfx_sources["click"].src, sfx_ctx);
                 flags["field"] = "speed";
             }
            });
@@ -323,7 +330,7 @@ export class GameScene extends Scene {
 
       var slow_button = new Button({x: resource_panel.x + 220, y: resource_panel.y + 80, width:100, height:30, label:"Slow Field",
             onClick: function(){
-                playSound(sfx_sources["button_click"].src, sfx_ctx);
+                playSound(sfx_sources["click"].src, sfx_ctx);
                 flags["field"] = "slow";
             }
            });
@@ -332,7 +339,7 @@ export class GameScene extends Scene {
 
       var nebula_button = new Button({x: resource_panel.x + 320, y: resource_panel.y + 80, width:100, height:30, label:"Nebula Field",
             onClick: function(){
-                playSound(sfx_sources["button_click"].src, sfx_ctx);
+                playSound(sfx_sources["click"].src, sfx_ctx);
                 flags["field"] = "nebula";
             }
            });
@@ -341,7 +348,7 @@ export class GameScene extends Scene {
 
       var pyrite_button = new Button({x: resource_panel.x + 420, y: resource_panel.y + 80, width:100, height:30, label:"Pyrite Field",
             onClick: function(){
-                playSound(sfx_sources["button_click"].src, sfx_ctx);
+                playSound(sfx_sources["click"].src, sfx_ctx);
                 flags["field"] = "pyrite";
             }
            });
@@ -392,6 +399,7 @@ export class GameScene extends Scene {
     load(){
         super.load();
         //Play main game music
+        music_player.stop();
         music_player.setBuffer(music_sources["main"]);
         music_player.play(true);
 

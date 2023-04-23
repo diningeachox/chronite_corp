@@ -26,6 +26,14 @@ gl.width = window.innerWidth;
 gl.height = window.innerHeight;
 gl.style.left = "0px";
 
+dialogFont = new FontFace('dialogFont', 'url(./fonts/Jost-500-Medium.otf)');
+dialogFont.load().then(
+    function(font){
+    // with canvas, if this is ommited won't work
+    document.fonts.add(font);
+    console.log('Dialog Font loaded');
+}).catch(console.error);
+
 // Video object for cutscene and intros (if needed)
 /*
 export const media = document.querySelector('video');
@@ -36,13 +44,7 @@ media.style.visibility = 'hidden';
 //Cursor
 export var cursor = new Cursor(ol, 0, 0);
 
-//fonts
-var dialogFont = new FontFace('dialogFont', 'url(../fonts/Jost-500-Medium.otf)');
-dialogFont.load().then(function(font){
-  // with canvas, if this is ommited won't work
-  document.fonts.add(font);
-  console.log('Dialog Font loaded');
-});
+
 
 
 /** WebGL renderer **/
@@ -170,7 +172,17 @@ function readTextFile(file, callback) {
     rawFile.send(null);
 }
 
+//HQ planet indicator
+const ring_geometry = new THREE.RingGeometry( 90, 95, 24 );
+const ring_material = new THREE.MeshBasicMaterial( { color: 0xff4a00, side: THREE.DoubleSide } );
+const ring = new THREE.Mesh( ring_geometry, ring_material );
+scene.add( ring );
+ring.scale.set(0.1, 0.1, 0.1);
+ring.position.set(0, 0, -80);
+ring.layers.disableAll();
+ring.layers.set(2); //Layer 1 for planets
 
+//Selection geometry
 const select_geometry = new THREE.SphereGeometry( 80, 16, 16 );
 
 const bar_geometry = new THREE.PlaneBufferGeometry( 120, 15 );
@@ -267,7 +279,6 @@ export function LaneFactory(source, destination){
     line.layers.set(1); //Layer 1
     scene.add(line);
 
-    console.log(line)
     console.log("Lane created!");
     return line.uuid;
 }

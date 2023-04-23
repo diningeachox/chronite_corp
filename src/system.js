@@ -11,7 +11,7 @@ var canvas = Assets.canvas;
 
 var planet_type = ["hq", "standard", "hostile"];
 var field_types = ["speed", "slow", "nebula", "pyrite"];
-var receiveables = ["Restoration", "Construction", "Munition", "Scout"]
+var receiveables = ["Restoration", "Construction", "Munition", "Basic", "Cutter", "Tanker"];
 const max_cooldown = 60;
 ECS.systems.selection = function systemSelection (game) {
     //Check raycasting intersections
@@ -50,9 +50,11 @@ ECS.systems.selection = function systemSelection (game) {
                 var hp_ratio = Math.max(0, matching_entity[intersects[0].object.uuid].components.hp.value / 100);
                 var panel_pos_x = ( vector.x * widthHalf ) + widthHalf;
                 var panel_pos_y = - ( vector.y * heightHalf ) + heightHalf;
-                game.stat_panel.visible = true;
-                game.stat_panel.x = panel_pos_x;
-                game.stat_panel.y = panel_pos_y;
+                if (entity.components.scouted.value){
+                    game.stat_panel.visible = true;
+                    game.stat_panel.x = panel_pos_x;
+                    game.stat_panel.y = panel_pos_y;
+                }
                 //ol.fillRect(panel_pos_x, panel_pos_y, 100 * hp_ratio, 20);
 
                 if (flags["mouse_click"]){
@@ -133,14 +135,47 @@ ECS.systems.updateEntities = function systemUpdateEntities(game, delta){
 
             //Overabundance penalty
             for (var key of Object.keys(inputs)){
-                if (inputs[key].current > inputs[key].max && game.frame % 40 == 0) ent.components.hp.value = Math.max(0, ent.components.hp.value - 1);
+                if (inputs[key].current > inputs[key].max && game.frame % 40 == 0 && key != "Scout") ent.components.hp.value = Math.max(0, ent.components.hp.value - 1);
             }
+
+            //Change scouted status
+            if (inputs.hasOwnProperty("Scout")){
+                if (inputs.Scout.current >= inputs.Scout.max) {
+                    //Change scouted status to true
+                    ent.components.scouted.value = 1;
+
+                    delete inputs.Scout;
+
+                }
+            }
+
+
 
             //Update HP bar
             matching_sphere[ent.components.asset.value].stat.scale.x = 0.1 * ent.components.hp.value / 100;
 
             //Update lanes
 
+        } else if (ent.components.type.value == "lane") {
+            var orig = ent.components.originplanet.value;
+            //Remove scout lanes
+            if (orig.components.outputgood.value == "Scout"){
+                //Recall lane, and ships
+                var dest = ent.components.destinationplanet.value;
+                //var dest_inputs = dest.components.inputgoods.value;
+                if (dest.components.scouted.value == 1){
+                    debugger;
+                    var mesh = Assets.scene.getObjectByProperty("uuid", ent.components.asset.value);
+                    //Delete mesh
+                    mesh.geometry.dispose();
+                    mesh.material.dispose();
+                    Assets.scene.remove( mesh );
+                    delete ECS.entities[ent.id]; //Delete lane from entities dict
+                    orig.components.lane.value = null;
+
+                }
+
+            }
         } else if (ent.components.type.value == "ship"){
             //Update active ships
             if (ent.components.active.value){
@@ -164,10 +199,23 @@ ECS.systems.updateEntities = function systemUpdateEntities(game, delta){
                                 //Ships drop off goods
                                 var dest_inputs = dest.components.inputgoods.value;
 
-                                //Goods that require the destinationplanet's input goods to match
-                                if (!receiveables.includes(ent.components.outputgood.value)){
-                                    dest_inputs[ent.components.outputgood.value].current += ent.components.carry.value;
-                                } else {
+                                if (dest_inputs.hasOwnProperty(ent.components.outputgood.value)){
+                                    //Goods that require the destinationplanet's input goods to match
+                                    if (!receiveables.includes(ent.components.outputgood.value)){
+                                        dest_inputs[ent.components.outputgood.value].current += ent.components.carry.value;
+                                    } else {
+                                        //Various non-input effects
+                                        var outputgood = ent.components.outputgood.value;
+                                        if (outputgood == "Munition"){
+                                            dest.components.hp.value = Math.max(0, dest.components.hp.value - 1);
+                                        } else if (outputgood == "Munition"){
+                                            dest.components.hp.value = Math.min(100, dest.components.hp.value + 1);
+                                        } else if (outputgood == "Construction"){
+                                            for (const input of dest_inputs){
+                                                dest_inputs[input].max += 1;
+                                            }
+                                        }
+                                    }
                                 }
                                 ent.components.carry.value = 0;
 
@@ -272,6 +320,15 @@ ECS.systems.cleanUp = function systemCleanUp (game, delta) {
             delete fields[key];
         }
     }
+
+    //Get rid of scout lanes
+    for (var key of Object.keys(ECS.entities)){
+        var ent = ECS.entities[key];
+
+        if (planet_type.includes(ent.components.type.value)){
+
+        }
+    }
 }
 
 ECS.systems.renderEntities = function systemRender (game, delta) {
@@ -289,9 +346,6 @@ ECS.systems.renderEntities = function systemRender (game, delta) {
                 planet.rotation.x -= delta / 400;
                 planet.rotation.y -= delta / 100;
             }
-
-
-
         }
     }
 }
