@@ -17,11 +17,22 @@ export var gl = document.getElementById('gl');
 export var c = canvas.getContext("2d");
 export var ol = overlay.getContext("2d");
 
+export var bg = document.getElementById('bg');
+export var bg_ctx = bg.getContext("2d");
+
 //export var projector = new THREE.Projector();
 
 gl.width = window.innerWidth;
 gl.height = window.innerHeight;
 gl.style.left = "0px";
+
+dialogFont = new FontFace('dialogFont', 'url(./fonts/Jost-500-Medium.otf)');
+dialogFont.load().then(
+    function(font){
+    // with canvas, if this is ommited won't work
+    document.fonts.add(font);
+    console.log('Dialog Font loaded');
+}).catch(console.error);
 
 // Video object for cutscene and intros (if needed)
 /*
@@ -33,13 +44,7 @@ media.style.visibility = 'hidden';
 //Cursor
 export var cursor = new Cursor(ol, 0, 0);
 
-//fonts
-var dialogFont = new FontFace('dialogFont', 'url(../fonts/Jost-500-Medium.otf)');
-dialogFont.load().then(function(font){
-  // with canvas, if this is ommited won't work
-  document.fonts.add(font);
-  console.log('Dialog Font loaded');
-});
+
 
 
 /** WebGL renderer **/
@@ -144,15 +149,15 @@ scene.background = null;
 
 
 //Background nebula
-const bg = new THREE.TextureLoader().load( "../sprites/nebula.jpg");
-bg.magFilter = THREE.NearestFilter;
-background_material.uniforms.textureSampler.value = bg;
+const background = new THREE.TextureLoader().load( "../sprites/nebula.jpg");
+background.magFilter = THREE.NearestFilter;
+background_material.uniforms.textureSampler.value = background;
 
 export var plane_mesh = new THREE.Mesh( plane_geometry, plane_material );
 plane_mesh.position.set( 0, 0, -100);
 plane_mesh.layers.disableAll();
 plane_mesh.layers.set(0); // Layer 0 for background
-scene.add( plane_mesh );
+//scene.add( plane_mesh );
 
 //Read any jsons we may use to store game data
 function readTextFile(file, callback) {
@@ -167,12 +172,25 @@ function readTextFile(file, callback) {
     rawFile.send(null);
 }
 
+//HQ planet indicator
+const ring_geometry = new THREE.RingGeometry( 90, 95, 24 );
+const ring_material = new THREE.MeshBasicMaterial( { color: 0xff4a00, side: THREE.DoubleSide } );
+const ring = new THREE.Mesh( ring_geometry, ring_material );
+scene.add( ring );
+ring.scale.set(0.1, 0.1, 0.1);
+ring.position.set(0, 0, -80);
+ring.layers.disableAll();
+ring.layers.set(2); //Layer 1 for planets
 
-const select_geometry = new THREE.SphereGeometry( 80, 32, 32 );
+//Selection geometry
+const select_geometry = new THREE.SphereGeometry( 80, 16, 16 );
 
 const bar_geometry = new THREE.PlaneBufferGeometry( 120, 15 );
+const black_material = new THREE.MeshBasicMaterial({
+    color: 0x2a3a2a
+});
 export function StarFactory(x, y){
-    const planet_geometry = new THREE.SphereGeometry( 64, 32, 32 );
+    const planet_geometry = new THREE.SphereGeometry( 64, 24, 24 );
     //Color
     const uniforms = {
       color: { value: new THREE.Color( 0x00a822 ) },
@@ -227,6 +245,7 @@ export function StarFactory(x, y){
     scene.add(hp_bar);
 
     matching_sphere[sphere.uuid] = {sel: sel_sphere, stat: hp_bar}; //Match the selection sphere with actual sphere
+    materials[sphere.uuid] = {1: shaderMaterial, 0: black_material};
     //scene.add(sphere);
     return sphere.uuid;
 }
@@ -253,13 +272,13 @@ export function LaneFactory(source, destination){
 
     } );
     matLine.resolution.set( gl.width, gl.height); //Set screen resolution (very important!)
-
     const line = new Line2( lane_geometry, matLine );
     line.computeLineDistances();
     line.scale.set( 1, 1, 1 );
     line.layers.disableAll();
     line.layers.set(1); //Layer 1
     scene.add(line);
+
     console.log("Lane created!");
     return line.uuid;
 }
@@ -293,13 +312,32 @@ export const ShipFactory = (x, y, type) => {
     return null;
 }
 
+//Field outline (before placing)
+const geometry = new THREE.CircleGeometry( 7, 32 );
+const material = new THREE.MeshBasicMaterial({
+    color: 0xffffff,
+    transparent: true,
+    opacity: 0.0,
+    wireframe: true
+});
+export const circle = new THREE.Mesh( geometry, material );
+
+circle.position.set(0, 0, -50);
+circle.layers.disableAll();
+circle.layers.set(2); //Layer 2 so it's non-interactable
+scene.add( circle );
+
 // Create an area effect field
 export function FieldFactory(x, y, size, type){
     const geometry = new THREE.CircleGeometry( size, 32 );
+    var color = 0x00ff00;
+    if (type == "speed"){
+        color = 0xffab00;
+    }
     const material = new THREE.MeshBasicMaterial({
-        color: 0xff0000,
+        color: color,
         transparent: true,
-        opacity: 0.15
+        opacity: 0.25
     });
     const circle = new THREE.Mesh( geometry, material );
 
@@ -308,6 +346,7 @@ export function FieldFactory(x, y, size, type){
     circle.layers.disableAll();
     circle.layers.set(2); //Layer 2 so it's non-interactable
     scene.add( circle );
+    fields[circle.uuid] = circle;
 
     return circle.uuid;
 }

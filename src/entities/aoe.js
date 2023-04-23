@@ -6,7 +6,7 @@ const field = (config) => {
     ent.addComponent( new ECS.Components.Position(config.position || new Vector2D(0, 0)));
     ent.addComponent( new ECS.Components.Size(config.size));
     ent.addComponent( new ECS.Components.Type(config.type || "speed"));
-    //ent.addComponent( new ECS.Components.Lane(config.lane));
+    ent.addComponent( new ECS.Components.Cooldown(500));
     var uuid = FieldFactory(ent.components.position.value.x,
                             ent.components.position.value.y,
                             ent.components.size.value,
