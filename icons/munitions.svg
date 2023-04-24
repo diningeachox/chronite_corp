@@ -15,7 +15,10 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   sodipodi:docname="munitions.svg">
+   sodipodi:docname="munitions.svg"
+   inkscape:export-filename="/home/munizao/projects/jams/shipping_game/icons/png/munitions.png"
+   inkscape:export-xdpi="29.09"
+   inkscape:export-ydpi="29.09">
   <defs
      id="defs2">
     <inkscape:path-effect
@@ -57,8 +60,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
-     inkscape:cx="117.85714"
-     inkscape:cy="102.14286"
+     inkscape:cx="15.831734"
+     inkscape:cy="100.12255"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -76,7 +79,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
