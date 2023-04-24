@@ -29,7 +29,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
-     inkscape:cx="15.831734"
+     inkscape:cx="-88.213977"
      inkscape:cy="100.12255"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
@@ -71,7 +71,7 @@
          cy="213.868"
          cx="-22.843069"
          id="path12692-5"
-         style="color:#000000;overflow:visible;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2.20000005;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1" />
+         style="color:#000000;overflow:visible;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2.7;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;stroke-miterlimit:4" />
       <path
          transform="matrix(1.274,0,0,1.274,230.95373,216.408)"
          inkscape:transform-center-x="-2.56e-06"
@@ -87,7 +87,7 @@
          sodipodi:sides="6"
          inkscape:flatsided="true"
          id="path15481-4-8"
-         style="color:#000000;overflow:visible;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
+         style="color:#000000;overflow:visible;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.56985871;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
          sodipodi:type="star" />
     </g>
   </g>
