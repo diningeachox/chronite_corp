@@ -78,7 +78,7 @@ uniform vec3 color;
 varying vec4 vLight;
 
 void main() {
-  vec3 light = vec3(0.5, 1.2, 3.0);
+  vec3 light = vec3(1.0, 0.8, 1.0);
   // ensure it's normalized
   light = normalize(light);
   // calculate the dot product of

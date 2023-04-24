@@ -12,6 +12,10 @@ export class Rectangle {
     }
 }
 
+export function pointvcircle(pt, center, radius){
+    return pt.subtract(center).modulus() <= radius;
+}
+
 
 export function circlevcircle(center1, radius1, center2, radius2){
     return center1.subtract(center2).modulus() <= radius1 + radius2;

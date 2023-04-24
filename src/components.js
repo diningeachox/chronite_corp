@@ -6,6 +6,13 @@ ECS.Components.Type = function ComponentType (value){
 };
 ECS.Components.Type.prototype.name = 'type';
 
+ECS.Components.Choices = function ComponentChoices (value){
+    this.value = value;
+
+    return this;
+};
+ECS.Components.Choices.prototype.name = 'choices';
+
 ECS.Components.Carry = function ComponentCarry (value){
     this.value = value;
 
@@ -82,6 +89,13 @@ ECS.Components.Ships = function ComponentShips (value){
     return this;
 };
 ECS.Components.Ships.prototype.name = 'ships';
+
+ECS.Components.ShipNumber = function ComponentShipNumber (value){
+    this.value = value;
+
+    return this;
+};
+ECS.Components.ShipNumber.prototype.name = 'shipnumber';
 
 ECS.Components.Position = function ComponentPosition (value){
     this.value = value;

@@ -11,6 +11,7 @@ const lane = (config) => {
     var dest = ent.components.destinationplanet.value;
     var uuid = LaneFactory(orig.components.position.value, dest.components.position.value);
     matching_entity[uuid] = ent;
+    ent.addComponent( new ECS.Components.Asset(uuid));
     return ent;
 }
 
