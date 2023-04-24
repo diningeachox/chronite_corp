@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="2.2in"
+   height="2.2in"
+   viewBox="0 0 55.880002 55.880003"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="engine-tanker.svg">
+  <defs
+     id="defs2">
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect54081"
+       is_visible="true"
+       lpeversion="1" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect55183"
+       is_visible="true"
+       lpeversion="1" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect63394"
+       is_visible="true"
+       lpeversion="1" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect63394-89"
+       is_visible="true"
+       lpeversion="1" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect63394-6"
+       is_visible="true"
+       lpeversion="1" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect63394-89-8"
+       is_visible="true"
+       lpeversion="1" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect39599-17"
+       is_visible="true"
+       lpeversion="1" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect39599-4-8"
+       is_visible="true"
+       lpeversion="1" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect39599-1"
+       is_visible="true"
+       lpeversion="1" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect39599-4-7"
+       is_visible="true"
+       lpeversion="1" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect39599"
+       is_visible="true"
+       lpeversion="1" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect39599-4"
+       is_visible="true"
+       lpeversion="1" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.979899"
+     inkscape:cx="117.85714"
+     inkscape:cy="102.14286"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="in"
+     inkscape:window-width="1920"
+     inkscape:window-height="969"
+     inkscape:window-x="0"
+     inkscape:window-y="40"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-241.11998)">
+    <g
+       transform="translate(143.73584,188.17075)"
+       id="g46789">
+      <g
+         id="g42171"
+         transform="matrix(0.61538463,0,0,0.61538463,-323.93728,6.1741521)">
+        <ellipse
+           style="color:#000000;overflow:visible;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2.20000005;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+           id="path39232"
+           cx="307.32306"
+           cy="121.412"
+           rx="9.3133392"
+           ry="40.639999" />
+        <path
+           inkscape:connector-curvature="0"
+           style="color:#000000;overflow:visible;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2.20000005;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+           d="m 307.32307,80.771998 h 15.24 c 12.92744,1.790558 25.34791,7.113618 35.56,15.239999 8.55549,6.808123 15.55596,15.558713 20.32,25.400003"
+           id="path39597"
+           inkscape:path-effect="#path-effect39599"
+           inkscape:original-d="m 307.32307,80.771998 h 15.24 c 0,0 23.70693,10.160264 35.56,15.239999 11.85307,5.079733 13.54693,16.933603 20.32,25.400003" />
+        <path
+           inkscape:connector-curvature="0"
+           style="color:#000000;overflow:visible;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2.20000005;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+           d="m 307.32307,162.052 h 15.24 c 12.92744,-1.79056 25.34791,-7.11362 35.56,-15.24 8.55549,-6.80812 15.55596,-15.55872 20.32,-25.4"
+           id="path39597-4"
+           inkscape:path-effect="#path-effect39599-4"
+           inkscape:original-d="m 307.32307,162.052 h 15.24 c 0,0 23.70693,-10.16026 35.56,-15.24 11.85307,-5.07973 13.54693,-16.9336 20.32,-25.4" />
+      </g>
+      <g
+         id="g15427-4"
+         transform="matrix(0.83,0,0,1.0956,-157.94499,36.364047)">
+        <path
+           inkscape:connector-curvature="0"
+           style="color:#000000;overflow:visible;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.10000002"
+           d="m 45.699599,22.1996 20.32,18.440399 -20.32,18.4404 z"
+           id="path2041-76" />
+      </g>
+    </g>
+  </g>
+</svg>
