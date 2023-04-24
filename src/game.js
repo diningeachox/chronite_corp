@@ -3,7 +3,7 @@ import * as Scene from './scenes.js';
 import * as Assets from './assets.js';
 import {clip} from "./utils.js";
 import {Vector2D} from "./vector2D.js";
-import {startingPlanet, outerPlanet} from "./entities/planet.js";
+import {startingPlanet, outerPlanet, addShip} from "./entities/planet.js";
 import {basic_ship, tanker, fleet} from "./entities/ship.js";
 import {area_field} from "./entities/aoe.js";
 import lane from "./entities/lane.js";
@@ -77,6 +77,7 @@ export function init(){
     //Subscribe to events
     em.subscribe("resource", game);
     em.subscribe("recall", game);
+    em.subscribe("ship", game);
 
     //Add Event listeners
     overlay.addEventListener('click', function(e){
@@ -238,7 +239,7 @@ class Game {
             if (this.selected_entity.components.choices.value != null){
                 this.selected_entity.components.outputgood.value = this.selected_entity.components.choices.value[data];
             }
-        } else if (event_type = "recall"){
+        } else if (event_type == "recall"){
             //Delete mesh
             var lane = this.selected_entity.components.lane.value;
             var mesh = Assets.scene.getObjectByProperty("uuid", lane.components.asset.value);
@@ -249,6 +250,8 @@ class Game {
             delete ECS.entities[lane.id]; //Delete lane from entities dict
             this.selected_entity.components.lane.value = null;
             Scene.info_panel.buttons[0].enabled = false;
+        } else if (event_type == "ship"){
+            addShip(this.selected_entity, this.selected_entity.components.outputgood.value);
         }
     }
 
@@ -293,6 +296,7 @@ class Game {
 
         ECS.systems.selection(this);
         ECS.systems.updateEntities(this, delta);
+        ECS.systems.updateHQ(this);
         ECS.systems.cleanUp(this, delta);
 
         var resources = this.hq.components.inputgoods.value;
@@ -302,8 +306,7 @@ class Game {
         Scene.resource_panel.buttons[3].enabled = (resources.Pyrite.current >= stats.costs.pyrite.quantity);
 
         //Check win condition
-        if (this.hq.components.inputgoods.value.Metacrystals.current >= stats.end) {
-            this.end = true;
+        if (this.end) {
             pause = 1;
         }
 
@@ -315,11 +318,13 @@ class Game {
         //Frame rate
         c.fillStyle = "white";
         c.font="20px dialogFont";
-        c.fillText("FPS: " + fps, 700, 40);
+        c.fillText("FPS: " + fps, Assets.canvas.width - 100, 40);
         ol.font = "30px dialogFont";
         ol.textAlign = "left";
+        ol.fillStyle = "#89CFF0";
         ol.fillText("Metacrystals: " + this.hq.components.inputgoods.value.Metacrystals.current + "/" + stats.end, 40, 40);
-
+        ol.fillStyle = "red";
+        ol.fillText("HP: " + this.hq.components.hp.value + "%", 440, 40);
         //c.fillText("Metal: " + pl3.components.inputgoods.value.metal.current, 900, 40);
         //c.fillText("Chronium: " + pl3.components.inputgoods.value.chronium.current, 900, 80);
         Assets.plane_uniforms.u_time.value += delta;

@@ -90,6 +90,13 @@ ECS.Components.Ships = function ComponentShips (value){
 };
 ECS.Components.Ships.prototype.name = 'ships';
 
+ECS.Components.ShipNumber = function ComponentShipNumber (value){
+    this.value = value;
+
+    return this;
+};
+ECS.Components.ShipNumber.prototype.name = 'shipnumber';
+
 ECS.Components.Position = function ComponentPosition (value){
     this.value = value;
 

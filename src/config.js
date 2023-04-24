@@ -23,7 +23,7 @@ const stats = {
         "slow": 1.8
     },
     "end": 1000,
-    "max_ships": 10
+    "max_ships": 6
 };
 
 export {volume, stats};

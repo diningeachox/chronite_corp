@@ -189,15 +189,21 @@ const bar_geometry = new THREE.PlaneBufferGeometry( 120, 15 );
 const black_material = new THREE.MeshBasicMaterial({
     color: 0x2a3a2a
 });
-export function StarFactory(x, y){
-    const planet_geometry = new THREE.SphereGeometry( 64, 24, 24 );
+export function StarFactory(x, y, type){
+    const planet_geometry = new THREE.SphereGeometry( 64, 36, 36 );
     //Color
+    var color = ((Math.random() * 0.1) + 0.9) * 0x00ff87;
+    var wetness = Math.random() * 0.8 + 0.2;
+    if (type.includes("hostile")){
+        color = ((Math.random() * 0.1) + 0.9) * 0xff4500;
+        wetness = Math.random() * 0.2;
+    }
     const uniforms = {
-      color: { value: new THREE.Color( 0x00a822 ) },
+      color: { value: new THREE.Color( color ) },
       wetness: {value: Math.random() * 0.8 + 0.2},
       seed: {value: Math.random() + 1.0},
     };
-    uniforms.color.value.setHex( Math.random() * 0xffff87 );
+    //uniforms.color.value.setHex( Math.random() * 0xffff87 );
     const size = 1 - Math.random() * 0.2;
 
     //const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
@@ -341,8 +347,7 @@ export function FieldFactory(x, y, size, type){
     });
     const circle = new THREE.Mesh( geometry, material );
 
-    circle.position.set(x, y, -50);
-    circle.scale.set(1, 1, 1);
+    circle.position.set(x, y, -80);
     circle.layers.disableAll();
     circle.layers.set(2); //Layer 2 so it's non-interactable
     scene.add( circle );

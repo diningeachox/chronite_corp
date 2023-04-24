@@ -5,11 +5,13 @@ import {StatPanel} from "./scenes.js";
 import lane from "./entities/lane.js";
 import {basic_ship, cutter, tanker, fleet} from "./entities/ship.js";
 import {pointvcircle, circlevcircle} from "./collision.js";
+import {stats} from "./config.js";
+import {addShip} from "./entities/planet.js";
 
 var canvas = Assets.canvas;
 
 
-var planet_type = ["hq", "standard", "hostile"];
+var planet_type = ["hq", "standard", "hostile1", "hostile2", "hostile3", "barren"];
 var field_types = ["speed", "slow", "nebula", "pyrite"];
 var receiveables = ["Restoration", "Construction", "Munition", "Basic", "Cutter", "Tanker"];
 const max_cooldown = 60;
@@ -69,6 +71,25 @@ ECS.systems.selection = function systemSelection (game) {
                             }
                             game.selected_entity = entity;
                             info_panel.buttons[0].enabled = (entity.components.lane.value != null);
+                            if (entity.components.type.value.includes("hostile")){
+                                info_panel.buttons[0].enabled = false;
+                            }
+
+                            //Enable/disable add ship button
+                            if (entity.components.outputgood.value == "Basic" ||
+                                entity.components.outputgood.value == "Cutter" ||
+                                entity.components.outputgood.value == "Tanker"){
+                                if (entity.components.ships.value.size() < stats.max_ships){
+                                    info_panel.buttons[2].enabled = true;
+                                    info_panel.buttons[2].visible = true;
+                                } else {
+                                    info_panel.buttons[2].enabled = false;
+                                    info_panel.buttons[2].visible = false;
+                                }
+                            } else {
+                                info_panel.buttons[2].enabled = false;
+                                info_panel.buttons[2].visible = false;
+                            }
                         } else {
                             //Create route to this planet
                             if (game.selected_entity != null){
@@ -116,8 +137,8 @@ ECS.systems.updateEntities = function systemUpdateEntities(game, delta){
             var inputs = ent.components.inputgoods.value;
             if (ent.components.cooldown.value > 0) ent.components.cooldown.value -= delta;
             //Send ships if planet has a lane and has ships
-            var lane = ent.components.lane.value;
-            if (lane != null ){
+            var lane_entity = ent.components.lane.value;
+            if (lane_entity != null ){
                 //debugger;
                 if (!ent.components.ships.value.isEmpty()){
                     if (ent.components.cooldown.value <= 0){
@@ -135,21 +156,45 @@ ECS.systems.updateEntities = function systemUpdateEntities(game, delta){
 
             //Overabundance penalty
             for (var key of Object.keys(inputs)){
-                if (inputs[key].current > inputs[key].max && game.frame % 40 == 0 && key != "Scout") ent.components.hp.value = Math.max(0, ent.components.hp.value - 1);
+                if (inputs[key].current > inputs[key].max && game.frame % 40 == 0 && key != "Scout") {
+                    var excess = inputs[key].current - inputs[key].max;
+                    ent.components.hp.value = Math.max(0, ent.components.hp.value - excess);
+                    inputs[key].current = inputs[key].max;
+                }
             }
 
             //Change scouted status
             if (inputs.hasOwnProperty("Scout")){
                 if (inputs.Scout.current >= inputs.Scout.max) {
+                    //Hostile planets establish a route to nearest scouted planet
+                    if (ent.components.type.value.includes("hostile")){
+                        if (ent.components.lane.value == null){
+                            var dist = Infinity;
+                            var closest_target = null;
+                            for (var i = 0; i < game.planets.length; i++){
+                                var target = game.planets[i];
+                                if (planet_type.includes(target.components.type.value)){
+                                    if (target.components.scouted.value == 1 && !target.components.type.value.includes("hostile")){
+                                        var d = ent.components.position.value.subtract(target.components.position.value).modulus();
+                                        if (d < dist) {
+                                            dist = d;
+                                            closest_target = target;
+                                        }
+                                    }
+                                }
+                            }
+
+                            //Send route to closest target
+                            const l = lane({origin: ent, destination: closest_target});
+                            lanes[ent.id+","+closest_target.id] = l;
+                            ent.components.lane.value = l;
+                        }
+                    }
                     //Change scouted status to true
                     ent.components.scouted.value = 1;
-
                     delete inputs.Scout;
-
                 }
             }
-
-
 
             //Update HP bar
             matching_sphere[ent.components.asset.value].stat.scale.x = 0.1 * ent.components.hp.value / 100;
@@ -164,7 +209,6 @@ ECS.systems.updateEntities = function systemUpdateEntities(game, delta){
                 var dest = ent.components.destinationplanet.value;
                 //var dest_inputs = dest.components.inputgoods.value;
                 if (dest.components.scouted.value == 1){
-                    debugger;
                     var mesh = Assets.scene.getObjectByProperty("uuid", ent.components.asset.value);
                     //Delete mesh
                     mesh.geometry.dispose();
@@ -172,18 +216,16 @@ ECS.systems.updateEntities = function systemUpdateEntities(game, delta){
                     Assets.scene.remove( mesh );
                     delete ECS.entities[ent.id]; //Delete lane from entities dict
                     orig.components.lane.value = null;
-
                 }
-
             }
         } else if (ent.components.type.value == "ship"){
             //Update active ships
             if (ent.components.active.value){
                 var planet = ent.components.planet.value;
                 if (planet != null) {
-                    var lane = planet.components.lane.value;
-                    if (lane != null){
-                        var dest = lane.components.destinationplanet.value; //Destination planet
+                    var lane_entity = planet.components.lane.value;
+                    if (lane_entity != null){
+                        var dest = lane_entity.components.destinationplanet.value; //Destination planet
                         var dir = dest.components.position.value.subtract(ent.components.position.value);
                         var target = "dest";
                         if (ent.components.carry.value == 0){
@@ -201,20 +243,21 @@ ECS.systems.updateEntities = function systemUpdateEntities(game, delta){
 
                                 if (dest_inputs.hasOwnProperty(ent.components.outputgood.value)){
                                     //Goods that require the destinationplanet's input goods to match
-                                    if (!receiveables.includes(ent.components.outputgood.value)){
-                                        dest_inputs[ent.components.outputgood.value].current += ent.components.carry.value;
-                                    } else {
-                                        //Various non-input effects
-                                        var outputgood = ent.components.outputgood.value;
-                                        if (outputgood == "Munition"){
-                                            dest.components.hp.value = Math.max(0, dest.components.hp.value - 1);
-                                        } else if (outputgood == "Munition"){
-                                            dest.components.hp.value = Math.min(100, dest.components.hp.value + 1);
-                                        } else if (outputgood == "Construction"){
-                                            for (const input of dest_inputs){
-                                                dest_inputs[input].max += 1;
-                                            }
+                                    dest_inputs[ent.components.outputgood.value].current += ent.components.carry.value;
+                                } else if (receiveables.includes(ent.components.outputgood.value)){
+                                    //Various non-input effects
+                                    var outputgood = ent.components.outputgood.value;
+                                    if (outputgood == "Munition"){
+                                        dest.components.hp.value = Math.max(0, dest.components.hp.value - 1);
+                                    } else if (outputgood == "Restoration"){
+                                        dest.components.hp.value = Math.min(100, dest.components.hp.value + 1);
+                                    } else if (outputgood == "Construction"){
+                                        for (const input of dest_inputs){
+                                            dest_inputs[input].max += 1;
                                         }
+                                    } else if (outputgood == "Basic" || outputgood == "Cutter" || outputgood == "Tanker"){
+                                        //Add ship to queue of destination planet
+                                        addShip(dest, outputgood);
                                     }
                                 }
                                 ent.components.carry.value = 0;
@@ -277,9 +320,9 @@ ECS.systems.updateEntities = function systemUpdateEntities(game, delta){
                                 if (in_field){
                                     var field_type = f.components.type.value;
                                     if (field_type == "speed"){
-                                        modifier *= 1.8;
+                                        modifier *= 2.0;
                                     } else if (field_type == "slow"){
-                                        modifier /= 1.8;
+                                        modifier /= 2.0;
                                     } else if (field_type == "nebula"){
 
                                     } else if (field_type == "pyrite"){
@@ -304,6 +347,46 @@ ECS.systems.updateEntities = function systemUpdateEntities(game, delta){
         }
     }
 }
+
+ECS.systems.updateHQ = function systemUpdateHQ(game){
+    var mc = game.hq.components.inputgoods.value.Metacrystals.current;
+    if (mc >= stats.end){
+        game.end = true;
+    } else if (mc >= 0.7 * stats.end){
+        triggerHostiles(game, "hostile3");
+    } else if (mc >= 0.5 * stats.end){
+        triggerHostiles(game, "hostile2");
+    } else if (mc >= 0.3 * stats.end){
+        triggerHostiles(game, "hostile1");
+    }
+
+}
+
+function triggerHostiles(game, hostile_type){
+    for (var i = 0; i < game.planets.length; i++){
+        var pl = game.planets[i];
+        if (pl.components.type.value == hostile_type && pl.components.lane.value == null){
+            var dist = Infinity;
+            var closest_target = null;
+            for (var j = 0; j < game.planets.length && i != j; j++){
+                var target = game.planets[j];
+                if (target.components.scouted.value == 1 && !target.components.type.value.includes("hostile")){
+                    var d = pl.components.position.value.subtract(target.components.position.value).modulus();
+                    if (d < dist){
+                        dist = d;
+                        closest_target = target;
+                    }
+                }
+            }
+
+            const l = lane({origin: pl, destination: closest_target});
+            lanes[ent.id+","+closest_target.id] = l;
+            pl.components.lane.value = l;
+            pl.components.scouted.value = 1;
+        }
+    }
+}
+
 
 ECS.systems.cleanUp = function systemCleanUp (game, delta) {
     for (var key of Object.keys(fields)){

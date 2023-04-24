@@ -21,8 +21,9 @@ const planet = (config) => {
     var starting_ships = config.starting_ships = ["basic", "basic", "basic"];
 
     ent.addComponent( new ECS.Components.Ships(new Queue()));
+
     //Meshes (one for actual planet, one spherical mesh for selection)
-    var uuid = StarFactory(ent.components.position.value.x, ent.components.position.value.y);
+    var uuid = StarFactory(ent.components.position.value.x, ent.components.position.value.y, config.type);
     matching_entity[uuid] = ent;
     //var meshes = StarFactory(ent.components.position.value.x, ent.components.position.value.y, 0);
     ent.addComponent( new ECS.Components.Asset(uuid));
@@ -51,7 +52,26 @@ const planet = (config) => {
             }
         }
     }
+    ent.addComponent( new ECS.Components.ShipNumber(ent.components.ships.value.size())); //Number of ships
     return ent;
+}
+
+function addShip(ent, type){
+    //var type = ent.components.outputgood.value;
+    var ship = basic_ship(ent.components.position.value.x,
+              ent.components.position.value.y,
+              ent.components.outputgood.value);
+    if (type == "Cutter"){
+        ship = cutter(ent.components.position.value.x,
+                ent.components.position.value.y,
+                ent.components.outputgood.value);
+    } else if (type == "Tanker"){
+        ship = cutter(ent.components.position.value.x,
+              ent.components.position.value.y,
+              ent.components.outputgood.value);
+    }
+    ship.components.planet.value = ent;
+    ent.components.ships.value.enqueue(ship);
 }
 
 // The idea here is that we'll want to start with one of each
@@ -118,6 +138,7 @@ const outerPlanet = (i, x, y) => {
       break;
     case 13: //Hostile planet sends munitions
       config.output = "Munition";
+      config.type = "hostile1";
       break;
     case 14: //Military planet
       config.output = "Munition";
@@ -145,6 +166,7 @@ const outerPlanet = (i, x, y) => {
       config.starting_ships = ["cutter", "cutter", "cutter"];
       if (Math.random() > 0.5) config.starting_ships = ["tanker", "tanker", "tanker"];
       config.output = "Munition";
+      config.type = "hostile2";
       break;
     case 20:
       config.output = "Restoration";
@@ -166,6 +188,7 @@ const outerPlanet = (i, x, y) => {
     case 24: //Hostile planet III
       config.starting_ships = ["basic", "basic", "cutter", "cutter", "tanker", "tanker"];
       config.output = "Munition";
+      config.type = "hostile3";
       break;
   }
 
@@ -173,4 +196,5 @@ const outerPlanet = (i, x, y) => {
   return planet(config);
 }
 
-export {startingPlanet, outerPlanet};
+
+export {startingPlanet, outerPlanet, addShip};

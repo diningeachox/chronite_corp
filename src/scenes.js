@@ -198,7 +198,17 @@ export class Menu extends Scene {
                 playSound(sfx_sources["button_click"].src, sfx_ctx);
             }
           });
-      this.buttons = [play_button, ins_button];
+      var quality_button = new ResourceButton({x: canvas.width / 2, y:700, width:80, height:20, label:"",
+            onClick: function(){
+                playSound(sfx_sources["button_click"].src, sfx_ctx);
+                quality = (quality + 1) % 2;
+            }
+          });
+      quality_button.left_choice = "Low Quality";
+      quality_button.right_choice = "High Quality";
+      quality_button.visible = true;
+      quality_button.enabled = true;
+      this.buttons = [play_button, ins_button, quality_button];
       this.frame = 0;
     }
     update(delta) {
@@ -291,12 +301,15 @@ export class GameScene extends Scene {
            });
       info_panel.addButton(resource_button);
 
-      var fleet_button = new Button({x: info_panel.x + info_panel.w/2, y: info_panel.y + info_panel.h - 160, width:200, height:30, label:"Send Fleet",
+      var ship_button = new Button({x: info_panel.x + info_panel.w/2, y: info_panel.y + info_panel.h - 160, width:200, height:30, label:"Make Ship",
             onClick: function(){
                 playSound(sfx_sources["click"].src, sfx_ctx);
+                em.notify("ship", "");
             }
            });
-      info_panel.addButton(fleet_button);
+      ship_button.visible = false;
+      ship_button.enabled = false;
+      info_panel.addButton(ship_button);
 
 
 
@@ -472,7 +485,7 @@ export class Ins extends Scene {
         c.fillStyle = gradient;
         c.fillRect(canvas.width - (canvas.width - canvas.height) / 2, 0, (canvas.width - canvas.height) / 2, canvas.height);
 
-        c.font="80px Arial";
+        c.font="80px dialogFont";
         c.fillStyle = "white";
         c.textAlign = "center";
         c.fillText("Instructions", canvas.width/2, 190);
