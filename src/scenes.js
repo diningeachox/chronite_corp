@@ -142,7 +142,7 @@ export class ResourcePanel extends Panel {
 
 export class StatPanel extends Panel {
     constructor(x, y, w, h){
-        super(x, y, w, h, "Planet Statistics");
+        super(x, y, w, h, "");
         this.visible = false;
     }
     update(delta) {
@@ -150,8 +150,13 @@ export class StatPanel extends Panel {
     }
     render(delta, planet){
         super.render(delta);
-        ol.font="15px dialogFont";
+        ol.font="25px dialogFont";
         ol.fillStyle = "black";
+        ol.textAlign = "center";
+        ol.fillText(planet.components.name.value, this.x + this.w / 2, this.y + 30);
+
+
+        ol.font="15px dialogFont";
         ol.textAlign = "left";
         ol.fillText("HP: " + planet.components.hp.value + "%", this.x + 10, this.y + 60);
         ol.fillText("Input Goods: ", this.x + 10, this.y + 80);
@@ -407,7 +412,11 @@ export class GameScene extends Scene {
             }
 
             //Only render info panel if a planet/lane is selected
-            if (this.game.selected_entity != null) info_panel.render(delta);
+            if (this.game.selected_entity != null) {
+                if (this.game.selected_entity.components.scouted.value == 1){
+                    info_panel.render(delta);
+                }
+            }
             resource_panel.render(delta);
         } else {
             ol.font="80px Arial";
@@ -449,6 +458,8 @@ export class GameScene extends Scene {
 
         //Stop music
         music_player.stop();
+        music_player.setBuffer(music_sources["menu"]);
+        music_player.play(true);
     }
 }
 
@@ -626,8 +637,9 @@ export function drawPause(){
     ol.clearRect(0, 0, overlay.width, overlay.height);
     ol.fillStyle = "rgba(0, 0, 0, 0.5)"; //Transparent black
     ol.fillRect(0, 0, overlay.width, overlay.height);
-    ol.font = "50px arial";
-    ol.fillStyle = "black";
-    ol.fillText("PAUSED", overlay.width / 2 - 100, overlay.height / 2);
+    ol.font = "50px dialogFont";
+    ol.fillStyle = "white";
+    ol.textAlign = "center"
+    ol.fillText("PAUSED", overlay.width / 2, overlay.height / 2);
 
 }

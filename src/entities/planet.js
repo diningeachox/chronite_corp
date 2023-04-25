@@ -17,6 +17,7 @@ const planet = (config) => {
     ent.addComponent( new ECS.Components.Cooldown(0));
     ent.addComponent( new ECS.Components.Lane(config.lane || null)); //outgoing lane
     ent.addComponent( new ECS.Components.Choices(config.choices || null));
+    ent.addComponent( new ECS.Components.Name(config.name || ""));
 
     var starting_ships = config.starting_ships = ["basic", "basic", "basic"];
 
@@ -66,7 +67,7 @@ function addShip(ent, type){
                 ent.components.position.value.y,
                 ent.components.outputgood.value);
     } else if (type == "Tanker"){
-        ship = cutter(ent.components.position.value.x,
+        ship = tanker(ent.components.position.value.x,
               ent.components.position.value.y,
               ent.components.outputgood.value);
     }
@@ -85,30 +86,39 @@ const startingPlanet = (i, x, y) => {
       config.input.Infrachronite = {max:30, current:0};
       config.input.Deuterium = {max:30, current:0};
       config.input.Pyrite = {max:30, current:0};
+      config.name = "Chronite Corporation HQ";
+      break;
     case 2:
       config.output = "Antimatter";
+      config.name = "Compact Energetics";
       break;
     case 3:
       config.output = "Basic";
       config.input.Antimatter = {max:30, current:0};
+      config.name = "All Cluster Transport";
       break;
     case 4:
       config.output = "Hyperchronite";
+      config.name = "Everfast City";
       break;
     case 5:
       config.output = "Computronium";
+      config.name = "Petabyte Research Labs";
       break;
     case 6:
       config.output = "Scout";
       config.input.Computronium = {max:30, current:0};
+      config.name = "Polytechnic Explorer's Institute";
       break;
     case 7:
       config.output = "Infrachronite";
+      config.name = "Starset Resort";
       break;
     case 8:
       config.output = "Metacrystals";
       config.input.Computronium = {max:30, current:0};
       config.input.Hyperchronite = {max:30, current:0};
+      config.name = "Cryptic Vaults";
       break;
   }
   config.position = new Vector2D(x, y);
@@ -122,73 +132,89 @@ const outerPlanet = (i, x, y) => {
   switch (i) {
     case 9:
       config.output = "Deuterium";
+      config.name = "Titanica";
       break;
     case 10:
       config.output = "Pyrite";
+      config.name = "New Tortuga";
       break;
     case 11:
       config.output = "Cutter";
       config.input.Hyperchronite = {max:50, current:0};
       config.input.Basic = {max:50, current:0};
+      config.name = "Swift Logistics";
       break;
     case 12:
       config.output = "Tanker";
       config.input.Infrachronite = {max:50, current:0};
       config.input.Basic = {max:50, current:0};
+      config.name = "Masslift Industries";
       break;
     case 13: //Hostile planet sends munitions
       config.output = "Munition";
       config.type = "hostile1";
+      config.name = "The Robo-Rebels";
       break;
     case 14: //Military planet
       config.output = "Munition";
       config.input.Antimatter = {max:30, current:0};
+      config.name = "Frontera Base";
       break;
     case 15:
       config.output = "Construction";
       config.input.Computronium = {max:30, current:0};
+      config.name = "Modular Silo Holdings";
       break;
     case 16:
       config.output = "Hyperchronite";
       config.choices = ["Hyperchronite", "Infrachronite"];
       //config.input.Computronium = {max:30, current:0};
+      config.name = "Time Whorls";
       break;
     case 17:
       config.output = "Deuterium";
       config.choices = ["Deuterium", "Pyrite"];
+      config.name = "Correctional Mines";
       break;
     case 18:
       config.output = "Metacrystals";
       config.input.Deuterium = {max:30, current:0};
       config.input.Pyrite = {max:30, current:0};
+      config.name = "THE (The Hidden Exchange)";
       break;
     case 19: //Hostile planet II
       config.starting_ships = ["cutter", "cutter", "cutter"];
       if (Math.random() > 0.5) config.starting_ships = ["tanker", "tanker", "tanker"];
       config.output = "Munition";
       config.type = "hostile2";
+      config.name = "The Formic Nest";
       break;
     case 20:
       config.output = "Restoration";
       config.input.Infrachronite = {max:30, current:0};
       config.input.Computronium = {max:30, current:0};
+      config.name = "Terraseed Nursery";
       break;
     case 21:
       config.output = "Antimatter";
       config.choices = ["Antimatter", "Computronium"];
+      config.name = "Positronic Fabricators";
       break;
     case 22:
       config.output = "Munition";
       config.input.Antimatter = {max:30, current:0};
+      config.name = "MilCorp Fortress";
       break;
     case 23: //Bazzar
       config.output = "Metacrystals";
       config.input.Currency = {max:100, current:0};
+      config.name = "The Galactic Bazaar";
       break;
     case 24: //Hostile planet III
       config.starting_ships = ["basic", "basic", "cutter", "cutter", "tanker", "tanker"];
       config.output = "Munition";
       config.type = "hostile3";
+      config.name = "The Clone Horde";
       break;
   }
 

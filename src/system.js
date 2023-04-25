@@ -8,6 +8,7 @@ import {pointvcircle, circlevcircle} from "./collision.js";
 import {stats} from "./config.js";
 import {addShip} from "./entities/planet.js";
 import {Queue, worldtoscreen} from "./utils.js";
+import {playSound} from "./sound.js";
 
 var canvas = Assets.canvas;
 var ol = Assets.ol;
@@ -194,6 +195,9 @@ ECS.systems.updateEntities = function systemUpdateEntities(game, delta){
                     //Change scouted status to true
                     ent.components.scouted.value = 1;
                     delete inputs.Scout;
+
+                    //Play discovery sound
+                    playSound(sfx_sources["discovery"].src, sfx_ctx);
                 }
             }
 
@@ -218,7 +222,7 @@ ECS.systems.updateEntities = function systemUpdateEntities(game, delta){
                 //Recall lane, and ships
                 var dest = ent.components.destinationplanet.value;
                 //var dest_inputs = dest.components.inputgoods.value;
-                if (dest.components.scouted.value == 1){
+                if (dest.components.scouted.value == 1 && !dest.components.inputgoods.value.hasOwnProperty("Scout")){
                     deleteEntity(ent);
                     orig.components.lane.value = null;
                     continue;
@@ -299,9 +303,15 @@ ECS.systems.updateEntities = function systemUpdateEntities(game, delta){
                                     } else if (field_type == "slow"){
                                         modifier /= 1.8;
                                     } else if (field_type == "nebula"){
-
+                                        //Destroy fast ships 30% of the time
+                                        if (ent.component.speed.value > 0.4){
+                                            if (Math.random() < 0.03) deleteEntity(ent);
+                                        }
                                     } else if (field_type == "pyrite"){
-
+                                        //Destroy slow ships 30% of the time
+                                        if (ent.component.speed.value < 0.2){
+                                            if (Math.random() < 0.03) deleteEntity(ent);
+                                        }
                                     }
                                     break;
                                 }
@@ -377,6 +387,11 @@ ECS.systems.updateHQ = function systemUpdateHQ(game){
     } else if (mc >= 0.3 * stats.end){
         triggerHostiles(game, "hostile1");
     }
+
+}
+
+ECS.systems.randomEvents = function systemRandomEvents(game){
+
 
 }
 
@@ -462,15 +477,35 @@ ECS.systems.renderEntities = function systemRender (game, delta) {
             var mesh = Assets.scene.getObjectByProperty("uuid", ent.components.asset.value);
             mesh.material = mat;
             matching_sphere[ent.components.asset.value].stat.visible = Boolean(scouted);
+
+            var coords = worldtoscreen(ent.components.position.value, Assets.ortho_camera);
             if (scouted){
                 var planet = Assets.scene.getObjectByProperty("uuid", ent.components.asset.value);
                 planet.rotation.x -= delta / 400;
                 planet.rotation.y -= delta / 100;
                 if (ent.components.type.value != "barren"){
                     var outputgood = ent.components.outputgood.value;
-                    var coords = worldtoscreen(ent.components.position.value, Assets.ortho_camera);
-                    ol.drawImage(images[outputgood], coords[0] - 16, coords[1] - 16, 32, 32);
+                    if (outputgood != "Null") ol.drawImage(images[outputgood], coords[0] - 16, coords[1] - 16, 32, 32);
                 }
+                ol.font="20px dialogFont";
+                ol.fillStyle = "white";
+                ol.textAlign = "center";
+                ol.fillText(ent.components.name.value, coords[0] - 16, coords[1] - 140 * Assets.ortho_camera.zoom);
+
+            } else {
+                //Draw scouting progress
+                ol.fillStyle = "green";
+                ol.beginPath();
+                ol.moveTo(coords[0], coords[1]);
+                ol.arc(coords[0], coords[1],30,0, Math.PI * 2 * (ent.components.inputgoods.value.Scout.current / ent.components.inputgoods.value.Scout.max));
+                ol.lineTo(coords[0], coords[1]);
+                ol.closePath();
+                ol.fill();
+                ol.font="30px dialogFont";
+                ol.fillStyle = "white";
+                ol.textAlign = "left";
+                ol.fillText("?", coords[0] - 8, coords[1] + 8);
+
             }
         }
     }
