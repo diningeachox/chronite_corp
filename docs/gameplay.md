@@ -14,7 +14,7 @@ Any non-hostile planet that produces goods may be sent engines.
 You may also send modules to non-hostile planets.
 
 ## Hostile Planets
-  Hostile planets produce Munitions. Instead of the player setting up routes, they are created automatically, preferring planets that are nearby and have lower HP. You may only send your own warships to hostile planets, not engines, resources, or modules. Hostile planets will be revealed either when triggered by exploration, or when Metacrystal quantities reach ceratin thresholds.
+  Hostile planets produce Munitions. Instead of the player setting up routes, they are created automatically, preferring planets that are nearby and have lower HP. You may only send your own warships to hostile planets, not engines, resources, or modules. Hostile planets will be revealed either when triggered by exploration, or when Metacrystal quantities reach certain thresholds.
 
 ## HQ Planet
 Gold delivered to the HQ planet determines score and possibly victory. The HQ planet having 0 HP causes defeat. Area effect resources must be sent to the HQ planet to be used. It starts with some Hyperchronite, but no other resources. It has no input maxima. It has twice the HP of other planets.

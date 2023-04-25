@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="2.2in"
+   height="2.2in"
+   viewBox="0 0 55.880002 55.880003"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="engine-tanker.svg"
+   inkscape:export-filename="/home/munizao/projects/jams/shipping_game/icons/png/engine-tanker.png"
+   inkscape:export-xdpi="29.09"
+   inkscape:export-ydpi="29.09">
+  <defs
+     id="defs2">
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect54081"
+       is_visible="true"
+       lpeversion="1" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect55183"
+       is_visible="true"
+       lpeversion="1" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect63394"
+       is_visible="true"
+       lpeversion="1" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect63394-89"
+       is_visible="true"
+       lpeversion="1" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect63394-6"
+       is_visible="true"
+       lpeversion="1" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect63394-89-8"
+       is_visible="true"
+       lpeversion="1" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect39599-17"
+       is_visible="true"
+       lpeversion="1" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect39599-4-8"
+       is_visible="true"
+       lpeversion="1" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect39599-1"
+       is_visible="true"
+       lpeversion="1" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect39599-4-7"
+       is_visible="true"
+       lpeversion="1" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect39599"
+       is_visible="true"
+       lpeversion="1" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect39599-4"
+       is_visible="true"
+       lpeversion="1" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.979899"
+     inkscape:cx="-90.70202"
+     inkscape:cy="100.12255"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="in"
+     inkscape:window-width="1920"
+     inkscape:window-height="969"
+     inkscape:window-x="0"
+     inkscape:window-y="40"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-241.11998)">
+    <g
+       transform="translate(2.5104536,111.57998)"
+       id="g1456">
+      <path
+         sodipodi:nodetypes="cssccscsscscc"
+         inkscape:connector-curvature="0"
+         d="m -6.4099971,-182.48923 c 2.0475915,0 3.939644,4.76673 4.9634394,12.50462 1.02379546,7.73788 1.02379546,17.27135 0,25.00923 -1.0237954,7.73789 -2.9158479,12.50462 -4.9634427,12.50461 h -9.3784646 c 0,0 -14.588881,-6.25247 -21.883078,-9.37846 -7.294197,-3.12599 -6.617185,-2.91791 -10.785229,-8.128 -0.614277,0 -1.181893,-1.43002 -1.489032,-3.75138 -0.307139,-2.32137 -0.307139,-5.1814 0,-7.50277 0.307138,-2.32137 0.874754,-3.75139 1.489032,-3.75139 4.168044,-5.21009 3.491032,-5.00201 10.785229,-8.128 7.294197,-3.12599 21.883078,-9.37846 21.883078,-9.37846 h 9.3784613"
+         style="color:#000000;overflow:visible;opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         transform="scale(-1)"
+         id="path39232-4-3" />
+      <path
+         transform="scale(-1,1)"
+         sodipodi:open="true"
+         d="m -6.4100002,182.48923 a 5.7312856,25.009232 0 0 1 -4.9634388,-12.50462 5.7312856,25.009232 0 0 1 0,-25.00923 5.7312856,25.009232 0 0 1 4.9634388,-12.50462"
+         sodipodi:end="4.712389"
+         sodipodi:start="1.5707963"
+         sodipodi:ry="25.009232"
+         sodipodi:rx="5.7312856"
+         sodipodi:cy="157.48"
+         sodipodi:cx="-6.4100003"
+         sodipodi:type="arc"
+         id="path39232-9"
+         style="color:#000000;overflow:visible;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
+    <g
+       transform="translate(143.73584,188.17075)"
+       id="g46789">
+      <g
+         id="g42171"
+         transform="matrix(0.61538463,0,0,0.61538463,-323.93728,6.1741521)" />
+      <g
+         id="g15427-4"
+         transform="matrix(0.83,0,0,1.0956,-157.94499,36.364047)">
+        <path
+           inkscape:connector-curvature="0"
+           style="color:#000000;overflow:visible;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.10000002"
+           d="m 45.699599,22.1996 20.32,18.440399 -20.32,18.4404 z"
+           id="path2041-76" />
+      </g>
+    </g>
+  </g>
+</svg>

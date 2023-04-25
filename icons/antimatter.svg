@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="2.2in"
+   height="2.2in"
+   viewBox="0 0 55.880002 55.880003"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="antimatter.svg"
+   inkscape:export-filename="/home/munizao/projects/jams/shipping_game/icons/png/antimatter.png"
+   inkscape:export-xdpi="29.09"
+   inkscape:export-ydpi="29.09">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.979899"
+     inkscape:cx="-192.25969"
+     inkscape:cy="100.12255"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="in"
+     inkscape:window-width="1920"
+     inkscape:window-height="969"
+     inkscape:window-x="0"
+     inkscape:window-y="40"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-241.11998)">
+    <g
+       transform="translate(-175.26,218.25998)"
+       id="g2051">
+      <rect
+         y="25.4"
+         x="177.8"
+         height="50.799999"
+         width="50.799999"
+         id="rect46851-6"
+         style="color:#000000;overflow:visible;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <path
+         inkscape:connector-curvature="0"
+         d="m 202.14595,30.8 a 21.082,21.082 0 0 0 -9.48673,2.789232 l 9.48673,16.431709 z m 2.10812,0 v 19.220941 l 9.48672,-16.431709 A 21.082,21.082 0 0 0 204.25407,30.8 Z m 1.05426,21.046401 16.64618,9.61111 a 21.082,21.082 0 0 0 2.32728,-9.610686 z m -23.19011,4.24e-4 a 21.082,21.082 0 0 0 2.32729,9.610686 l 16.64573,-9.610686 z m 20.02773,1.82546 -16.6466,9.610686 a 21.082,21.082 0 0 0 7.15987,6.821455 z m 2.10812,8.3e-4 v 4.23e-4 l 9.48715,16.430855 a 21.082,21.082 0 0 0 7.15901,-6.820558 z"
+         style="color:#000000;overflow:visible;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.82999998;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
+         id="path16972" />
+    </g>
+  </g>
+</svg>
