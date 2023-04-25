@@ -29,7 +29,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
-     inkscape:cx="-88.213977"
+     inkscape:cx="-192.25969"
      inkscape:cy="100.12255"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
@@ -60,18 +60,18 @@
     <g
        transform="translate(-175.26,218.25998)"
        id="g2051">
-      <path
-         inkscape:connector-curvature="0"
-         d="m 202.14595,30.8 a 21.082,21.082 0 0 0 -9.48673,2.789232 l 9.48673,16.431709 z m 2.10812,0 v 19.220941 l 9.48672,-16.431709 A 21.082,21.082 0 0 0 204.25407,30.8 Z m 1.05426,21.046401 16.64618,9.61111 a 21.082,21.082 0 0 0 2.32728,-9.610686 z m -23.19011,4.24e-4 a 21.082,21.082 0 0 0 2.32729,9.610686 l 16.64573,-9.610686 z m 20.02773,1.82546 -16.6466,9.610686 a 21.082,21.082 0 0 0 7.15987,6.821455 z m 2.10812,8.3e-4 v 4.23e-4 l 9.48715,16.430855 a 21.082,21.082 0 0 0 7.15901,-6.820558 z"
-         style="color:#000000;overflow:visible;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.82999998;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
-         id="path16972" />
       <rect
          y="25.4"
          x="177.8"
          height="50.799999"
          width="50.799999"
          id="rect46851-6"
-         style="color:#000000;overflow:visible;vector-effect:none;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+         style="color:#000000;overflow:visible;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <path
+         inkscape:connector-curvature="0"
+         d="m 202.14595,30.8 a 21.082,21.082 0 0 0 -9.48673,2.789232 l 9.48673,16.431709 z m 2.10812,0 v 19.220941 l 9.48672,-16.431709 A 21.082,21.082 0 0 0 204.25407,30.8 Z m 1.05426,21.046401 16.64618,9.61111 a 21.082,21.082 0 0 0 2.32728,-9.610686 z m -23.19011,4.24e-4 a 21.082,21.082 0 0 0 2.32729,9.610686 l 16.64573,-9.610686 z m 20.02773,1.82546 -16.6466,9.610686 a 21.082,21.082 0 0 0 7.15987,6.821455 z m 2.10812,8.3e-4 v 4.23e-4 l 9.48715,16.430855 a 21.082,21.082 0 0 0 7.15901,-6.820558 z"
+         style="color:#000000;overflow:visible;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.82999998;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
+         id="path16972" />
     </g>
   </g>
 </svg>
