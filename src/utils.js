@@ -35,6 +35,12 @@ Queue.prototype.size = function(){
 Useful helper functions and data structures for the game
 **/
 
+export function worldtoscreen(pos, camera){
+    var x = (window.innerWidth / 2) + (camera.zoom * (pos.x - camera.position.x) / ((camera.right - camera.left)) * window.innerWidth);
+    var y = (window.innerHeight / 2) - (camera.zoom * (pos.y - camera.position.y) / ((camera.top - camera.bottom)) * window.innerHeight);
+    return [x, y];
+}
+
 // Converts a #ffffff hex string into an [r,g,b] array
 export var h2r = function(hex) {
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);

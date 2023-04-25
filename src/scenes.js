@@ -92,7 +92,7 @@ export class Panel extends Scene {
     }
     render(delta){
 
-        ol.fillStyle = "#FFFFFF8A";
+        ol.fillStyle = "rgba(255, 255, 255, 0.5)";
         ol.fillRect(this.x, this.y, this.w, this.h);
         ol.lineWidth = 4;
         ol.strokeStyle = "white";

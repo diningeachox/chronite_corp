@@ -7,7 +7,7 @@ import {basic_ship, cutter, tanker, fleet} from "./entities/ship.js";
 import {pointvcircle, circlevcircle} from "./collision.js";
 import {stats} from "./config.js";
 import {addShip} from "./entities/planet.js";
-import {Queue} from "./utils.js";
+import {Queue, worldtoscreen} from "./utils.js";
 
 var canvas = Assets.canvas;
 var ol = Assets.ol;
@@ -466,6 +466,11 @@ ECS.systems.renderEntities = function systemRender (game, delta) {
                 var planet = Assets.scene.getObjectByProperty("uuid", ent.components.asset.value);
                 planet.rotation.x -= delta / 400;
                 planet.rotation.y -= delta / 100;
+                if (ent.components.type.value != "barren"){
+                    var outputgood = ent.components.outputgood.value;
+                    var coords = worldtoscreen(ent.components.position.value, Assets.ortho_camera);
+                    ol.drawImage(images[outputgood], coords[0] - 16, coords[1] - 16, 32, 32);
+                }
             }
         }
     }

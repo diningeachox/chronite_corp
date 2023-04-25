@@ -7,7 +7,7 @@ import {basic_ship, tanker, cutter} from "./ship.js";
 const planet = (config) => {
     const ent = new ECS.Entity();
     ent.addComponent( new ECS.Components.Type(config.type || "standard"));
-    ent.addComponent( new ECS.Components.HP(config.HP || 1));
+    ent.addComponent( new ECS.Components.HP(config.HP || 100));
     ent.addComponent( new ECS.Components.OutputGood(config.output || "Null"));
     ent.addComponent( new ECS.Components.InputGoods(config.input || {}));
     ent.addComponent( new ECS.Components.Position(config.position || new Vector2D(0, 0)));
