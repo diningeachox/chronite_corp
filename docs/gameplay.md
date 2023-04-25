@@ -32,7 +32,7 @@ Gold delivered to the HQ planet determines score and possibly victory. The HQ pl
 
 5. "Petabit Research Labs" Produces Computronium. No inputs.
 
-6. "Institute of Explorers" Sends Scouts. Takes Computronium as an input.
+6. "Polytechnic Explorer's Institute" Sends Scouts. Takes Computronium as an input.
 
 7. "Starset Resort" Produces Infrachronite. (was Slowium.)
 
