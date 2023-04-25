@@ -22,21 +22,21 @@ Gold delivered to the HQ planet determines score and possibly victory. The HQ pl
 
 ## Starting Planets
 
-1. HQ. Takes Metacrystals (was Gold) and all area effect resources as inputs. (Hyperchronite, Infrachronite, Deuterium, and Pyrite.)
+1. "Chronite Corporation HQ". Takes Metacrystals (was Gold) and all area effect resources as inputs. (Hyperchronite, Infrachronite, Deuterium, and Pyrite.)
 
-2. Produces Antimatter. No inputs. Starts with a route to 3.
+2. "Compact Energetics" Produces Antimatter. No inputs. Starts with a route to 3.
 
-3. Sends Basic Engines. Takes Antimatter as an input. Engines cannot be sent here; domestic production must be used to get more ships.
+3. "All Cluster Transport" Sends Basic Engines. Takes Antimatter as an input. Engines cannot be sent here; domestic production must be used to get more ships.
 
-4. Produces Hyperchronite (was Speedium.) No inputs.
+4. "Everfast City" Produces Hyperchronite (was Speedium.) No inputs.
 
-5. Produces Computronium. No inputs.
+5. "Petabit Research Labs" Produces Computronium. No inputs.
 
-6. Sends Scouts. Takes Computronium as an input.
+6. "Polytechnic Explorer's Institute" Sends Scouts. Takes Computronium as an input.
 
-7. Produces Infrachronite. (was Slowium.)
+7. "Starset Resort" Produces Infrachronite. (was Slowium.)
 
-8. Produces Metacrystals. Takes Computronium and Hyperchronite as inputs. Has low input maxes.
+8. "Cryptic Vaults" Produces Metacrystals. Takes Computronium and Hyperchronite as inputs. Has low input maxes.
 
 ## Initially Unexplored Planets
 
@@ -46,41 +46,41 @@ Exploration will randomly pick one of the non hostile planets within a tier. Hos
 
 ### First Tier. 
 
-9. Produces Deuterium. No inputs.
+9. "Titanica" Produces Deuterium. No inputs.
 
-10. Produces Pyrite. No inputs.
+10. "New Tortuga" Produces Pyrite. No inputs.
 
-11. Sends Cutter Engines. Takes Hyperchronite and Basic Engines as inputs. Engines sent here are *inputs*, they cannot be sent to be used as ships; domestic production must be used to get more ships. Has Cutter ships.
+11. "Swift Logistics" Sends Cutter Engines. Takes Hyperchronite and Basic Engines as inputs. Engines sent here are *inputs*, they cannot be sent to be used as ships; domestic production must be used to get more ships. Has Cutter ships.
 
-12. Sends Heavy Engines. Takes Infrachronite and Basic Engines as inputs. Engines sent here are *inputs*, they cannot be sent to be used as ships; domestic production must be used to get more ships. Has Heavy ships.
+12. "Masslift Industries" Sends Heavy Engines. Takes Infrachronite and Basic Engines as inputs. Engines sent here are *inputs*, they cannot be sent to be used as ships; domestic production must be used to get more ships. Has Heavy ships.
 
-13. Hostile Military Planet I. Sends Munitions. If it is not revealed by the exploration trigger, it will be revealed when Metacrystals are at 30% of the victory threshold.
+13. "The Robotic Rebellion" Hostile Military Planet I. Sends Munitions. If it is not revealed by the exploration trigger, it will be revealed when Metacrystals are at 30% of the victory threshold.
 
 ### Second Tier
 
-14. Military Planet. Sends munitions. Takes Antimatter as an input.
+14. "Frontera Base" Military Planet. Sends munitions. Takes Antimatter as an input.
 
-15. Sends Construction Modules. Takes Computronium as input.
+15. "Modular Silo Holdings" Sends Construction Modules. Takes Computronium as input.
 
-16. Produces Selectable Resource. (Resource can be selected in the planet's info panel, and can be Hyperchronite or Infrachronite.)
+16. "Time Whorls" Produces Selectable Resource. (Resource can be selected in the planet's info panel, and can be Hyperchronite or Infrachronite.)
 
-17. Produces Selectable Resource. (Resource can be selected in the planet's info panel, and can be Deuterium or Pyrite.)
+17. "Correctional Mines" Produces Selectable Resource. (Resource can be selected in the planet's info panel, and can be Deuterium or Pyrite.)
 
-18. Produces Metacrystals. Takes Pyrite and Deuterium as inputs.
+18. "The Hidden Exchange" Produces Metacrystals. Takes Pyrite and Deuterium as inputs.
 
-19. Hostile military planet II. Sends Munitions on either Cutter or Heavy ships. (Determined randomly when revealed.) If it is not revealed by the exploration trigger, it will be revealed when Metacrystals are at 50% of the victory threshold.
+19. "The Formic Nest" Hostile military planet II. Sends Munitions on either Cutter or Heavy ships. (Determined randomly when revealed.) If it is not revealed by the exploration trigger, it will be revealed when Metacrystals are at 50% of the victory threshold.
 
 ### Third Tier
 
-20. Sends Restoration Modules. Takes Infrachronite and Computronium as input.
+20. "Terraseed Nursery" Sends Restoration Modules. Takes Infrachronite and Computronium as input.
 
-21. Produces Selectable Resource. (Resource can be selected in the planet's info panel, and can be Antimatter or Computronium.)
+21. "Positronic Fabricators" Produces Selectable Resource. (Resource can be selected in the planet's info panel, and can be Antimatter or Computronium.)
 
-22. Military Planet II. Sends Munitions. Takes Antimatter as an input.
+22. "Milcorp Fortress" Military Planet II. Sends Munitions. Takes Antimatter as an input.
 
-23. Grand Bazaar. Takes every Basic resource. (They all feed into the same input stat.) Produces Metacrystals.
+23. "The Galactic Bazaar". Takes every Basic resource. (They all feed into the same input stat.) Produces Metacrystals.
 
-24. Hostile military planet III. Sends Munitions on all three kinds of ships. If it is not revealed by the exploration trigger, it will be revealed when Metacrystals are at 70% of the victory threshold.
+24. "The Clone Horde" Hostile military planet III. Sends Munitions on all three kinds of ships. If it is not revealed by the exploration trigger, it will be revealed when Metacrystals are at 70% of the victory threshold.
 
 # Trade Routes
 
