@@ -22,6 +22,7 @@ const stats = {
         "speed": 1.8,
         "slow": 1.8
     },
+    "field_radius": 10,
     "end": 1000,
     "max_ships": 6
 };

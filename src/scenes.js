@@ -127,7 +127,7 @@ export class ResourcePanel extends Panel {
         ol.font="15px dialogFont";
         ol.fillStyle = "black";
         ol.textAlign = "left";
-        ol.fillText("Resources", this.x + 10, this.y + 60);
+        //ol.fillText("Resources", this.x + 10, this.y + 60);
 
         for (var i = 0; i < this.buttons.length; i++){
             this.buttons[i].draw(ol);
@@ -169,6 +169,8 @@ export class StatPanel extends Panel {
 
         ol.fillText("Output Good: "+outputgood, this.x + 10, this.y + 80 + i * 20);
         i++;
+        ol.fillText("Total ships: "+planet.components.shipnumber.value, this.x + 10, this.y + 80 + i * 20);
+        i++;
         ol.fillText("Time until next ship: "+planet.components.cooldown.value, this.x + 10, this.y + 80 + i * 20);
 
     }
@@ -192,27 +194,40 @@ export class Menu extends Scene {
                 playSound(sfx_sources["button_click"].src, sfx_ctx);
             }
            });
+      var regen_button = new Button({x: canvas.width / 2 + 100, y:400, width:50, height:50, label:"↻",
+           onClick: function(){
+               //Reset game level
+               changeScene(Game.game_scene);
+               playSound(sfx_sources["button_click"].src, sfx_ctx);
+           }
+          });
       var ins_button = new Button({x: canvas.width / 2, y:500, width:150, height:50, label:"Instructions",
             onClick: function(){
                 changeScene(Game.ins_scene);
                 playSound(sfx_sources["button_click"].src, sfx_ctx);
             }
           });
-      var quality_button = new ResourceButton({x: canvas.width / 2, y:700, width:80, height:20, label:"",
+      var credits_button = new Button({x: canvas.width / 2, y:600, width:150, height:50, label:"Credits",
+            onClick: function(){
+                changeScene(Game.credits_scene);
+                playSound(sfx_sources["button_click"].src, sfx_ctx);
+            }
+          });
+      var quality_button = new ResourceButton({x: canvas.width / 2, y:canvas.height - 70, width:80, height:20, label:"",
             onClick: function(){
                 playSound(sfx_sources["button_click"].src, sfx_ctx);
                 quality = (quality + 1) % 2;
             }
           });
-      quality_button.left_choice = "Low Quality";
-      quality_button.right_choice = "High Quality";
+      quality_button.left_choice = "Off";
+      quality_button.right_choice = "On";
       quality_button.visible = true;
       quality_button.enabled = true;
-      this.buttons = [play_button, ins_button, quality_button];
+      this.buttons = [play_button, ins_button, quality_button, credits_button, regen_button];
       this.frame = 0;
     }
     update(delta) {
-        this.frame++;
+        frame++;
     }
     render(delta){
         c.clearRect(0, 0, canvas.width, canvas.height);
@@ -223,7 +238,7 @@ export class Menu extends Scene {
         // Add three color stops
         gradient.addColorStop(0, "rgba(0, 0, 0, 1.0)");
         gradient.addColorStop(r, "rgba(0, 0, 0, 1.0)");
-        gradient.addColorStop(0.5, "rgba(255, 255, 255, "+ (Math.sin(this.frame / 80.0) * 0.1 + 0.1) +")");
+        gradient.addColorStop(0.5, "rgba(0, 0, 0, "+ (Math.sin(frame / 80.0) * 0.1 + 0.1) +")");
         gradient.addColorStop(1 - r, "rgba(0, 0, 0, 1.0)");
         gradient.addColorStop(1, "rgba(0, 0, 0, 1.0)");
         c.fillStyle = gradient;
@@ -232,14 +247,14 @@ export class Menu extends Scene {
         c.drawImage(images["cover1"], (canvas.width - canvas.height) / 2 - canvas.height, 0, canvas.height, canvas.height);
         c.drawImage(images["cover3"], canvas.width - (canvas.width - canvas.height) / 2, 0, canvas.height, canvas.height);
 
-        gradient = c.createLinearGradient(0, 0, (canvas.width - canvas.height) / 2, 0);
+        gradient = c.createLinearGradient(0, 0, (canvas.width - canvas.height) / 2 + 10, 0);
         // Add three color stops
         gradient.addColorStop(0, "rgba(0, 0, 0, 0.0)");
         gradient.addColorStop(1, "rgba(0, 0, 0, 1.0)");
         c.fillStyle = gradient;
         c.fillRect(0, 0, (canvas.width - canvas.height) / 2, canvas.height);
 
-        gradient = c.createLinearGradient(canvas.width - (canvas.width - canvas.height) / 2, 0, canvas.width, 0);
+        gradient = c.createLinearGradient(canvas.width - (canvas.width - canvas.height) / 2 - 10, 0, canvas.width, 0);
         // Add three color stops
         gradient.addColorStop(0, "rgba(0, 0, 0, 1.0)");
         gradient.addColorStop(1, "rgba(0, 0, 0, 0.0)");
@@ -251,6 +266,10 @@ export class Menu extends Scene {
         c.fillStyle = "white";
         c.textAlign = "center";
         c.fillText("Chronite Corporation", canvas.width/2, 190);
+
+        //c.fillStyle = "black";
+        c.font="20px dialogFont";
+        c.fillText("Dynamic Nebula (for powerful PCs)", canvas.width/2, canvas.height - 100);
 
         for (var i = 0; i < this.buttons.length; i++){
             this.buttons[i].draw(c);
@@ -416,7 +435,14 @@ export class GameScene extends Scene {
         music_player.setBuffer(music_sources["main"]);
         music_player.play(true);
 
-        bg_ctx.drawImage(images["bg"], 0, 0, bg.width, bg.height);
+        if (quality % 2 == 0){
+
+            bg_ctx.drawImage(images["bg"], 0, 0, bg.width, bg.height);
+            bg_ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
+            bg_ctx.fillRect(0, 0, bg.width, bg.height);
+        } else {
+            if (Assets.scene.getObjectByProperty("uuid", Assets.plane_mesh_uuid) == null) Assets.scene.add(Assets.plane_mesh);
+        }
     }
     unload(){
         //this.game = null;
@@ -450,8 +476,10 @@ export class Ins extends Scene {
            }
           });
       this.buttons = [menu_button, play_button];
+      this.page
     }
     update(delta) {
+       frame++;
     }
     render(delta){
         c.clearRect(0, 0, canvas.width, canvas.height);
@@ -462,7 +490,7 @@ export class Ins extends Scene {
         // Add three color stops
         gradient.addColorStop(0, "rgba(0, 0, 0, 1.0)");
         gradient.addColorStop(r, "rgba(0, 0, 0, 1.0)");
-        gradient.addColorStop(0.5, "rgba(0, 0, 0, 0.0)");
+        gradient.addColorStop(0.5, "rgba(0, 0, 0, "+ (Math.sin(frame / 80.0) * 0.1 + 0.1) +")");
         gradient.addColorStop(1 - r, "rgba(0, 0, 0, 1.0)");
         gradient.addColorStop(1, "rgba(0, 0, 0, 1.0)");
         c.fillStyle = gradient;
@@ -471,14 +499,14 @@ export class Ins extends Scene {
         c.drawImage(images["cover1"], (canvas.width - canvas.height) / 2 - canvas.height, 0, canvas.height, canvas.height);
         c.drawImage(images["cover3"], canvas.width - (canvas.width - canvas.height) / 2, 0, canvas.height, canvas.height);
 
-        gradient = c.createLinearGradient(0, 0, (canvas.width - canvas.height) / 2, 0);
+        gradient = c.createLinearGradient(0, 0, (canvas.width - canvas.height) / 2 + 10, 0);
         // Add three color stops
         gradient.addColorStop(0, "rgba(0, 0, 0, 0.0)");
         gradient.addColorStop(1, "rgba(0, 0, 0, 1.0)");
         c.fillStyle = gradient;
         c.fillRect(0, 0, (canvas.width - canvas.height) / 2, canvas.height);
 
-        gradient = c.createLinearGradient(canvas.width - (canvas.width - canvas.height) / 2, 0, canvas.width, 0);
+        gradient = c.createLinearGradient(canvas.width - (canvas.width - canvas.height) / 2 - 10, 0, canvas.width, 0);
         // Add three color stops
         gradient.addColorStop(0, "rgba(0, 0, 0, 1.0)");
         gradient.addColorStop(1, "rgba(0, 0, 0, 0.0)");
@@ -495,10 +523,91 @@ export class Ins extends Scene {
 
         c.font="20px Arial";
 
-        c.fillStyle = "black";
-        c.fillText("Well ya do a little o' this and a little o' that...", canvas.width/2, 290);
+        //Annotated images as instructions
+
+        //c.fillStyle = "black";
+        //c.fillText("Well ya do a little o' this and a little o' that...", canvas.width/2, 290);
     }
     unload(){
+    }
+}
+
+export class Credits extends Scene {
+    constructor(){
+      super();
+      this.name = "credits";
+      //Clicking play will change scene from "menu" to "game"
+      var play_button = new Button({x: canvas.width / 2, y:canvas.height - 200, width:150, height:50, label:"Play",
+            onClick: function(){
+                changeScene(Game.game_scene);
+                playSound(sfx_sources["button_click"].src, sfx_ctx);
+            }
+           });
+      var menu_button = new Button({x: canvas.width / 2, y:canvas.height - 100, width:150, height:50, label:"Back",
+           onClick: function(){
+               changeScene(Game.menu);
+               playSound(sfx_sources["button_click"].src, sfx_ctx);
+           }
+          });
+      this.buttons = [play_button, menu_button];
+      this.frame = 0;
+    }
+    update(delta) {
+        frame++;
+    }
+    render(delta){
+        c.clearRect(0, 0, canvas.width, canvas.height);
+
+        c.drawImage(images["cover2"], (canvas.width - canvas.height) / 2, 0, canvas.height, canvas.height);
+        var r = (canvas.width - canvas.height) / (2 * canvas.width);
+        var gradient = c.createLinearGradient(0, 0, canvas.width, 0);
+        // Add three color stops
+        gradient.addColorStop(0, "rgba(0, 0, 0, 1.0)");
+        gradient.addColorStop(r, "rgba(0, 0, 0, 1.0)");
+        gradient.addColorStop(0.5, "rgba(0, 0, 0, "+ (Math.sin(frame / 80.0) * 0.1 + 0.1) +")");
+        gradient.addColorStop(1 - r, "rgba(0, 0, 0, 1.0)");
+        gradient.addColorStop(1, "rgba(0, 0, 0, 1.0)");
+        c.fillStyle = gradient;
+        c.fillRect(0, 0, canvas.width, canvas.height);
+
+        c.drawImage(images["cover1"], (canvas.width - canvas.height) / 2 - canvas.height, 0, canvas.height, canvas.height);
+        c.drawImage(images["cover3"], canvas.width - (canvas.width - canvas.height) / 2, 0, canvas.height, canvas.height);
+
+        gradient = c.createLinearGradient(0, 0, (canvas.width - canvas.height) / 2 + 10, 0);
+        // Add three color stops
+        gradient.addColorStop(0, "rgba(0, 0, 0, 0.0)");
+        gradient.addColorStop(1, "rgba(0, 0, 0, 1.0)");
+        c.fillStyle = gradient;
+        c.fillRect(0, 0, (canvas.width - canvas.height) / 2, canvas.height);
+
+        gradient = c.createLinearGradient(canvas.width - (canvas.width - canvas.height) / 2 - 10, 0, canvas.width, 0);
+        // Add three color stops
+        gradient.addColorStop(0, "rgba(0, 0, 0, 1.0)");
+        gradient.addColorStop(1, "rgba(0, 0, 0, 0.0)");
+        c.fillStyle = gradient;
+        c.fillRect(canvas.width - (canvas.width - canvas.height) / 2, 0, (canvas.width - canvas.height) / 2, canvas.height);
+
+        //title
+        c.font="80px dialogFont";
+        c.fillStyle = "white";
+        c.textAlign = "center";
+        c.fillText("Credits", canvas.width/2, 190);
+
+        //c.fillStyle = "black";
+        c.font="30px dialogFont";
+        c.fillText("Programming/UI: Radar (Jack Ding)", canvas.width/2, 290);
+        c.fillText("Design/Vector Graphics: munizao (Alexandre Muniz)", canvas.width/2, 390);
+        c.fillText("Music/SFX: FidelDelgado (Fidel Delgado)", canvas.width/2, 490);
+
+        for (var i = 0; i < this.buttons.length; i++){
+            this.buttons[i].draw(c);
+        }
+    }
+    load(){
+
+    }
+    unload(){
+        //music_player.stop();
     }
 }
 

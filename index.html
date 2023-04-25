@@ -97,6 +97,7 @@
 
     // Scene manager
     var sm;
+    var frame = 0;
 
     //Sound sources
     var music_ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -123,16 +124,17 @@
     document.body.scroll = "no";
 
 </script>
-
-<script type="module" src="src/assets.js"></script>
-<script type="module" src="src/config.js"></script>
-
 <script type="module" src="shaders/vert.js"></script>
 <script type="module" src="shaders/frag.js"></script>
 <script type="module" src="shaders/texture.js"></script>
 <script type="module" src="shaders/skyfield.js"></script>
 <script type="module" src="shaders/planet_surface.js"></script>
 <script type="module" src="shaders/nebula.js"></script>
+
+<script type="module" src="src/assets.js"></script>
+<script type="module" src="src/config.js"></script>
+
+
 
 <script type="module" src="src/sound.js"></script>
 

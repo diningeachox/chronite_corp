@@ -7,9 +7,10 @@ import {basic_ship, cutter, tanker, fleet} from "./entities/ship.js";
 import {pointvcircle, circlevcircle} from "./collision.js";
 import {stats} from "./config.js";
 import {addShip} from "./entities/planet.js";
+import {Queue} from "./utils.js";
 
 var canvas = Assets.canvas;
-
+var ol = Assets.ol;
 
 var planet_type = ["hq", "standard", "hostile1", "hostile2", "hostile3", "barren"];
 var field_types = ["speed", "slow", "nebula", "pyrite"];
@@ -199,6 +200,15 @@ ECS.systems.updateEntities = function systemUpdateEntities(game, delta){
             //Update HP bar
             matching_sphere[ent.components.asset.value].stat.scale.x = 0.1 * ent.components.hp.value / 100;
 
+            //Change status to barren if HP is 0
+            if (ent.components.hp.value <= 0 && ent.components.type.value != "barren") {
+                ent.components.type.value = "barren";
+                //Change mesh material
+                var asset = ent.components.asset.value;
+                var mesh = Assets.scene.getObjectByProperty("uuid", asset);
+                mesh.material.uniforms.color.value.setHex( 0x28005c );
+                mesh.material.uniforms.wetness.value = 0.0; //Dry up
+            }
             //Update lanes
 
         } else if (ent.components.type.value == "lane") {
@@ -209,17 +219,19 @@ ECS.systems.updateEntities = function systemUpdateEntities(game, delta){
                 var dest = ent.components.destinationplanet.value;
                 //var dest_inputs = dest.components.inputgoods.value;
                 if (dest.components.scouted.value == 1){
-                    var mesh = Assets.scene.getObjectByProperty("uuid", ent.components.asset.value);
-                    //Delete mesh
-                    mesh.geometry.dispose();
-                    mesh.material.dispose();
-                    Assets.scene.remove( mesh );
-                    delete ECS.entities[ent.id]; //Delete lane from entities dict
+                    deleteEntity(ent);
                     orig.components.lane.value = null;
+                    continue;
                 }
             }
         } else if (ent.components.type.value == "ship"){
             //Update active ships
+
+            //Update visibility depending on whether home planet is scouted
+            var asset = ent.components.asset.value;
+            var mesh = Assets.scene.getObjectByProperty("uuid", asset);
+            mesh.visible = (ent.components.planet.value.components.scouted.value == 1);
+
             if (ent.components.active.value){
                 var planet = ent.components.planet.value;
                 if (planet != null) {
@@ -230,8 +242,14 @@ ECS.systems.updateEntities = function systemUpdateEntities(game, delta){
                         var target = "dest";
                         if (ent.components.carry.value == 0){
                             //Return to orig planet if ship is empty
-                            dir = planet.components.position.value.subtract(ent.components.position.value);
-                            target = "orig";
+                            if (planet.components.type.value != "barren"){
+                                dir = planet.components.position.value.subtract(ent.components.position.value);
+                                target = "orig";
+                            } else {
+                                //Self-destruct if home planet is barren
+                                deleteEntity(ent);
+                                continue;
+                            }
                         }
                         var distance = dir.modulus();
                         var angle = dir.angle();
@@ -408,7 +426,27 @@ ECS.systems.cleanUp = function systemCleanUp (game, delta) {
     for (var key of Object.keys(ECS.entities)){
         var ent = ECS.entities[key];
 
-        if (planet_type.includes(ent.components.type.value)){
+        if (ent.components.type.value == "lane"){
+            var orig = ent.components.originplanet.value;
+            if (orig.components.type.value == "barren"){
+                deleteEntity(ent);
+                orig.components.lane.value = null;
+                continue;
+            }
+            var dest = ent.components.destinationplanet.value;
+            if (dest.components.type.value == "barren"){
+                deleteEntity(ent);
+                orig.components.lane.value = null;
+                continue;
+            }
+        } else if (ent.components.type.value == "ship"){
+            var pl = ent.components.planet.value;
+
+            if (pl.components.type.value == "barren"){
+                pl.components.ships.value = new Queue();
+                deleteEntity(ent);
+                continue;
+            }
 
         }
     }
@@ -431,6 +469,17 @@ ECS.systems.renderEntities = function systemRender (game, delta) {
             }
         }
     }
+}
+
+function deleteEntity(entity){
+    if (entity.components.hasOwnProperty("asset")){
+        var asset = entity.components.asset.value;
+        var mesh = Assets.scene.getObjectByProperty("uuid", asset);
+        mesh.geometry.dispose();
+        mesh.material.dispose();
+        Assets.scene.remove( mesh );
+    }
+    delete ECS.entities[entity.id];
 }
 
 function hasEnoughInputs(entity){
