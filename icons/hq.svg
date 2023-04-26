@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="2.2in"
+   height="2.2in"
+   viewBox="0 0 55.880002 55.880003"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="hq.svg"
+   inkscape:export-filename="/home/munizao/projects/jams/shipping_game/icons/png/hq.png"
+   inkscape:export-xdpi="29.09"
+   inkscape:export-ydpi="29.09">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1"
+     inkscape:cx="-194.77144"
+     inkscape:cy="111.12255"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     units="in"
+     inkscape:window-width="1920"
+     inkscape:window-height="969"
+     inkscape:window-x="0"
+     inkscape:window-y="40"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="axonomgrid"
+       id="grid858"
+       units="mm"
+       empspacing="5"
+       spacingy="4.9999999" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-241.11998)">
+    <g
+       id="g6002">
+      <path
+         inkscape:transform-center-y="-2.6052388"
+         inkscape:transform-center-x="-4.7957367e-06"
+         transform="matrix(0.93203538,-0.30283666,0.30283666,0.93203538,304.39148,354.47958)"
+         d="m -214.33417,-167.54016 -19.23644,26.47668 -31.1252,-10.11319 0,-32.72698 31.1252,-10.11319 z"
+         inkscape:randomized="0"
+         inkscape:rounded="0"
+         inkscape:flatsided="true"
+         sodipodi:arg2="0.62831853"
+         sodipodi:arg1="0"
+         sodipodi:r2="22.522411"
+         sodipodi:r1="27.839231"
+         sodipodi:cy="-167.54016"
+         sodipodi:cx="-242.1734"
+         sodipodi:sides="5"
+         id="path843"
+         style="opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:2.04081631;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         sodipodi:type="star" />
+      <path
+         inkscape:transform-center-y="-2.5873751"
+         inkscape:transform-center-x="1.8895271e-06"
+         transform="scale(1,-1)"
+         d="m 27.940001,-248.22824 -6.768643,-13.71477 -15.1351473,-2.19926 10.9518963,-10.67546 -2.585394,-15.07399 13.537288,7.11697 13.537286,-7.11697 -2.585393,15.07399 10.951897,10.67546 -15.135149,2.19926 z"
+         inkscape:randomized="0"
+         inkscape:rounded="0"
+         inkscape:flatsided="false"
+         sodipodi:arg2="2.1991149"
+         sodipodi:arg1="1.5707963"
+         sodipodi:r2="11.515502"
+         sodipodi:r1="23.031008"
+         sodipodi:cy="-271.25925"
+         sodipodi:cx="27.940001"
+         sodipodi:sides="5"
+         id="path851"
+         style="opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.98082244;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         sodipodi:type="star" />
+    </g>
+  </g>
+</svg>
