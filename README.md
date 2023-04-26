@@ -1,4 +1,4 @@
-# Shipping Game (name to be decided)
+# Chronite Corporation
 
 ## Introduction
 A shipping management game with time manipulation mechanics. You try to build a galactic shipping empire which aims to maximize profits. However the galaxy is a treacherous place. Use your time manipulation tech to secure your trade routes!

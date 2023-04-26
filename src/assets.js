@@ -5,7 +5,7 @@ import { LineGeometry } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm
 import {Cursor} from "./cursor.js";
 import {Vector2D} from "./vector2D.js";
 import { OrbitControls } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/controls/OrbitControls.js';
-
+import {stats} from "./config.js";
 
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
@@ -43,8 +43,6 @@ media.style.visibility = 'hidden';
 
 //Cursor
 export var cursor = new Cursor(ol, 0, 0);
-
-
 
 
 /** WebGL renderer **/
@@ -108,24 +106,15 @@ export const plane_uniforms = {
 export const plane_material = new THREE.ShaderMaterial( {
     uniforms: plane_uniforms,
     vertexShader: shaders.vert,
-    fragmentShader: shaders.nebula
+    fragmentShader: shaders.nebula2
 } );
 
-export const background_material = new THREE.ShaderMaterial({
-    uniforms: THREE.UniformsUtils.merge([
-        THREE.UniformsLib['lights'],
-        {
-            lightIntensity: {type: 'f', value: 1.0},
-            textureSampler: {type: 't', value: null}
-        }
-    ]),
-    vertexShader: shaders.tex_vert,
-    fragmentShader: shaders.tex_frag,
-    //vertexShader: shaders.vert,
-    //fragmentShader: shaders.nebula,
-    transparent: true,
-    lights: true
-});
+export var plane_mesh = new THREE.Mesh( plane_geometry, plane_material );
+plane_mesh.position.set( 0, 0, -100);
+plane_mesh.layers.disableAll();
+plane_mesh.layers.set(0); // Layer 0 for background
+export const plane_mesh_uuid = plane_mesh.uuid;
+//scene.add( plane_mesh );
 
 /*
 const light = new THREE.PointLight( 0xff0000, 1, 100 );
@@ -148,16 +137,9 @@ controls.enableRotate = false;
 scene.background = null;
 
 
-//Background nebula
-const background = new THREE.TextureLoader().load( "../sprites/nebula.jpg");
-background.magFilter = THREE.NearestFilter;
-background_material.uniforms.textureSampler.value = background;
 
-export var plane_mesh = new THREE.Mesh( plane_geometry, plane_material );
-plane_mesh.position.set( 0, 0, -100);
-plane_mesh.layers.disableAll();
-plane_mesh.layers.set(0); // Layer 0 for background
-//scene.add( plane_mesh );
+
+
 
 //Read any jsons we may use to store game data
 function readTextFile(file, callback) {
@@ -187,7 +169,7 @@ const select_geometry = new THREE.SphereGeometry( 80, 16, 16 );
 
 const bar_geometry = new THREE.PlaneBufferGeometry( 120, 15 );
 const black_material = new THREE.MeshBasicMaterial({
-    color: 0x2a3a2a
+    color: 0x1a2a1a
 });
 export function StarFactory(x, y, type){
     const planet_geometry = new THREE.SphereGeometry( 64, 36, 36 );
@@ -269,7 +251,7 @@ export function LaneFactory(source, destination){
     //Linematerial with linewidth replaced by an attribute
     const matLine = new LineMaterial( {
       color: 0xffffff,
-      linewidth: 8, // in pixels
+      linewidth: 10, // in pixels
       vertexColors: true,
       //resolution:  // to be set by renderer, eventually
       dashed: false,
@@ -319,7 +301,7 @@ export const ShipFactory = (x, y, type) => {
 }
 
 //Field outline (before placing)
-const geometry = new THREE.CircleGeometry( 7, 32 );
+const geometry = new THREE.CircleGeometry( stats.field_radius, 32 );
 const material = new THREE.MeshBasicMaterial({
     color: 0xffffff,
     transparent: true,
@@ -347,7 +329,7 @@ export function FieldFactory(x, y, size, type){
     });
     const circle = new THREE.Mesh( geometry, material );
 
-    circle.position.set(x, y, -80);
+    circle.position.set(x, y, -40);
     circle.layers.disableAll();
     circle.layers.set(2); //Layer 2 so it's non-interactable
     scene.add( circle );

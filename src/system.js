@@ -7,9 +7,11 @@ import {basic_ship, cutter, tanker, fleet} from "./entities/ship.js";
 import {pointvcircle, circlevcircle} from "./collision.js";
 import {stats} from "./config.js";
 import {addShip} from "./entities/planet.js";
+import {Queue, worldtoscreen} from "./utils.js";
+import {playSound} from "./sound.js";
 
 var canvas = Assets.canvas;
-
+var ol = Assets.ol;
 
 var planet_type = ["hq", "standard", "hostile1", "hostile2", "hostile3", "barren"];
 var field_types = ["speed", "slow", "nebula", "pyrite"];
@@ -193,12 +195,24 @@ ECS.systems.updateEntities = function systemUpdateEntities(game, delta){
                     //Change scouted status to true
                     ent.components.scouted.value = 1;
                     delete inputs.Scout;
+
+                    //Play discovery sound
+                    playSound(sfx_sources["discovery"].src, sfx_ctx);
                 }
             }
 
             //Update HP bar
             matching_sphere[ent.components.asset.value].stat.scale.x = 0.1 * ent.components.hp.value / 100;
 
+            //Change status to barren if HP is 0
+            if (ent.components.hp.value <= 0 && ent.components.type.value != "barren") {
+                ent.components.type.value = "barren";
+                //Change mesh material
+                var asset = ent.components.asset.value;
+                var mesh = Assets.scene.getObjectByProperty("uuid", asset);
+                mesh.material.uniforms.color.value.setHex( 0x28005c );
+                mesh.material.uniforms.wetness.value = 0.0; //Dry up
+            }
             //Update lanes
 
         } else if (ent.components.type.value == "lane") {
@@ -208,18 +222,20 @@ ECS.systems.updateEntities = function systemUpdateEntities(game, delta){
                 //Recall lane, and ships
                 var dest = ent.components.destinationplanet.value;
                 //var dest_inputs = dest.components.inputgoods.value;
-                if (dest.components.scouted.value == 1){
-                    var mesh = Assets.scene.getObjectByProperty("uuid", ent.components.asset.value);
-                    //Delete mesh
-                    mesh.geometry.dispose();
-                    mesh.material.dispose();
-                    Assets.scene.remove( mesh );
-                    delete ECS.entities[ent.id]; //Delete lane from entities dict
+                if (dest.components.scouted.value == 1 && !dest.components.inputgoods.value.hasOwnProperty("Scout")){
+                    deleteEntity(ent);
                     orig.components.lane.value = null;
+                    continue;
                 }
             }
         } else if (ent.components.type.value == "ship"){
             //Update active ships
+
+            //Update visibility depending on whether home planet is scouted
+            var asset = ent.components.asset.value;
+            var mesh = Assets.scene.getObjectByProperty("uuid", asset);
+            mesh.visible = (ent.components.planet.value.components.scouted.value == 1);
+
             if (ent.components.active.value){
                 var planet = ent.components.planet.value;
                 if (planet != null) {
@@ -230,8 +246,14 @@ ECS.systems.updateEntities = function systemUpdateEntities(game, delta){
                         var target = "dest";
                         if (ent.components.carry.value == 0){
                             //Return to orig planet if ship is empty
-                            dir = planet.components.position.value.subtract(ent.components.position.value);
-                            target = "orig";
+                            if (planet.components.type.value != "barren"){
+                                dir = planet.components.position.value.subtract(ent.components.position.value);
+                                target = "orig";
+                            } else {
+                                //Self-destruct if home planet is barren
+                                deleteEntity(ent);
+                                continue;
+                            }
                         }
                         var distance = dir.modulus();
                         var angle = dir.angle();
@@ -281,9 +303,15 @@ ECS.systems.updateEntities = function systemUpdateEntities(game, delta){
                                     } else if (field_type == "slow"){
                                         modifier /= 1.8;
                                     } else if (field_type == "nebula"){
-
+                                        //Destroy fast ships 30% of the time
+                                        if (ent.component.speed.value > 0.4){
+                                            if (Math.random() < 0.03) deleteEntity(ent);
+                                        }
                                     } else if (field_type == "pyrite"){
-
+                                        //Destroy slow ships 30% of the time
+                                        if (ent.component.speed.value < 0.2){
+                                            if (Math.random() < 0.03) deleteEntity(ent);
+                                        }
                                     }
                                     break;
                                 }
@@ -362,6 +390,11 @@ ECS.systems.updateHQ = function systemUpdateHQ(game){
 
 }
 
+ECS.systems.randomEvents = function systemRandomEvents(game){
+
+
+}
+
 function triggerHostiles(game, hostile_type){
     for (var i = 0; i < game.planets.length; i++){
         var pl = game.planets[i];
@@ -408,7 +441,27 @@ ECS.systems.cleanUp = function systemCleanUp (game, delta) {
     for (var key of Object.keys(ECS.entities)){
         var ent = ECS.entities[key];
 
-        if (planet_type.includes(ent.components.type.value)){
+        if (ent.components.type.value == "lane"){
+            var orig = ent.components.originplanet.value;
+            if (orig.components.type.value == "barren"){
+                deleteEntity(ent);
+                orig.components.lane.value = null;
+                continue;
+            }
+            var dest = ent.components.destinationplanet.value;
+            if (dest.components.type.value == "barren"){
+                deleteEntity(ent);
+                orig.components.lane.value = null;
+                continue;
+            }
+        } else if (ent.components.type.value == "ship"){
+            var pl = ent.components.planet.value;
+
+            if (pl.components.type.value == "barren"){
+                pl.components.ships.value = new Queue();
+                deleteEntity(ent);
+                continue;
+            }
 
         }
     }
@@ -424,13 +477,49 @@ ECS.systems.renderEntities = function systemRender (game, delta) {
             var mesh = Assets.scene.getObjectByProperty("uuid", ent.components.asset.value);
             mesh.material = mat;
             matching_sphere[ent.components.asset.value].stat.visible = Boolean(scouted);
+
+            var coords = worldtoscreen(ent.components.position.value, Assets.ortho_camera);
             if (scouted){
                 var planet = Assets.scene.getObjectByProperty("uuid", ent.components.asset.value);
                 planet.rotation.x -= delta / 400;
                 planet.rotation.y -= delta / 100;
+                if (ent.components.type.value != "barren"){
+                    var outputgood = ent.components.outputgood.value;
+                    if (outputgood != "Null") ol.drawImage(images[outputgood], coords[0] - 16, coords[1] - 16, 32, 32);
+                }
+                ol.font="20px dialogFont";
+                ol.fillStyle = "white";
+                ol.textAlign = "center";
+                ol.fillText(ent.components.name.value, coords[0] - 16, coords[1] - 140 * Assets.ortho_camera.zoom);
+
+            } else {
+                //Draw scouting progress
+                ol.fillStyle = "green";
+                ol.beginPath();
+                ol.moveTo(coords[0], coords[1]);
+                ol.arc(coords[0], coords[1],30,0, Math.PI * 2 * (ent.components.inputgoods.value.Scout.current / ent.components.inputgoods.value.Scout.max));
+                ol.lineTo(coords[0], coords[1]);
+                ol.closePath();
+                ol.fill();
+                ol.font="30px dialogFont";
+                ol.fillStyle = "white";
+                ol.textAlign = "left";
+                ol.fillText("?", coords[0] - 8, coords[1] + 8);
+
             }
         }
     }
+}
+
+function deleteEntity(entity){
+    if (entity.components.hasOwnProperty("asset")){
+        var asset = entity.components.asset.value;
+        var mesh = Assets.scene.getObjectByProperty("uuid", asset);
+        mesh.geometry.dispose();
+        mesh.material.dispose();
+        Assets.scene.remove( mesh );
+    }
+    delete ECS.entities[entity.id];
 }
 
 function hasEnoughInputs(entity){

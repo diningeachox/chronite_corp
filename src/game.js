@@ -44,6 +44,7 @@ export var game;
 export var game_scene;
 export var ins_scene;
 export var menu;
+export var credits_scene;
 
 function resize() {
     canvas.width = window.innerWidth;
@@ -73,6 +74,7 @@ export function init(){
     game = new Game();
     game_scene = new Scene.GameScene(game);
     ins_scene = new Scene.Ins();
+    credits_scene = new Scene.Credits();
 
     //Subscribe to events
     em.subscribe("resource", game);
@@ -225,7 +227,7 @@ class Game {
         //UI
 
         //Planet stats panel
-        this.stat_panel = new Scene.StatPanel(20, 20, canvas.width / 6, canvas.width / 8);
+        this.stat_panel = new Scene.StatPanel(20, 20, canvas.width / 6, canvas.width / 7);
 
         this.frame = 0;
         this.end = false;
@@ -236,7 +238,7 @@ class Game {
     process(event_type, data){
         //Process data from message streams
         if (event_type == "resource"){
-            if (this.selected_entity.components.choices.value != null){
+            if (this.selected_entity != null && this.selected_entity.components.choices.value != null){
                 this.selected_entity.components.outputgood.value = this.selected_entity.components.choices.value[data];
             }
         } else if (event_type == "recall"){
@@ -265,7 +267,7 @@ class Game {
             var collided = false;
             for (const key of Object.keys(fields)){
                 var f = matching_entity[key];
-                collided = circlevcircle(new Vector2D(x, y), 7, f.components.position.value, f.components.size.value);
+                collided = circlevcircle(new Vector2D(x, y), stats.field_radius, f.components.position.value, f.components.size.value);
                 if (collided) break;
             }
 
@@ -319,12 +321,11 @@ class Game {
         c.fillStyle = "white";
         c.font="20px dialogFont";
         c.fillText("FPS: " + fps, Assets.canvas.width - 100, 40);
-        ol.font = "30px dialogFont";
-        ol.textAlign = "left";
-        ol.fillStyle = "#89CFF0";
-        ol.fillText("Metacrystals: " + this.hq.components.inputgoods.value.Metacrystals.current + "/" + stats.end, 40, 40);
-        ol.fillStyle = "red";
-        ol.fillText("HP: " + this.hq.components.hp.value + "%", 440, 40);
+
+        //Game icons and indicators
+
+
+
         //c.fillText("Metal: " + pl3.components.inputgoods.value.metal.current, 900, 40);
         //c.fillText("Chronium: " + pl3.components.inputgoods.value.chronium.current, 900, 80);
         Assets.plane_uniforms.u_time.value += delta;
@@ -339,6 +340,14 @@ class Game {
         }
 
         this.stat_panel.visible = false;
+
+        //Top HUD
+        ol.font = "30px dialogFont";
+        ol.textAlign = "left";
+        ol.fillStyle = "#89CFF0";
+        ol.fillText("Metacrystals: " + this.hq.components.inputgoods.value.Metacrystals.current + "/" + stats.end, 40, 40);
+        ol.fillStyle = "red";
+        ol.fillText("HP: " + this.hq.components.hp.value + "%", 440, 40);
 
 
     }

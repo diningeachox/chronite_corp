@@ -103,7 +103,7 @@ class ResourceButton extends Button {
             ctx.font="15px dialogFont";
             ctx.fillStyle = "black";
             ctx.textAlign = "left";
-            ctx.fillText(this.left_choice, this.x - (this.width / 2) - 100, this.y);
+            ctx.fillText(this.left_choice, this.x - (this.width / 2) - 10 * this.left_choice.length, this.y);
             ctx.fillText(this.right_choice, this.x + (this.width / 2) + 10, this.y);
 
             ctx.fillStyle = "gray";
