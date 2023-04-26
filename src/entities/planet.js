@@ -3,6 +3,7 @@ import {Vector2D} from "../vector2D.js";
 import {StarFactory} from "../assets.js";
 import {Queue} from "../utils.js";
 import {basic_ship, tanker, cutter} from "./ship.js";
+import {stats} from "../config.js";
 
 const planet = (config) => {
     const ent = new ECS.Entity();
@@ -19,9 +20,10 @@ const planet = (config) => {
     ent.addComponent( new ECS.Components.Choices(config.choices || null));
     ent.addComponent( new ECS.Components.Name(config.name || ""));
 
-    var starting_ships = config.starting_ships = ["basic", "basic", "basic"];
+    var starting_ships = (config.starting_ships || ["basic", "basic", "basic"]);
 
     ent.addComponent( new ECS.Components.Ships(new Queue()));
+    ent.addComponent( new ECS.Components.ShipComp({"Basic": 0, "Cutter": 0, "Tanker": 0}) );
 
     //Meshes (one for actual planet, one spherical mesh for selection)
     var uuid = StarFactory(ent.components.position.value.x, ent.components.position.value.y, config.type);
@@ -59,20 +61,31 @@ const planet = (config) => {
 
 function addShip(ent, type){
     //var type = ent.components.outputgood.value;
-    var ship = basic_ship(ent.components.position.value.x,
-              ent.components.position.value.y,
-              ent.components.outputgood.value);
-    if (type == "Cutter"){
-        ship = cutter(ent.components.position.value.x,
-                ent.components.position.value.y,
-                ent.components.outputgood.value);
-    } else if (type == "Tanker"){
-        ship = tanker(ent.components.position.value.x,
-              ent.components.position.value.y,
-              ent.components.outputgood.value);
+    if (ent.components.shipnumber.value < stats.max_ships){
+        if (type == "Basic"){
+            var ship = basic_ship(ent.components.position.value.x,
+                    ent.components.position.value.y,
+                    ent.components.outputgood.value);
+            ship.components.planet.value = ent;
+            ent.components.ships.value.enqueue(ship);
+        } else if (type == "Cutter"){
+            var ship = cutter(ent.components.position.value.x,
+                    ent.components.position.value.y,
+                    ent.components.outputgood.value);
+            ship.components.planet.value = ent;
+            ent.components.ships.value.enqueue(ship);
+        } else if (type == "Tanker"){
+            var ship = tanker(ent.components.position.value.x,
+                  ent.components.position.value.y,
+                  ent.components.outputgood.value);
+            ship.components.planet.value = ent;
+            ent.components.ships.value.enqueue(ship);
+        }
+
+        ent.components.shipnumber.value += 1;
     }
-    ship.components.planet.value = ent;
-    ent.components.ships.value.enqueue(ship);
+
+
 }
 
 // The idea here is that we'll want to start with one of each
@@ -140,12 +153,14 @@ const outerPlanet = (i, x, y) => {
       break;
     case 11:
       config.output = "Cutter";
+      config.starting_ships = ["cutter", "cutter", "cutter"];
       config.input.Hyperchronite = {max:50, current:0};
       config.input.Basic = {max:50, current:0};
       config.name = "Swift Logistics";
       break;
     case 12:
       config.output = "Tanker";
+      config.starting_ships = ["tanker", "tanker", "tanker"];
       config.input.Infrachronite = {max:50, current:0};
       config.input.Basic = {max:50, current:0};
       config.name = "Masslift Industries";

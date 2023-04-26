@@ -137,10 +137,6 @@ controls.enableRotate = false;
 scene.background = null;
 
 
-
-
-
-
 //Read any jsons we may use to store game data
 function readTextFile(file, callback) {
     var rawFile = new XMLHttpRequest();
@@ -178,11 +174,11 @@ export function StarFactory(x, y, type){
     var wetness = Math.random() * 0.8 + 0.2;
     if (type.includes("hostile")){
         color = ((Math.random() * 0.1) + 0.9) * 0xff4500;
-        wetness = Math.random() * 0.2;
+        wetness = Math.random() * 0.1;
     }
     const uniforms = {
       color: { value: new THREE.Color( color ) },
-      wetness: {value: Math.random() * 0.8 + 0.2},
+      wetness: {value: wetness},
       seed: {value: Math.random() + 1.0},
     };
     //uniforms.color.value.setHex( Math.random() * 0xffff87 );
@@ -267,34 +263,57 @@ export function LaneFactory(source, destination){
     line.layers.set(1); //Layer 1
     scene.add(line);
 
+    //Add arrow to indicate direction
+    const origin = new THREE.Vector3(source.x, source.y, -80);
+    const dir = new THREE.Vector3(destination.x, destination.y, -80);
+
+    dir.sub(origin);
+    const perp = new Vector2D(
+        dir.x * Math.cos(Math.PI / 2) - dir.y * Math.sin(Math.PI / 2),
+        dir.x * Math.sin(Math.PI / 2) + dir.y * Math.cos(Math.PI / 2)
+    ).normalize();
+    origin.add(new THREE.Vector3(perp.x, perp.y, 0));
+    const length = dir.length() * 0.5;
+
+    //normalize the direction vector (convert to vector of length 1)
+    dir.normalize();
+
+
+    const hex = 0x00ff00;
+
+    const arrowHelper = new THREE.ArrowHelper( dir, origin, length, hex, 0.08 * length,  0.04 * length);
+    scene.add( arrowHelper );
+    arrows[line.uuid] = arrowHelper;
+
     console.log("Lane created!");
     return line.uuid;
 }
 
 // Create a sprite object in THREE.js
-export function SpriteFactory(x, y, src){
+export function SpriteFactory(x, y, type, src){
     const map = loader.load(src);
     const material = new THREE.SpriteMaterial( { map: map } );
     const sprite = new THREE.Sprite( material );
     sprite.position.set(x, y, 0);
-    sprite.scale.set(2, 2, 2);
+    var size_mod = 2 * (type >= 1);
+    sprite.scale.set(2 + size_mod, 2 + size_mod, 2 + size_mod);
     sprite.layers.disableAll();
     sprite.layers.set(2); //Layer 2 so it's non-interactable
     scene.add(sprite);
-    //sprites[id] = sprite;
+    console.log("Type " + type + " ship created!");
     return sprite.uuid;
 }
 
 export const ShipFactory = (x, y, type) => {
     switch (type) {
       case 0:
-        return SpriteFactory(x, y, "../sprites/basic.png");
+        return SpriteFactory(x, y, type, images["basic"].src);
         break;
       case 1:
-        return SpriteFactory(x, y, "../sprites/tanker.png");
+        return SpriteFactory(x, y, type, images["tanker"].src);
         break;
       case 2:
-        return SpriteFactory(x, y, "../sprites/cutter.png");
+        return SpriteFactory(x, y, type, images["cutter"].src);
         break;
     }
     return null;
@@ -321,7 +340,12 @@ export function FieldFactory(x, y, size, type){
     var color = 0x00ff00;
     if (type == "speed"){
         color = 0xffab00;
+    } else if (type == "nebula"){
+        color = 0xeeeeee;
+    } else if (type == "pyrite"){
+        color = 0xff00a9;
     }
+
     const material = new THREE.MeshBasicMaterial({
         color: color,
         transparent: true,

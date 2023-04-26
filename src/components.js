@@ -104,6 +104,13 @@ ECS.Components.ShipNumber = function ComponentShipNumber (value){
 };
 ECS.Components.ShipNumber.prototype.name = 'shipnumber';
 
+ECS.Components.ShipComp = function ComponentShipComp (value){
+    this.value = value;
+
+    return this;
+};
+ECS.Components.ShipComp.prototype.name = 'shipcomp';
+
 ECS.Components.Position = function ComponentPosition (value){
     this.value = value;
 

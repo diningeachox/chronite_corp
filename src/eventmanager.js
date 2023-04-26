@@ -12,7 +12,7 @@ class EventManager {
 
     }
 
-    unsubsribe(event_type, listener){
+    unsubscribe(event_type, listener){
         delete this.listeners[event_type];
     }
 

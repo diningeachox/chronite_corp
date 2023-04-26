@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Javascript Game Template</title>
+    <title>Chronite Corporation</title>
     <style>
     	* { padding: 0; margin: 0; }
 
@@ -67,9 +67,11 @@
            entities: {},
            game: {}
     };
+
     var matching_sphere = {};
     var matching_entity = {};
     var lanes = {};
+    var arrows = {};
     var fields = {};
 
     var materials = {};
@@ -79,6 +81,7 @@
     //Game flags
     var flags = {"mouse_down": false,
                 "mouse_click": false,
+                "right_click": false,
                 "shift": false,
                 "field": null};
 
@@ -93,6 +96,9 @@
         "cover1": "sprites/menu.jpg",
         "cover2": "sprites/menu2.jpg",
         "cover3": "sprites/menu3.jpg",
+        "basic": "sprites/basic.png",
+        "cutter": "sprites/cutter.png",
+        "tanker": "sprites/tanker.png",
 
         "Antimatter": "icons/png/antimatter.png",
         "Computronium": "icons/png/computronium.png",
@@ -110,6 +116,10 @@
         "Scout": "icons/png/scouts.png",
 
     };
+
+    for (var i = 0; i < 12; i++){
+        arr[i] = "sprites/manual/"+i+".jpg";
+    }
 
     // Scene manager
     var sm;
@@ -130,6 +140,9 @@
     var sfx_player;
 
     var em;
+
+    // Game pause toggle
+    var pause = 0;
 
     //Fonts
     var dialogFont;
@@ -234,7 +247,7 @@ Promise.all(promises)
       music_player = new AudioPlayer(music_ctx);
       ambient_player = new AudioPlayer(ambient_sounds_ctx);
       sfx_player = new AudioPlayer(sfx_ctx);
-
+      console.log(images);
 
       music_player.setBuffer(music_sources["menu"]);
       music_player.play(true);

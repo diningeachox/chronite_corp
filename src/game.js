@@ -4,12 +4,13 @@ import * as Assets from './assets.js';
 import {clip} from "./utils.js";
 import {Vector2D} from "./vector2D.js";
 import {startingPlanet, outerPlanet, addShip} from "./entities/planet.js";
-import {basic_ship, tanker, fleet} from "./entities/ship.js";
+import {basic_ship, tanker} from "./entities/ship.js";
 import {area_field} from "./entities/aoe.js";
 import lane from "./entities/lane.js";
 import {pointvcircle, circlevcircle} from "./collision.js";
 import {stats} from "./config.js";
 import {playSound} from "./sound.js";
+import {deleteEntity} from "./system.js";
 
 //Variables from assets.js
 var canvas = Assets.canvas;
@@ -22,8 +23,7 @@ var bg = Assets.bg;
 //Debug mode toggle
 var DEBUG = false;
 
-// Game pause toggle
-var pause = 0;
+
 
 //Game frames
 var frame_rate = 60;
@@ -71,15 +71,18 @@ export function init(){
     menu = new Scene.Menu();
 
     sm.cur_scene = menu;
-    game = new Game();
-    game_scene = new Scene.GameScene(game);
+    //game = new Game();
+    game_scene = new Scene.GameScene(null);
     ins_scene = new Scene.Ins();
     credits_scene = new Scene.Credits();
 
     //Subscribe to events
+    /*
     em.subscribe("resource", game);
     em.subscribe("recall", game);
     em.subscribe("ship", game);
+    em.subscribe("reset", game);
+    */
 
     //Add Event listeners
     overlay.addEventListener('click', function(e){
@@ -119,20 +122,29 @@ export function init(){
 
     //Mouse down
     canvas.addEventListener('click', function(e){
-        var rect = canvas.getBoundingClientRect();
-        var mouseX = e.clientX - rect.left;
-        var mouseY = e.clientY - rect.top;
-        //Current scene's Buttons
-        sm.cur_scene.handleMouseClick(mouseX, mouseY);
-        flags["mouse_click"] = true;
+        if (e.button === 0){
+            var rect = canvas.getBoundingClientRect();
+            var mouseX = e.clientX - rect.left;
+            var mouseY = e.clientY - rect.top;
+            //Current scene's Buttons
+            sm.cur_scene.handleMouseClick(mouseX, mouseY);
+            flags["mouse_click"] = true;
+        } else if (e.button === 2){
+            flags["right_click"] = true;
+        }
     }, false);
 
     canvas.addEventListener('mousedown', function(e){
-        var rect = canvas.getBoundingClientRect();
-        var mouseX = e.clientX - rect.left;
-        var mouseY = e.clientY - rect.top;
-        //Current scene's Buttons
-        flags["mouse_down"] = true;
+        if (e.button === 0){
+            var rect = canvas.getBoundingClientRect();
+            var mouseX = e.clientX - rect.left;
+            var mouseY = e.clientY - rect.top;
+            //Current scene's Buttons
+            flags["mouse_down"] = true;
+        } else if (e.button === 2){
+            flags["field"] = null;
+            Assets.circle.material.opacity = 0.0;
+        }
     }, false);
 
     //Mouse move
@@ -151,6 +163,7 @@ export function init(){
         var mouseY = e.clientY - rect.top;
         //Current scene's Buttons
         flags["mouse_down"] = false;
+        flags["right_click"] = false;
     }, false);
 
     //Mouse scroll wheel
@@ -185,7 +198,7 @@ export function init(){
 }
 
 //The game simulation
-class Game {
+export class Game {
     constructor(){
         this.selected_entity = null;
         this.hovered_entity = null;
@@ -198,22 +211,27 @@ class Game {
         var startX = 0;
         var startY = 0;
         var startangle = 0;
+        var dist = 42;
         for (var i = 1; i < 9; i++){
             this.planets.push(startingPlanet(i, startX, startY));
             startangle += (Math.PI / 3) * (0.5 + Math.random());
             var ring = Math.floor(startangle / (Math.PI * 2)) + 1;
-            startX = 35 * ring * Math.cos(startangle);
-            startY = 35 * ring * Math.sin(startangle);
+            startX = dist * ring * Math.cos(startangle);
+            startY = dist * ring * Math.sin(startangle);
         }
 
 
         //Create outer planets (initially unexplored)
         for (var i = 9; i < 25; i++){
-            this.planets.push(outerPlanet(i, startX, startY));
+            if (i == 13 || i == 19 || i == 24){
+                this.planets.push(outerPlanet(i, Math.max(100, startX), Math.max(100, startX)));
+            } else {
+                this.planets.push(outerPlanet(i, startX, startY));
+            }
             startangle += (Math.PI / 3) * (0.5 + Math.random());
             var ring = Math.floor(startangle / (Math.PI * 2)) + 1;
-            startX = 35 * ring * Math.cos(startangle);
-            startY = 35 * ring * Math.sin(startangle);
+            startX = dist * ring * Math.cos(startangle);
+            startY = dist * ring * Math.sin(startangle);
         }
 
 
@@ -231,6 +249,9 @@ class Game {
 
         this.frame = 0;
         this.end = false;
+        ECS.systems.renderEntities(this, 0);
+
+        this.placing = false;
 
         this.loading = false;
     }
@@ -244,16 +265,13 @@ class Game {
         } else if (event_type == "recall"){
             //Delete mesh
             var lane = this.selected_entity.components.lane.value;
-            var mesh = Assets.scene.getObjectByProperty("uuid", lane.components.asset.value);
-            //Delete mesh
-            mesh.geometry.dispose();
-            mesh.material.dispose();
-            Assets.scene.remove( mesh );
-            delete ECS.entities[lane.id]; //Delete lane from entities dict
+            deleteEntity(lane);
             this.selected_entity.components.lane.value = null;
             Scene.info_panel.buttons[0].enabled = false;
         } else if (event_type == "ship"){
             addShip(this.selected_entity, this.selected_entity.components.outputgood.value);
+        } else if (event_type == "reset"){
+            this.cleanUp();
         }
     }
 
@@ -292,6 +310,7 @@ class Game {
                 } else {
                     Assets.circle.material.color.setHex(0xffffff);
                 }
+
             }
 
         }
@@ -308,7 +327,7 @@ class Game {
         Scene.resource_panel.buttons[3].enabled = (resources.Pyrite.current >= stats.costs.pyrite.quantity);
 
         //Check win condition
-        if (this.end) {
+        if (this.end || this.loss) {
             pause = 1;
         }
 
@@ -349,7 +368,79 @@ class Game {
         ol.fillStyle = "red";
         ol.fillText("HP: " + this.hq.components.hp.value + "%", 440, 40);
 
+        //Field Resources
+        ol.font = "12px dialogFont";
+        ol.fillStyle = "#89CFF0";
+        ol.drawImage(images["Hyperchronite"], Scene.resource_panel.x + 120 - 40, Scene.resource_panel.y + 110 - 8, 20, 20);
+        ol.fillText(this.hq.components.inputgoods.value.Hyperchronite.current + "/6", Scene.resource_panel.x + 120, Scene.resource_panel.y + 110);
+        ol.drawImage(images["Infrachronite"], Scene.resource_panel.x + 220 - 40, Scene.resource_panel.y + 110 - 8, 20, 20);
+        ol.fillText(this.hq.components.inputgoods.value.Infrachronite.current + "/6", Scene.resource_panel.x + 220, Scene.resource_panel.y + 110);
+        ol.drawImage(images["Deuterium"], Scene.resource_panel.x + 320 - 40, Scene.resource_panel.y + 110 - 8, 20, 20);
+        ol.fillText(this.hq.components.inputgoods.value.Deuterium.current + "/6", Scene.resource_panel.x + 320, Scene.resource_panel.y + 110);
+        ol.drawImage(images["Pyrite"], Scene.resource_panel.x + 420 - 40, Scene.resource_panel.y + 110 - 8, 20, 20);
+        ol.fillText(this.hq.components.inputgoods.value.Pyrite.current + "/6", Scene.resource_panel.x + 420, Scene.resource_panel.y + 110);
 
+
+    }
+
+    cleanUp(){
+        //Delete all meshes in the game
+        for (var key of Object.keys(fields)){
+            var field_ent = matching_entity[key];
+            var field_mesh = fields[key];
+            if (field_ent.components.cooldown.value <= 0){
+                //Delete geometry and mesh from THREE.js scene
+                field_mesh.geometry.dispose();
+                field_mesh.material.dispose();
+                Assets.scene.remove( field_mesh );
+
+                //Delete from entity dictionaries
+                delete matching_entity[key];
+                delete fields[key];
+            }
+        }
+
+        //Get rid of entities and their meshes
+        for (var key of Object.keys(ECS.entities)){
+            var ent = ECS.entities[key];
+
+            //Delete the MESH
+            if (ent.components.hasOwnProperty("asset")){
+                var asset = ent.components.asset.value;
+                var mesh = Assets.scene.getObjectByProperty("uuid", asset);
+                mesh.geometry.dispose();
+                mesh.material.dispose();
+                Assets.scene.remove(mesh);
+
+                //Delete selection spheres & hp bars
+                if (matching_sphere.hasOwnProperty(asset)){
+                    Assets.scene.remove(matching_sphere[asset].sel);
+                    Assets.scene.remove(matching_sphere[asset].stat);
+                }
+
+            }
+            delete ECS.entities[key];
+        }
+
+        //Delete arrowhelpers
+        for (var key of Object.keys(arrows)){
+            var mesh = arrows[key];
+
+            Assets.scene.remove(mesh);
+            mesh.line.geometry.dispose();
+            mesh.line.material.dispose();
+            mesh.cone.geometry.dispose();
+            mesh.cone.material.dispose();
+        }
+
+        //Empty out the dictionaries
+        matching_sphere = {};
+        matching_entity = {};
+        lanes = {};
+        fields = {};
+        materials = {};
+        sprites = {};
+        arrows = {};
     }
 }
 
@@ -357,7 +448,6 @@ class Game {
 
 //Game loop
 function gameLoop(current){
-
     if (pause == 0){
         //Update FPS calculation once every 250 milliseconds
         if ((Date.now() - time) > 1000){
@@ -381,17 +471,13 @@ function gameLoop(current){
         //console.log(lag);
         real_frames += 1;
         ol.clearRect(0, 0, overlay.width, overlay.height);
-    } else {
+    } else if (pause == 1){
         lag = 0;
-
+        prev = Date.now();
     }
     //Render
     sm.render(lag / MS_PER_UPDATE);
 
-    if (pause) {
-        Scene.drawPause();
-        //Pause music
-    }
     window.requestAnimationFrame(gameLoop);
 
 }
